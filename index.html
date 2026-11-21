@@ -11,6 +11,8 @@
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./world.css">
+  <link rel="stylesheet" href="./experience.css">
+  <script defer src="./sound.js"></script>
   <script defer src="./app.js"></script>
 </head>
 <body>
@@ -22,7 +24,7 @@
         <div class="brand-copy">
           <div class="eyebrow">CHRONOS ARCHIVE <span class="separator">/</span> REMOTE TERMINAL 07</div>
           <h1 id="portalTitle">TEMPORAL CONNECTION <span>1473 / 2027</span></h1>
-          <div class="subtitle">ONE TRANSMISSION. ONE OBJECT. ONE CHANCE.</div>
+          <div class="subtitle">THE CROSSING IS OPEN. FATE IS YOURS TO CHOOSE.</div>
         </div>
       </div>
       <div class="telemetry">
@@ -34,6 +36,7 @@
           <div class="field-label">TIME UNTIL COLLAPSE</div>
           <div class="countdown" id="mainTimer" role="timer" aria-label="Time until portal closure">20:00</div>
         </div>
+        <button id="soundToggle" class="admin-trigger sound-trigger" type="button" aria-label="Enable ambient sound" aria-pressed="false" title="Sound on / off">♪</button>
         <button id="adminOpen" class="admin-trigger" type="button" aria-label="Open organiser controls" title="Organiser controls">⚙</button>
       </div>
     </header>
@@ -48,9 +51,9 @@
         <div class="world-entry-copy">
           <div class="world-eyebrow">AN ANCIENT POWER HAS AWAKENED</div>
           <h2>THE VEIL<br><em>BETWEEN</em> AGES</h2>
-          <p>A forgotten crossing. Seven destinations beyond the known world. Nine relics from a future not yet written.</p>
+          <p>A forgotten crossing. Seven destinations beyond the known world. Ten relics from a future not yet written.</p>
           <button type="button" class="world-button" id="worldEnter"><span>STEP THROUGH THE PORTAL</span><span aria-hidden="true">ᛟ</span></button>
-          <small>YEAR 1473 <span aria-hidden="true">✦</span> CONNECTION TO 2027</small>
+          <small>1473 <span aria-hidden="true">✦</span> 2027</small>
         </div>
         <div class="gate-composition" aria-hidden="true">
           <div class="gate-backglow"></div>
@@ -110,17 +113,18 @@
     <section class="archive-section" id="archiveSection" hidden>
       <div class="section-heading">
         <div><span class="section-rule" aria-hidden="true"></span><span class="section-kicker">RECOVERABLE OBJECTS FROM THE YEAR 2027</span></div>
-        <div class="archive-meta"><span id="remainingCount">9</span> <span>REMAINING</span><span class="meta-divider">/</span><span id="destroyedCount">0</span> <span>LOST</span></div>
+        <div class="archive-meta"><span id="remainingCount">10</span> <span>REMAINING</span><span class="meta-divider">/</span><span id="destroyedCount">0</span> <span>LOST</span></div>
       </div>
       <div class="object-grid" id="objectGrid" aria-label="Future objects"></div>
-      <div class="archive-empty" id="archiveEmpty" hidden>No objects available. Open organiser controls to add objects.</div>
+      <div class="archive-empty" id="archiveEmpty" hidden>No relics remain here. The runestone may yet reveal another path.</div>
     </section>
     <footer class="portal-footer">
       <div class="footer-left"><span class="signal-bars" aria-hidden="true">▂▄▆</span><span>QUANTUM UPLINK</span><span class="footer-muted" id="footerState">AWAITING ORGANISER ACTIVATION</span></div>
       <div class="ticker-wrap"><span class="ticker-prefix">TRANSMISSION LOG</span><span id="logText">Temporal archive synchronised. Awaiting activation.</span></div>
-      <div class="footer-right">1473 <span>⟷</span> 2027 <span class="revision">V1.0</span></div>
+      <div class="footer-right">1473 <span>⟷</span> 2027 <span class="revision">V3.0</span></div>
     </footer>
   </main>
+  <div class="ritual-flash" id="ritualFlash" aria-hidden="true"></div>
 
   <dialog id="objectDialog" class="themed-dialog object-dialog" aria-labelledby="detailTitle">
     <button type="button" class="dialog-close" id="detailClose" aria-label="Close details">×</button>
@@ -132,6 +136,7 @@
       <div class="detail-facts">
         <div class="fact"><span class="fact-heading advantage">POTENTIAL ADVANTAGE</span><p id="detailBenefit"></p></div>
         <div class="fact"><span class="fact-heading limitation">CRITICAL LIMITATION</span><p id="detailLimitation"></p></div>
+        <div class="fact consequence-fact"><span class="fact-heading consequence">ECHO THROUGH TIME</span><p id="detailConsequence"></p></div>
       </div>
       <div class="detail-actions">
         <button type="button" class="button ghost" id="detailBack">RETURN TO ARCHIVE</button>
@@ -185,9 +190,10 @@
         <div class="editor-grid">
           <label>NAME<input id="objName" maxlength="70"></label>
           <label>ICON / EMOJI<input id="objIcon" maxlength="12"></label>
-          <label class="full">SHORT DESCRIPTION<textarea id="objDescription" rows="2" maxlength="220"></textarea></label>
-          <label class="full">ADVANTAGE<textarea id="objBenefit" rows="2" maxlength="260"></textarea></label>
-          <label class="full">LIMITATION<textarea id="objLimitation" rows="2" maxlength="260"></textarea></label>
+          <label class="full">RELIC DESCRIPTION<textarea id="objDescription" rows="2" maxlength="480"></textarea></label>
+          <label class="full">POWER<textarea id="objBenefit" rows="3" maxlength="780"></textarea></label>
+          <label class="full">THE CATCH<textarea id="objLimitation" rows="3" maxlength="780"></textarea></label>
+          <label class="full">CONSEQUENCE<textarea id="objConsequence" rows="3" maxlength="780"></textarea></label>
           <label class="full">IMAGE URL OR RELATIVE ASSET PATH<input id="objImage" placeholder="./assets/my-object.jpg"></label>
           <label class="full">DESTINATION / REALM<select id="objLocation"></select></label>
         </div>
