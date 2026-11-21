@@ -1,0 +1,142 @@
+/* iPad-first tactile LARP presentation. All visuals are local and offline-friendly. */
+:root{--ritual-gold:#e5c58c;--ritual-green:#a9ebd7;--ipad-safe-bottom:env(safe-area-inset-bottom,0px)}
+html{overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+button,input,textarea,select{touch-action:manipulation}
+button{user-select:none;-webkit-user-select:none}
+.portal{padding-bottom:max(13px,env(safe-area-inset-bottom));}
+.portal::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 50% 40%,rgba(241,215,158,.035),transparent 64%)}
+.topbar{position:relative}
+.brand-mark{color:var(--ritual-gold);filter:drop-shadow(0 0 13px rgba(224,185,112,.34))}
+.brand-copy .eyebrow{color:#abbb9c}
+h1 span{color:#d9c493}
+.subtitle{color:#7e9993}
+.status-pill{border-color:rgba(217,199,148,.3)}
+.status-pill.stable,.status-pill.completed{color:var(--ritual-gold);border-color:rgba(229,197,140,.5)}
+.countdown{color:#e8d4a3;text-shadow:0 0 27px rgba(237,195,135,.29)}
+.admin-trigger{min-width:44px;min-height:44px}
+.sound-trigger{font-size:23px;font-family:Georgia,serif;font-weight:bold;transition:.2s;background:rgba(21,48,48,.47);color:#8fa69c}
+.sound-trigger[aria-pressed="true"]{color:var(--ritual-gold);border-color:var(--ritual-gold);box-shadow:0 0 17px rgba(228,199,142,.24)}
+.sound-trigger[aria-pressed="false"]{opacity:.72}
+.world-gate .world-button,.world-path .world-button,.world-dial .world-button{min-height:54px}
+.world-entry-copy p{color:#d3ddcb}
+.world-stage{border-color:rgba(206,193,145,.3);box-shadow:inset 0 0 0 1px rgba(235,208,153,.06),0 17px 42px rgba(0,0,0,.36)}
+.world-stage::before{content:"";position:absolute;z-index:7;inset:0;pointer-events:none;background-image:radial-gradient(circle at 17% 34%,rgba(248,224,167,.7) 0 1px,transparent 2px),radial-gradient(circle at 83% 61%,rgba(170,239,220,.65) 0 1px,transparent 2px),radial-gradient(circle at 48% 14%,rgba(237,219,172,.4) 0 1px,transparent 2px);background-size:189px 213px,307px 283px,377px 359px;opacity:.32;animation:dustDrift 21s linear infinite}
+.realm-nav{border-color:rgba(211,194,149,.3)}
+.realm-nav strong{color:var(--ritual-gold)}
+.portal.in-realm .archive-section{border-color:rgba(220,204,160,.32)}
+.portal.in-realm .object-grid{min-height:0}
+.object-card{box-shadow:inset 0 0 0 1px rgba(239,208,149,.04),0 12px 32px rgba(0,0,0,.25);border-color:rgba(218,197,155,.3)}
+.object-card:hover,.object-card:focus-visible{border-color:#e5ca9a;box-shadow:0 0 28px rgba(233,208,155,.21)}
+.card-foot{border-top:1px solid rgba(211,199,164,.21)}
+.card-arrow{color:#d8bd8a}
+.card-title{letter-spacing:.3px;font-weight:650}
+.card-description{color:#a8bbb5}
+.object-grid.low-count .card-media .card-icon{font-size:clamp(60px,11vh,130px)}
+.section-kicker{color:#e7d3a0}
+.themed-dialog{background:radial-gradient(ellipse at 38% 0,rgba(121,165,151,.14),transparent 54%),linear-gradient(155deg,#13242b,#081319 75%);border-color:rgba(222,195,133,.6);box-shadow:0 25px 110px rgba(0,0,0,.87),0 0 50px rgba(221,193,151,.13)}
+.themed-dialog::backdrop{background:rgba(1,7,10,.88);backdrop-filter:blur(7px)}
+.detail-visual{position:relative;min-height:0;overflow:hidden;background:radial-gradient(ellipse at center,#294b50,#08161d 65%)}
+.detail-visual::after{content:"";position:absolute;inset:0;border:15px solid transparent;pointer-events:none;background:linear-gradient(120deg,rgba(249,215,159,.08),transparent 70%)}
+.object-dialog[open]{display:grid;grid-template-columns:minmax(230px,40%) minmax(0,60%);min-height:0;width:min(1140px,95vw);max-height:min(94dvh,950px)}
+.detail-info{padding:clamp(20px,2.7vw,39px);min-width:0;max-height:92dvh;overflow:auto}
+.detail-info h2{color:#f2dec0;font-family:Georgia,serif;font-weight:500;font-size:clamp(29px,2.8vw,45px);margin:7px 0 10px}
+.detail-description{font-size:clamp(14px,1.1vw,18px);margin:0 0 14px;color:#c4d8ce;line-height:1.44}
+.detail-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.fact{background:rgba(8,27,32,.42);border:1px solid rgba(184,211,184,.19);border-top:2px solid #809e88;padding:12px 13px;min-width:0}
+.fact p{font-size:clamp(12px,.92vw,14px);line-height:1.46;color:#d7e4d6;margin:7px 0 0;overflow-wrap:break-word}
+.fact-heading{font-size:10px;letter-spacing:1.7px;color:#b6e7c9}
+.fact-heading.limitation{color:#ffc7ab}
+.fact-heading.consequence{color:#e9ca9c}
+.consequence-fact{grid-column:1/-1;border-top-color:#d5b986}
+.consequence-fact p{font-size:clamp(13px,.99vw,15px)}
+.detail-actions{position:sticky;bottom:0;margin-top:auto;padding:15px 0 0;background:linear-gradient(0deg,#0b1b21 68%,transparent);z-index:2}
+.detail-actions .button{min-height:49px;padding:11px 17px;font-size:12px}
+.detail-note{letter-spacing:.65px;text-transform:none;font-size:11px;color:#bdc9b9}
+.confirm-dialog{border-color:#e5c58c}.confirm-dialog h2{font-family:Georgia,serif;font-weight:500;color:#ead3ae}
+.confirm-dialog .button{min-height:49px}
+.ending-inner h2{color:#f3d39b}.ending-name{color:#c9e4b9}
+.ritual-flash{position:fixed;z-index:27;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,rgba(246,218,167,.7),rgba(80,131,135,.18) 35%,transparent 75%)}
+.ritual-flash.destroy{animation:ritualBreak .65s ease-out both;background:radial-gradient(ellipse at center,rgba(250,115,97,.7),rgba(100,19,35,.17) 44%,transparent 75%)}
+.ritual-flash.travel{animation:ritualOpen .75s ease-out both}
+.ritual-flash.warning{animation:ritualWarning .95s ease-out both;background:radial-gradient(ellipse at center,rgba(248,135,97,.5),rgba(167,29,40,.2) 34%,transparent 72%)}
+.ritual-flash.success{animation:ritualOpen 1.3s ease-out both}
+@keyframes ritualBreak{0%{opacity:.75;transform:scale(.85)}35%{opacity:.65}100%{opacity:0;transform:scale(1.08)}}
+@keyframes ritualOpen{0%{opacity:0}30%{opacity:.83}100%{opacity:0}}
+@keyframes ritualWarning{0%{opacity:0}25%,64%{opacity:.66}50%,100%{opacity:0}}
+@keyframes dustDrift{to{background-position:113px 127px,-149px 134px,87px -119px}}
+@media(min-width:761px) and (max-height:820px){
+  .object-dialog[open]{max-height:94dvh}
+  .detail-info{padding:19px 23px;max-height:91dvh}
+  .detail-info h2{font-size:29px;margin:5px 0 8px}
+  .detail-description{font-size:13px;margin-bottom:9px}
+  .fact{padding:8px 10px}
+  .fact p{font-size:12px;margin-top:4px}
+  .detail-facts{gap:7px}
+  .detail-actions{padding-top:9px}
+  .detail-actions .button{min-height:44px;font-size:10px}
+}
+@media(max-width:760px){
+  .portal{padding:11px 11px max(13px,var(--ipad-safe-bottom))}
+  .telemetry{gap:8px}
+  .status-pill{padding:10px;min-width:112px}
+  .sound-trigger{margin-left:auto}
+  .object-dialog[open]{display:block;max-height:94dvh}
+  .detail-visual{height:195px;border-right:none;border-bottom:1px solid rgba(225,198,146,.35)}
+  .detail-info{max-height:none;padding:20px}
+  .detail-facts{grid-template-columns:1fr}
+  .consequence-fact{grid-column:auto}
+  .detail-actions{background:#0b1b21}
+  .detail-actions .button{min-width:42%;flex-grow:1}
+  .world-stage:before{animation:none}
+}
+@media(min-width:761px) and (max-width:1100px){
+  .telemetry{gap:10px}
+  .world-entry-copy h2{font-size:clamp(42px,4.7vw,63px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .world-stage:before,.ritual-flash{animation:none!important}
+}
+/* The classic 768px-wide iPad portrait viewport needs its own compact journey. */
+@media (orientation:portrait) and (min-width:761px) and (max-width:900px){
+  .portal{gap:10px;padding:13px}
+  .topbar{min-height:88px}
+  .world-stage{min-height:660px}
+  .world-entry-copy{top:37px;left:40px;right:40px;transform:none;max-width:85%}
+  .world-entry-copy h2{font-size:61px;max-width:550px}
+  .world-entry-copy p{font-size:15px;max-width:425px}
+  .gate-composition{top:auto;bottom:-9%;right:4%;transform:none;width:475px;height:475px}
+  .world-dial{display:flex;flex-direction:column;justify-content:flex-start;overflow:auto}
+  .dial-left{width:100%;padding:25px 30px 0}
+  .dial-left h2{font-size:43px;margin:8px 0}
+  .dial-left>p{font-size:14px;max-width:660px;margin-bottom:6px}
+  .location-readout{margin:10px 0 4px;padding-top:10px;max-width:660px}
+  .location-readout h3{font-size:30px;margin:6px 0}
+  .location-readout p{min-height:0;font-size:14px;margin:0 0 6px}
+  .dial-commands{margin-top:8px}
+  .dial-commands button{min-height:44px}
+  .slab-area{width:100%;min-height:420px;padding:6px 20px 20px}
+  .stone-slab{height:390px;width:390px}
+  .stone-dial{width:290px}
+  .rune-socket{width:48px;height:48px;font-size:27px}
+  .realm-nav{flex-direction:column;align-items:stretch}
+  .realm-buttons button{flex:1}
+  .object-dialog[open]{display:block;max-height:92dvh;width:min(660px,95vw)}
+  .detail-visual{height:235px;border-right:0;border-bottom:1px solid rgba(225,198,146,.35)}
+  .detail-info{max-height:none;padding:24px}
+  .detail-info h2{font-size:37px}
+  .detail-facts{grid-template-columns:1fr 1fr}
+  .detail-actions{background:#0b1b21}
+}
+@media (max-width:900px) and (orientation:landscape){
+  .portal{gap:8px}
+  .world-stage{min-height:320px}
+  .world-entry-copy h2{font-size:40px}
+  .world-entry-copy p{font-size:12px;line-height:1.35}
+  .object-dialog[open]{width:96vw}
+  .detail-info{padding:18px}
+  .detail-info h2{font-size:28px}
+  .detail-facts{gap:6px}
+  .fact{padding:7px}
+  .fact p{font-size:12px;line-height:1.35}
+}

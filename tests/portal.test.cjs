@@ -105,7 +105,7 @@ function harness(storage = new Map()) {
 
 test("archive displays all objects and prevents destruction before activation", () => {
   const app = harness();
-  assert.equal(app.get("remainingCount").textContent, "9");
+  assert.equal(app.get("remainingCount").textContent, "10");
   assert.equal(app.get("worldStage").hidden, false);
   assert.equal(app.get("archiveSection").hidden, true);
   assert.equal(app.get("statusText").textContent, "STANDBY");
@@ -123,7 +123,7 @@ test("destruction requires a second confirmation", () => {
   app.destroy("smartphone", true);
   assert.equal(app.state().lost.length, 1);
   assert.equal(app.state().lost[0].id, "smartphone");
-  assert.equal(app.get("remainingCount").textContent, "8");
+  assert.equal(app.get("remainingCount").textContent, "9");
 });
 
 test("successful emergency sacrifice stabilises the portal", () => {
@@ -132,7 +132,7 @@ test("successful emergency sacrifice stabilises the portal", () => {
   app.click("sessionInstability");
   assert.ok(app.state().emergency);
   assert.equal(app.get("statusText").textContent, "UNSTABLE");
-  app.destroy("camera");
+  app.destroy("toilet");
   assert.equal(app.state().emergency, null);
   assert.equal(app.state().lost.length, 1);
 });
@@ -209,7 +209,7 @@ test("game state survives reopening in the same browser", () => {
   first.destroy("smartphone");
   const restored = harness(storage);
   assert.equal(restored.state().phase, "running");
-  assert.equal(restored.get("remainingCount").textContent, "8");
+  assert.equal(restored.get("remainingCount").textContent, "9");
   assert.equal(restored.get("statusText").textContent, "STABLE");
 });
 
@@ -224,12 +224,12 @@ test("edited object content persists for organiser export", () => {
 });
 
 
-test("seven distinct destination runes and exactly nine objects have a valid assignment", () => {
+test("seven distinct destination runes and exactly ten objects have a valid assignment", () => {
   const app = harness();
   app.enterCode();
   const expected = app.config();
   assert.equal(expected.locations.length, 7);
-  assert.equal(expected.objects.length, 9);
+  assert.equal(expected.objects.length, 10);
   const names = new Set(expected.locations.map(x => x.name));
   assert.equal(names.size, 7);
   const ids = new Set(expected.locations.map(x => x.id));
@@ -253,10 +253,10 @@ test("touchscreen journey goes through gateway, walks to slab and opens a select
   assert.equal(app.state().viewAll, false);
   assert.ok(app.state().visited.includes("verdant"));
   assert.equal(app.get("realmName").textContent, "Verdant Hollow");
-  assert.equal((app.get("objectGrid").innerHTML.match(/class="object-card"/g)||[]).length, 2);
+  assert.equal((app.get("objectGrid").innerHTML.match(/class="object-card"/g)||[]).length, 1);
   app.click("worldAll");
   assert.equal(app.state().viewAll, true);
-  assert.equal((app.get("objectGrid").innerHTML.match(/class="object-card"/g)||[]).length, 9);
+  assert.equal((app.get("objectGrid").innerHTML.match(/class="object-card"/g)||[]).length, 10);
   app.click("worldReturn");
   assert.equal(app.state().scene, "dial");
 });
@@ -272,7 +272,7 @@ test("emergency can interrupt travel then restores the correct previous scene", 
   assert.equal(app.state().viewAll, true);
   assert.equal(app.get("worldStage").hidden, true);
   assert.ok(app.state().emergency);
-  app.destroy("radio");
+  app.destroy("led");
   assert.equal(app.state().scene, "path");
   assert.equal(app.state().emergency, null);
   assert.equal(app.get("worldStage").hidden, false);
@@ -294,11 +294,11 @@ test("organiser can rename destinations and reassign an object without editing s
   assert.equal(app.config().objects[0].locationId, "sanctum");
 });
 
-test("organiser cannot add a tenth object while nine slots are filled", () => {
+test("organiser cannot add an eleventh object while ten slots are filled", () => {
   const app = harness();
   app.enterCode();
   app.click("objectAdd");
-  assert.equal(app.config().objects.length, 9);
+  assert.equal(app.config().objects.length, 10);
 });
 
 test("reopening in the same browser keeps exploration progress and dial choice", () => {
@@ -311,3 +311,50 @@ test("reopening in the same browser keeps exploration progress and dial choice",
   assert.equal(restored.state().walkProgress, 12);
 });
 
+
+test("player enters the gate and starts the clock without organiser access", () => {
+  const app = harness();
+  assert.equal(app.state().phase,"standby");
+  app.click("worldEnter");
+  assert.equal(app.state().phase,"running");
+  assert.equal(app.state().scene,"path");
+  app.moveClock(3000);
+  app.tick();
+  assert.equal(app.get("mainTimer").textContent,"19:57");
+});
+
+test("all ten relics have complete stories and locally packaged illustrations", () => {
+  const app=harness();
+  app.enterCode();
+  const items=app.config().objects;
+  assert.equal(items.length,10);
+  assert.equal(new Set(items.map(i=>i.id)).size,10);
+  for(const item of items) {
+    assert.ok(item.benefit.length>20,"Missing power for "+item.id);
+    assert.ok(item.limitation.length>20,"Missing catch for "+item.id);
+    assert.ok(item.consequence.length>20,"Missing consequence for "+item.id);
+    assert.ok(fs.existsSync(path.join(__dirname,"..",item.image.replace(/^\.\//,""))),"Missing illustration for "+item.id);
+  }
+  app.openObject("history");
+  assert.match(app.get("detailConsequence").textContent,/catastrophe/i);
+});
+
+test("previous sessions upgrade to the ten-relic edition without carrying old deletions", () => {
+  const storage=new Map();
+  storage.set(CONFIG_KEY,JSON.stringify({version:2,objects:[{id:"smartphone",name:"Old sample"}]}));
+  storage.set(SESSION_KEY,JSON.stringify({phase:"running",scene:"archive",lost:[{id:"camera"}],endsAt:99999999}));
+  const app=harness(storage);
+  assert.equal(app.config().version,3);
+  assert.equal(app.config().objects.length,10);
+  assert.equal(app.config().objects[0].name,"Smartphone");
+  assert.equal(app.state().phase,"standby");
+  assert.equal(app.state().scene,"gate");
+});
+
+test("offline shell includes new interface, audio engine and ten illustrated objects", () => {
+  const root=path.join(__dirname,"..");
+  const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");
+  for(const file of ["./experience.css","./sound.js",
+    ...["smartphone","toilet","history","medical","worldmap","firearm","led","condoms","filter","seeds"].map(id=>"./assets/objects/"+id+".svg")])
+    assert.ok(sw.includes(file),"Not in offline cache: "+file);
+});
