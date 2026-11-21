@@ -1,6 +1,6 @@
 /* Offline app shell for iPad use after a successful first online visit. */
-const CACHE = "chronos1473-shell-v2";
-const SHELL = ["./","./index.html","./styles.css","./app.js","./icon.svg","./manifest.webmanifest","./assets/future-city.svg","./assets/objects/smartphone.svg","./assets/objects/history.svg","./assets/objects/seeds.svg","./assets/objects/camera.svg","./assets/objects/filter.svg","./assets/objects/medicine.svg","./assets/objects/solar.svg","./assets/objects/microscope.svg","./assets/objects/glasses.svg","./assets/objects/radio.svg","./assets/objects/bicycle.svg","./assets/objects/drive.svg"];
+const CACHE = "chronos1473-shell-v3";
+const SHELL = ["./","./index.html","./styles.css","./world.css","./app.js","./icon.svg","./manifest.webmanifest","./assets/future-city.svg","./assets/world/gate-landscape.svg","./assets/world/void-landscape.svg","./assets/objects/smartphone.svg","./assets/objects/history.svg","./assets/objects/seeds.svg","./assets/objects/camera.svg","./assets/objects/filter.svg","./assets/objects/medicine.svg","./assets/objects/solar.svg","./assets/objects/microscope.svg","./assets/objects/glasses.svg","./assets/objects/radio.svg","./assets/objects/bicycle.svg","./assets/objects/drive.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
 });
