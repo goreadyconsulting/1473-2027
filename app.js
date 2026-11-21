@@ -4,11 +4,12 @@
   var CONFIG_KEY = "chronos1473_config_v1";
   var SESSION_KEY = "chronos1473_session_v1";
   var DEFAULT_CONFIG = {
-    version: 3,
+    version: 4,
     title: "TEMPORAL CONNECTION",
-    durationMinutes: 20,
+    durationMinutes: 420,
+    autoEliminateEveryMinutes: 60,
     emergencySeconds: 45,
-    instabilityAtMinutesRemaining: [15, 10, 5],
+    instabilityAtMinutesRemaining: [],
     failureDestroyCount: 2,
     glitchMinSeconds: 35,
     glitchMaxSeconds: 75,
@@ -57,7 +58,8 @@
     if (!raw || typeof raw!=="object") throw new Error("Configuration must be a JSON object.");
     var c=Object.assign({},clone(DEFAULT_CONFIG),raw);
     c.title=asText(c.title).slice(0,90)||DEFAULT_CONFIG.title;
-    c.durationMinutes=intRange(c.durationMinutes,2,240,20);
+    c.durationMinutes=intRange(c.durationMinutes,2,1440,420);
+    c.autoEliminateEveryMinutes=intRange(c.autoEliminateEveryMinutes,1,1440,60);
     c.emergencySeconds=intRange(c.emergencySeconds,10,300,45);
     c.failureDestroyCount=intRange(c.failureDestroyCount,0,10,2);
     c.glitchMinSeconds=intRange(c.glitchMinSeconds,10,3600,35);
@@ -67,7 +69,9 @@
       .map(Number).filter(function(n){return Number.isFinite(n)&&n>0&&n<c.durationMinutes;})
       .map(function(n){return Math.round(n*100)/100;})
       .filter(function(n,i,a){return a.indexOf(n)===i;}).sort(function(a,b){return b-a;});
-    c.version=3;
+    // Preserve edited relics and locations; existing v3 sites receive the new seven-hour rules.
+    if(Number(raw.version)<4){c.durationMinutes=420;c.autoEliminateEveryMinutes=60;c.instabilityAtMinutesRemaining=[];}
+    c.version=4;
     if(!Array.isArray(raw.locations)||raw.locations.length!==7) c.locations=clone(DEFAULT_CONFIG.locations);
     else {
       var uniqueLocations=new Set();
@@ -103,14 +107,17 @@
   function readStored(key) { try {var s=localStorage.getItem(key);return s?JSON.parse(s):null;}catch(e){return null;} }
   var config;
   try {config=normalizeConfig(readStored(CONFIG_KEY)||DEFAULT_CONFIG);} catch(e){config=normalizeConfig(DEFAULT_CONFIG);}
-  function freshSession() {return {version:3,phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
+  function freshSession() {return {version:4,phase:"standby",paused:false,endsAt:0,durationMs:0,autoIntervalMs:0,hourlyProcessed:0,lastHourlyLost:null,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
   function loadSession() {
     var s=readStored(SESSION_KEY);
-    if(!s||s.version!==3||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
+    if(!s||s.version!==4||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
     var merged=Object.assign(freshSession(),s);
     merged.lost=Array.isArray(merged.lost)?merged.lost.filter(function(l){return l&&typeof l.id==="string";}):[];
     merged.fired=Array.isArray(merged.fired)?merged.fired:[];
     merged.log=Array.isArray(merged.log)?merged.log.slice(0,40):[];
+    merged.durationMs=intRange(merged.durationMs,0,1440*60000,0);
+    merged.autoIntervalMs=intRange(merged.autoIntervalMs,0,1440*60000,0);
+    merged.hourlyProcessed=intRange(merged.hourlyProcessed,0,1440,0);
     merged.scene=["gate","path","dial","archive"].includes(merged.scene)?merged.scene:"gate";
     merged.walkProgress=intRange(merged.walkProgress,0,100,0);
     merged.selectedLocation=config.locations.some(function(l){return l.id===merged.selectedLocation;})?merged.selectedLocation:config.locations[0].id;
@@ -130,6 +137,22 @@
   function remainingMs() {if(state.phase==="standby")return config.durationMinutes*60000;if(state.paused)return Math.max(0,Number(state.remainingMs)||0);return Math.max(0,state.endsAt-Date.now());}
   function emergencyMs() {if(!state.emergency)return 0;return state.paused?Math.max(0,Number(state.emergency.remainingMs)||0):Math.max(0,state.emergency.endsAt-Date.now());}
   function timeText(ms) {var secs=Math.ceil(Math.max(0,ms)/1000),m=Math.floor(secs/60),s=secs%60;return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");}
+  function longTimeText(ms) {
+    var secs=Math.ceil(Math.max(0,ms)/1000);
+    var h=Math.floor(secs/3600),m=Math.floor(secs%3600/60),s=secs%60;
+    return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  }
+  function hourlyTotal() {
+    var span=state.durationMs||config.durationMinutes*60000;
+    var interval=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+    return Math.floor(span/interval);
+  }
+  function nextHourlyMs() {
+    var span=state.durationMs||config.durationMinutes*60000;
+    var interval=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+    if(state.hourlyProcessed>=Math.floor(span/interval)||activeObjects().length<=1)return null;
+    return Math.max(0,(state.hourlyProcessed+1)*interval-(span-remainingMs()));
+  }
   function mediaMarkup(obj) {
     var src=mediaUrl(obj.image);
     var icon='<span class="card-icon" aria-hidden="true">'+html(obj.icon||"✦")+'</span>';
@@ -162,7 +185,10 @@
     var klass=status==="SECURED"?"completed":status.toLowerCase();
     $("statusPill").className="status-pill "+klass;
     $("statusText").textContent=status;
-    $("mainTimer").textContent=timeText(rem);
+    $("mainTimer").textContent=longTimeText(rem);
+    var next=nextHourlyMs();
+    $("nextElimination").textContent=state.phase==="closed"||state.phase==="completed"?"—":next==null?"—":longTimeText(next);
+    $("hourlyProgress").textContent=state.hourlyProcessed+" / "+hourlyTotal()+" ELIMINATIONS";
     $("mainTimer").classList.toggle("urgent",rem<=180000&&state.phase==="running");
     var emergency=!!state.emergency;
     $("emergencyStrip").hidden=!emergency;
@@ -279,7 +305,7 @@
   function enterGateway() {
     if(state.scene!=="gate"||["closed","completed"].includes(state.phase)||state.paused)return;
     if(state.phase==="standby"){
-      state.phase="running";state.endsAt=Date.now()+config.durationMinutes*60000;
+      state.phase="running";state.durationMs=config.durationMinutes*60000;state.autoIntervalMs=config.autoEliminateEveryMinutes*60000;state.endsAt=Date.now()+state.durationMs;
       log("The temporal pact has begun. The countdown is sealed.");
       nextGlitch();
     }
@@ -464,7 +490,7 @@
   }
   function startSession() {
     if(state.phase==="running"&&!window.confirm("Restart the running session? This restores all objects and resets the timer."))return;
-    state=freshSession();state.phase="running";state.endsAt=Date.now()+config.durationMinutes*60000;
+    state=freshSession();state.phase="running";state.durationMs=config.durationMinutes*60000;state.autoIntervalMs=config.autoEliminateEveryMinutes*60000;state.endsAt=Date.now()+state.durationMs;
     requestScreenWake();
     log("Temporal connection established. Archive unlocked.");
     nextGlitch();persist();closeGameplayDialogs();render();notice("Session started.");
@@ -482,7 +508,7 @@
   function renderSessionAdmin() {
     if(!$("adminContent")||!adminUnlocked)return;
     var items=activeObjects().length;
-    $("sessionSummary").textContent="SCENE: "+state.scene.toUpperCase()+"  •  PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+timeText(remainingMs())+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
+    $("sessionSummary").textContent="SCENE: "+state.scene.toUpperCase()+"  •  PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+longTimeText(remainingMs())+"  •  HOURLY: "+state.hourlyProcessed+" / "+hourlyTotal()+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
     $("adminHistory").innerHTML=state.log.length?state.log.map(function(entry){return "<p>"+html(entry.time)+" — "+html(entry.text)+"</p>";}).join(""):"<p>No events recorded yet.</p>";
     $("sessionPause").disabled=state.phase!=="running";
     $("sessionInstability").disabled=state.phase!=="running"||state.paused||!!state.emergency||items<=1;
@@ -588,13 +614,13 @@
     selectedGlitchEditor=null;persist();renderGlitchEditor();notice("Glitch deleted.");
   }
   function renderSettingsEditor() {
-    $("setTitle").value=config.title;$("setDuration").value=config.durationMinutes;$("setEmergency").value=config.emergencySeconds;
+    $("setTitle").value=config.title;$("setDuration").value=config.durationMinutes;$("setAutoInterval").value=config.autoEliminateEveryMinutes;$("setEmergency").value=config.emergencySeconds;
     $("setThresholds").value=config.instabilityAtMinutesRemaining.join(", ");
     $("setFailureCount").value=config.failureDestroyCount;$("setGlitchMin").value=config.glitchMinSeconds;$("setGlitchMax").value=config.glitchMaxSeconds;$("setPin").value=config.adminPin;
   }
   function saveSettings() {
     var proposed=clone(config);
-    proposed.title=$("setTitle").value.trim();proposed.durationMinutes=$("setDuration").value;
+    proposed.title=$("setTitle").value.trim();proposed.durationMinutes=$("setDuration").value;proposed.autoEliminateEveryMinutes=$("setAutoInterval").value;
     proposed.emergencySeconds=$("setEmergency").value;proposed.failureDestroyCount=$("setFailureCount").value;
     proposed.glitchMinSeconds=$("setGlitchMin").value;proposed.glitchMaxSeconds=$("setGlitchMax").value;
     proposed.instabilityAtMinutesRemaining=$("setThresholds").value.split(",").map(function(x){return Number(x.trim());});
