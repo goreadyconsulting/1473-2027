@@ -34,12 +34,17 @@
         </div>
         <div class="countdown-area">
           <div class="field-label">TIME UNTIL COLLAPSE</div>
-          <div class="countdown" id="mainTimer" role="timer" aria-label="Time until portal closure">20:00</div>
+          <div class="countdown" id="mainTimer" role="timer" aria-label="Time until portal closure">07:00:00</div>
         </div>
         <button id="soundToggle" class="admin-trigger sound-trigger" type="button" aria-label="Enable ambient sound" aria-pressed="false" title="Sound on / off">♪</button>
         <button id="adminOpen" class="admin-trigger" type="button" aria-label="Open organiser controls" title="Organiser controls">⚙</button>
       </div>
     </header>
+    <section class="hourly-status" aria-label="Hourly sacrifice schedule">
+      <span class="hourly-label"><span class="hourly-emblem" aria-hidden="true">ᚺ</span> NEXT RELIC LOST IN</span>
+      <strong id="nextElimination" aria-live="off">01:00:00</strong>
+      <span id="hourlyProgress" class="hourly-progress">0 / 7 ELIMINATIONS</span>
+    </section>
     <section class="emergency-strip" id="emergencyStrip" hidden aria-live="assertive">
       <div class="warning-glyph">⚠</div>
       <div class="emergency-copy"><strong>CRITICAL INSTABILITY</strong><span>SELECT AN OBJECT TO DESTROY BEFORE CONNECTION FAILURE</span></div>
@@ -121,10 +126,19 @@
     <footer class="portal-footer">
       <div class="footer-left"><span class="signal-bars" aria-hidden="true">▂▄▆</span><span>QUANTUM UPLINK</span><span class="footer-muted" id="footerState">AWAITING THE FIRST TRAVELLER</span></div>
       <div class="ticker-wrap"><span class="ticker-prefix">TRANSMISSION LOG</span><span id="logText">The crossing lies dormant. Touch the ancient gate.</span></div>
-      <div class="footer-right">1473 <span>⟷</span> 2027 <span class="revision">V3.0</span></div>
+      <div class="footer-right">1473 <span>⟷</span> 2027 <span class="revision">V4.0</span></div>
     </footer>
   </main>
   <div class="ritual-flash" id="ritualFlash" aria-hidden="true"></div>
+  <div class="hourly-overlay" id="hourlyOverlay" hidden aria-live="assertive" aria-atomic="true">
+    <div class="hourly-overlay-inner">
+      <span class="hourly-overlay-rune" aria-hidden="true">ᛟ</span>
+      <div id="hourlyEventHour" class="hourly-overlay-eyebrow">THE 01 HOUR MARK</div>
+      <div class="hourly-overlay-heading">THE TOLL IS CLAIMED</div>
+      <div id="hourlyEventName" class="hourly-overlay-name"></div>
+      <div class="hourly-overlay-foot">THE CROSSING TAKES ONE. THE JOURNEY CONTINUES.</div>
+    </div>
+  </div>
 
   <dialog id="objectDialog" class="themed-dialog object-dialog" aria-labelledby="detailTitle">
     <button type="button" class="dialog-close" id="detailClose" aria-label="Close details">×</button>
@@ -179,6 +193,7 @@
           <button class="button ghost" type="button" id="sessionStabilise">STABILISE NOW</button>
           <button class="button ghost" type="button" id="sessionGlitch">PLAY RANDOM GLITCH</button>
           <button class="button ghost" type="button" id="sessionAdvance">ADVANCE TIMER −60s</button>
+          <button class="button ghost" type="button" id="sessionAdvanceHour">SIMULATE NEXT HOUR</button>
           <button class="button ghost" type="button" id="sessionReset">RESET SESSION</button>
         </div>
         <p class="admin-help">The timer persists across page refreshes on this device. Keep this screen open during the performance. Closing the browser does not pause a running countdown.</p>
@@ -225,7 +240,8 @@
       <section class="admin-panel" data-panel="settings" hidden>
         <div class="editor-grid">
           <label class="full">PORTAL TITLE<input id="setTitle" maxlength="90"></label>
-          <label>TOTAL SESSION TIME (MIN)<input id="setDuration" type="number" min="2" max="240"></label>
+          <label>SESSION DURATION (MIN)<input id="setDuration" type="number" min="2" max="1440"></label>
+          <label>AUTOMATIC ELIMINATION EVERY (MIN)<input id="setAutoInterval" type="number" min="1" max="1440"></label>
           <label>EMERGENCY WINDOW (SEC)<input id="setEmergency" type="number" min="10" max="300"></label>
           <label class="full">INSTABILITY TRIGGERS: MINUTES REMAINING, COMMA-SEPARATED<input id="setThresholds" placeholder="15, 10, 5"></label>
           <label>OBJECTS LOST ON FAILURE<input id="setFailureCount" type="number" min="0" max="10"></label>
