@@ -765,6 +765,11 @@
       if(state.phase!=="running"||state.paused)return notice("Run the session before advancing time.");
       state.endsAt-=60000;saveSession();tick();render();
     });
+    $("sessionAdvanceHour").addEventListener("click",function() {
+      if(state.phase!=="running"||state.paused)return notice("Start or resume the session before simulating an hour.");
+      state.endsAt-=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+      saveSession();tick();render();
+    });
     $("sessionReset").addEventListener("click",resetSession);
     $("objectSelect").addEventListener("change",function(e){selectedObjEditor=e.target.value;renderObjectEditor();});
     $("locationSelect").addEventListener("change",function(e){selectedLocEditor=e.target.value;renderLocationEditor();});
