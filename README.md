@@ -7,7 +7,7 @@ This is a **static web app**: no accounts, build system, database, analytics, or
 ## Status
 
 - **Prototype / rehearsal build.** The 12 objects and their descriptions are editable sample content, not an approved final LARP inventory.
-- The default visuals are icon illustrations/placeholders. Organisers should replace them with suitable photographs or artwork before the event.
+- The starter archive includes 12 original futuristic SVG illustrations. Organisers can replace these with their chosen event photographs or artwork.
 - The same iPad should run the session and be **mirrored to the TV** through AirPlay or a wired adapter. Opening the page on two separate devices does **not** synchronise game state.
 
 ## Features
@@ -25,11 +25,11 @@ This is a **static web app**: no accounts, build system, database, analytics, or
 
 ## Launch / hosting
 
-After the feature branch is reviewed and merged into **main**, open the repository **Settings → Pages → Build and deployment**. Choose **Deploy from a branch**, then **main** and **/(root)**. The site will normally become available at:
+After the feature branch is reviewed and merged into **main**, open repository **Settings → Pages → Build and deployment** and select **GitHub Actions** as the Pages source. The committed deployment workflow runs automatically for every update to **main**. The site will normally become available at:
 
 https://goreadyconsulting.github.io/1473-2027/
 
-GitHub Pages configuration must be done by a repository administrator. Do not treat the URL as live until deployment has been enabled and verified.
+GitHub Pages must be enabled by a repository administrator using the **GitHub Actions** source. Follow the **Deploy portal to GitHub Pages** workflow in the Actions tab. Do not treat the URL as live until deployment succeeds.
 
 To preview locally, serve the repository directory with a static web server, for example:
 
@@ -63,7 +63,7 @@ An organiser can enter or change media URLs in the on-screen editor, without edi
 
 For remote media, HTTPS URLs are supported, but internet access will be required. Video is best supplied as a short, muted, iPad-compatible MP4. Huge files may take too long to load.
 
-**Important offline limitation:** the app shell and included demonstration SVG are cached after the first online visit, but newly added media, particularly videos, are **not guaranteed to be available offline** just because they appear in the editor. Test airplane-mode playback with the final assets on the actual iPad well before the event. For a mission-critical fully offline show, host and precache every final media asset, and run a complete offline test.
+**Important offline limitation:** the app shell, all 12 included future-object SVGs and the demonstration glitch SVG are cached after the first online visit, but newly added media, particularly videos, are **not guaranteed to be available offline** just because they appear in the editor. Test airplane-mode playback with the final assets on the actual iPad well before the event. For a mission-critical fully offline show, host and precache every final media asset, and run a complete offline test.
 
 ## Configuration example
 
@@ -93,7 +93,7 @@ The editable content format can also be shared between organisers as a plain JSO
 
 ## Event-day rehearsal checklist
 
-- [ ] Verify every object image and every glitch video on the actual iPad.
+- [ ] Verify all 12 bundled object illustrations, any replacement images and every glitch video on the actual iPad.
 - [ ] Import and back up the final configuration JSON.
 - [ ] Confirm the iPad/TV display route and sound needs; no sound is required by this build.
 - [ ] Disable auto-lock, notifications and unexpected app switching as appropriate for the event setup.
@@ -102,7 +102,7 @@ The editable content format can also be shared between organisers as a plain JSO
 - [ ] Trigger another emergency with a short deadline and verify the automatic consequence.
 - [ ] Reduce the archive to one object; confirm that **DESTROY** is absent and **RETAIN** works.
 - [ ] Test pause/resume, reloading the page, and recovering from a mistaken organiser action.
-- [ ] Test connection loss and offline functionality (especially media) on the event iPad.
+- [ ] Test connection loss, offline availability and custom-media playback on the event iPad.
 - [ ] Reset the session before players arrive.
 
 ## Scope / next improvements
