@@ -127,7 +127,7 @@
     return merged;
   }
   var state=loadSession();
-  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null,lastPointerWalkAt=0;
+  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null,lastPointerWalkAt=0,hourlyEventHandle=null;
   function persist() {try{localStorage.setItem(CONFIG_KEY,JSON.stringify(config));localStorage.setItem(SESSION_KEY,JSON.stringify(state));return true;}catch(e){notice("Local storage is full or unavailable. Export your configuration.");return false;}}
   function saveSession() {try{localStorage.setItem(SESSION_KEY,JSON.stringify(state));}catch(e){notice("Session cannot be saved on this device.");}}
   function notice(message) {$("adminNotice").textContent=message; toast(message);}
@@ -213,7 +213,7 @@
       $("endingTitle").textContent="THE PORTAL HAS CLOSED";
       $("endingVisual").innerHTML='<span class="card-icon" aria-hidden="true">⌛</span>';
       $("endingName").textContent="CONNECTION LOST";
-      $("endingText").textContent="The transmission has ended before a final object was secured.";
+      $("endingText").textContent="The seventh hour is over. The final crossing has closed before a relic was secured."+(state.lastHourlyLost?" Last consumed: "+state.lastHourlyLost.name+".":"");
     }
   }
 
@@ -472,9 +472,53 @@
     if(entry.type==="video"){var v=$("glitchContent").querySelector("video");if(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}}
     glitchHandle=setTimeout(stopGlitch,(entry.durationSeconds||3)*1000);
   }
+
+  function showHourlyEvent(obj,hour) {
+    $("hourlyEventName").textContent=obj.name.toUpperCase();
+    $("hourlyEventHour").textContent="THE "+String(hour).padStart(2,"0")+" HOUR MARK";
+    $("hourlyOverlay").hidden=false;
+    if(hourlyEventHandle)clearTimeout(hourlyEventHandle);
+    hourlyEventHandle=setTimeout(function(){$("hourlyOverlay").hidden=true;},4800);
+  }
+  function processHourlyEliminations() {
+    if(state.phase!=="running"||state.paused)return false;
+    var span=state.durationMs||config.durationMinutes*60000;
+    var interval=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+    if(!interval||!span)return false;
+    var elapsed=Math.min(span,Math.max(0,span-remainingMs()));
+    var due=Math.min(Math.floor(span/interval),Math.floor(elapsed/interval));
+    if(state.hourlyProcessed>=due)return false;
+    var lastVictim=null,lastHour=0;
+    // Process each crossed hour exactly once; this also handles Safari suspending timers.
+    while(state.hourlyProcessed<due){
+      state.hourlyProcessed++;
+      var choices=activeObjects();
+      if(choices.length>1) {
+        var victim=choices[Math.floor(Math.random()*choices.length)];
+        state.lost.push({id:victim.id,reason:"THE HOURLY TOLL",hour:state.hourlyProcessed,at:Date.now()});
+        state.lastHourlyLost={id:victim.id,name:victim.name,hour:state.hourlyProcessed};
+        log("HOUR "+state.hourlyProcessed+" // "+victim.name+" consumed by the crossing.");
+        lastVictim=victim;lastHour=state.hourlyProcessed;
+      } else {
+        log("HOUR "+state.hourlyProcessed+" // The last relic is protected.");
+      }
+    }
+    if(lastVictim){
+      stopGlitch();
+      soundCue("destroy");ritualFlash("destroy");
+      closeGameplayDialogs();
+      if(state.emergency&&activeObjects().length<=1){state.emergency=null;restoreJourneyAfterEmergency();}
+      if(activeObjects().length===1){state.scene="archive";state.viewAll=true;}
+      showHourlyEvent(lastVictim,lastHour);
+    }
+    saveSession();render();
+    return !!lastVictim;
+  }
+
   function tick() {
     if(state.phase==="running"&&!state.paused){
       var rem=remainingMs();
+      processHourlyEliminations();
       if(rem<=0){closePortal();return;}
       if(state.emergency&&emergencyMs()<=0){failEmergency();return;}
       if(!state.emergency)checkTriggers(rem);
@@ -490,6 +534,7 @@
   }
   function startSession() {
     if(state.phase==="running"&&!window.confirm("Restart the running session? This restores all objects and resets the timer."))return;
+    $("hourlyOverlay").hidden=true;
     state=freshSession();state.phase="running";state.durationMs=config.durationMinutes*60000;state.autoIntervalMs=config.autoEliminateEveryMinutes*60000;state.endsAt=Date.now()+state.durationMs;
     requestScreenWake();
     log("Temporal connection established. Archive unlocked.");
@@ -503,7 +548,7 @@
   }
   function resetSession() {
     if(!window.confirm("Reset this game? All destroyed objects will return and the current countdown will be cleared."))return;
-    state=freshSession();releaseScreenWake();stopGlitch();saveSession();closeGameplayDialogs();render();notice("Session reset. Ready for a new performance.");
+    state=freshSession();releaseScreenWake();stopGlitch();$("hourlyOverlay").hidden=true;saveSession();closeGameplayDialogs();render();notice("Session reset. Ready for a new performance.");
   }
   function renderSessionAdmin() {
     if(!$("adminContent")||!adminUnlocked)return;
