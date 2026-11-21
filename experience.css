@@ -140,3 +140,69 @@ h1 span{color:#d9c493}
   .fact{padding:7px}
   .fact p{font-size:12px;line-height:1.35}
 }
+
+/* The seven-hour toll: visible, quiet until the crossing claims a relic. */
+.countdown{font-size:clamp(30px,3.6vw,56px);letter-spacing:1.1px}
+.hourly-status{
+  display:flex;align-items:center;justify-content:center;gap:15px;
+  min-height:43px;padding:6px 15px;flex-wrap:wrap;
+  border:1px solid rgba(210,187,143,.32);
+  background:linear-gradient(90deg,rgba(8,21,26,.45),rgba(41,48,39,.58),rgba(8,21,26,.45));
+  color:#e6d4b1;
+  box-shadow:inset 0 1px 0 rgba(244,218,159,.07);
+}
+.hourly-label{font:700 11px/1.3 "Courier New",monospace;letter-spacing:2.5px;color:#cbbf9c}
+.hourly-emblem{font:23px/1 Georgia,serif;color:#d8bc88;vertical-align:middle;margin-right:12px;text-shadow:0 0 18px rgba(230,204,131,.43)}
+.hourly-status strong{font:700 20px/1.1 "Courier New",monospace;letter-spacing:2px;color:#fae0ab;font-variant-numeric:tabular-nums;text-shadow:0 0 15px rgba(247,214,156,.19)}
+.hourly-progress{font:700 10px "Courier New",monospace;letter-spacing:1.7px;color:#a0b9aa}
+.hourly-overlay{
+  position:fixed;z-index:40;inset:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;
+  background:radial-gradient(ellipse at 50% 42%,rgba(29,61,60,.92),rgba(5,12,18,.97) 70%);
+  animation:hourlyArrival .65s both;
+}
+.hourly-overlay[hidden]{display:none!important}
+.hourly-overlay:before{
+  content:"";position:absolute;inset:3%;
+  border:1px solid rgba(228,197,139,.26);
+  box-shadow:inset 0 0 80px rgba(3,8,14,.5);
+}
+.hourly-overlay-inner{position:relative;z-index:1;max-width:850px}
+.hourly-overlay-rune{
+  display:block;font:normal clamp(65px,12vw,147px)/1 Georgia,serif;
+  color:#b4e1c8;text-shadow:0 0 30px rgba(158,245,206,.64),0 0 80px rgba(158,245,206,.35);
+  animation:hourlyRune 2.6s ease-in-out infinite;
+}
+.hourly-overlay-eyebrow{font:700 12px/1.3 "Courier New",monospace;letter-spacing:6px;color:#d9c596;margin-top:20px}
+.hourly-overlay-heading{font:normal clamp(32px,6vw,76px)/1.1 Georgia,serif;letter-spacing:3px;color:#f3e1bf;margin:20px 0;text-shadow:0 0 35px rgba(230,194,122,.25)}
+.hourly-overlay-name{font:700 clamp(16px,2.6vw,29px)/1.3 "Courier New",monospace;letter-spacing:2px;color:#f4b4a1;text-transform:uppercase}
+.hourly-overlay-foot{font:700 11px/1.7 "Courier New",monospace;color:#90b7a8;letter-spacing:2.2px;margin-top:38px}
+@keyframes hourlyArrival{from{opacity:0;filter:blur(18px)}to{opacity:1;filter:blur(0)}}
+@keyframes hourlyRune{50%{opacity:.63;transform:scale(.96)}}
+@media(max-width:1000px){
+  .telemetry{gap:10px}
+  .hourly-status{min-height:38px;gap:10px;padding:5px 10px}
+  .hourly-label{font-size:10px;letter-spacing:1px}
+  .hourly-status strong{font-size:17px}
+  .hourly-progress{font-size:9px}
+  .countdown{font-size:clamp(29px,3.55vw,44px);letter-spacing:0}
+}
+@media(orientation:portrait) and (min-width:761px) and (max-width:900px){
+  .topbar{flex-wrap:wrap;gap:8px;min-height:auto}
+  .telemetry{width:100%;justify-content:space-between}
+  .countdown{font-size:46px}
+  .hourly-status{justify-content:space-between}
+}
+@media(max-width:760px){
+  .hourly-status{justify-content:space-between}
+  .hourly-label{font-size:9px}
+  .hourly-progress{font-size:9px}
+  .countdown{font-size:38px}
+}
+@media(max-height:650px) and (min-width:761px){
+  .hourly-status{min-height:31px;padding:3px 10px}
+  .hourly-status strong{font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hourly-overlay,.hourly-overlay-rune{animation:none!important}
+}
