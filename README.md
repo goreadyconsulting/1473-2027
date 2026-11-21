@@ -1,153 +1,110 @@
-# TEMPORAL CONNECTION — 1473 / 2027
+# The Veil Between Ages — 1473 ⇄ 2027
 
-A cinematic, touchscreen-friendly portal for Saule's medieval fantasy LARP. Players choose **one object from 2027** to carry back to 1473 by sacrificing the others while the temporal connection deteriorates.
+An immersive, player-controlled, **iPad-first** temporal portal for Saulė's live-action role-playing experience. Players pass through a carved gateway, traverse the void, discover a seven-rune stone slab, choose destinations, and decide which single object from 2027 can survive the journey back to 1473.
 
-This is a **static web app**: no accounts, build system, database, analytics, or external JavaScript libraries are required.
+**Live site:** https://goreadyconsulting.github.io/1473-2027/
 
-## Status
+The experience uses original Norse-inspired scenery and generated sound rather than third-party game assets. It is a responsive **2.5D cinematic web experience**, not an open-world 3D game.
 
-- **Prototype / rehearsal build.** The nine relics and seven destination names are editable sample content, not an approved final LARP inventory.
-- The starter archive includes nine futuristic SVG relic illustrations, seven original destination landscapes, and two atmospheric journey scenes. Organisers can replace these with their chosen event photographs or artwork.
-- The same iPad should run the session and be **mirrored to the TV** through AirPlay or a wired adapter. Opening the page on two separate devices does **not** synchronise game state.
+## The player journey
 
-## Features
+1. **Awaken the gate** — tap **STEP THROUGH THE PORTAL**. This *automatically starts* the 20-minute countdown; no organiser PIN is required for play.
+2. **Cross the void** — tap/hold **HOLD TO WALK FORWARD**, swipe upward, or press ↑ / W to reach the runestone. Nine taps are enough.
+3. **Choose a destination** — touch one of seven rune sockets on the carved stone dial, or swipe horizontally between destinations. Each rune reveals its location, lore, and surviving relic count.
+4. **Explore the selected realm** — the destination reveals its distinct illustrated landscape and available objects. Tap a relic for its illustration, background, **Power**, **Catch** and **Echo Through Time (Consequence)**.
+5. **Choose what is lost** — tap **DESTROY OBJECT**, then explicitly confirm. The object is removed across *all* destinations and cannot be selected again.
+6. **Return to the runestone**, choose other destinations, or tap **VIEW ALL REMAINING RELICS** to compare the surviving objects together.
+7. **Seal the final fate** — the final relic cannot be destroyed. Tap **RETAIN AS FINAL OBJECT** and confirm to end the story.
 
-- Three-stage interactive journey: an ancient glowing portal, a touch-driven walk through the void, and a seven-rune stone dial that opens a destination.
-- Seven organiser-editable destinations, each with a distinctive illustrated landscape, rune and description.
-- Exactly nine starter relics assigned across the seven destinations. Each destination shows its own relics; the global archive remains accessible to compare every surviving relic.
-- Tap objects for large image, description, advantage and limitation.
-- Two-stage **DESTROY** confirmation; destroyed objects disappear and survivors reflow.
-- Final object is protected from destruction and must be separately **retained**.
-- Main portal countdown; portal closes if it reaches zero before a final selection.
-- Configurable timed instability events (e.g. at 15, 10 and 5 minutes remaining).
-- Emergency countdown forces a sacrifice; failure randomly erases a configurable number of objects, but **never the final remaining object**.
-- Non-interactive, random short glitch messages, images or muted videos; they never modify object state.
-- Organiser console for starting, pausing, resetting, overriding events, inspecting history, editing seven destinations, assigning relics to locations, managing glitches/settings, and exporting/importing content JSON.
-- Session, visited destinations, walk progress and organiser content persist in the **same browser** via localStorage. An offline-capable app shell is cached with a service worker after a successful HTTPS visit.
+A live timer, intermittent signal glitches and scheduled instability events add urgency. During critical instability, the entire surviving archive is revealed, so players can sacrifice one relic in time. If they do not, the portal randomly destroys a configured number of relics but never the final survivor. Normal navigation resumes after the instability is resolved.
 
-## Launch / hosting
+The countdown continues across journey scenes, page refreshes, and app backgrounding unless the organiser explicitly pauses the session.
 
-After the feature branch is reviewed and merged into **main**, open repository **Settings → Pages → Build and deployment** and select **GitHub Actions** as the Pages source. The committed deployment workflow runs automatically for every update to **main**. The site will normally become available at:
+## Ten relics from Saulė's item list
 
-https://goreadyconsulting.github.io/1473-2027/
+| Relic | Destination | Dossier includes |
+|---|---|---|
+| Smartphone — 37% battery | Echoes of Iron | Power, finite battery, potential historical consequences |
+| Giant pack of toilet paper | Glasswind Bazaar | Comfort, non-replenishable supply, humorous consequences |
+| History book (1300–2027) | Emberfall Keep | Foreknowledge, branching historical uncertainty |
+| Modern doctor's kit | The Quiet Sanctum | Medical potential, training and supply constraints |
+| Modern world map | Glasswind Bazaar | Geography, different medieval borders, altered exploration |
+| Modern firearm | Emberfall Keep | Advanced weapon, limited ammunition, potential power shifts |
+| Portable LED lights | Stormglass Spire | Fireless lighting, battery limits, sparkles |
+| Condoms / contraceptive supplies | The Quiet Sanctum | Family planning, single-use limits, social implications |
+| Portable water purifier | Bleakwater Crossing | Water safety, eventual filter failure, community impact |
+| Agricultural seed collection | Verdant Hollow | Food resilience, local growing constraints, long-term impact |
 
-GitHub Pages must be enabled by a repository administrator using the **GitHub Actions** source. Follow the **Deploy portal to GitHub Pages** workflow in the Actions tab. Do not treat the URL as live until deployment succeeds.
+All ten objects include **illustrated local assets and three complete story fields**. The seven destination names are currently thematic placeholders that the organiser can change before the LARP.
 
-To preview locally, serve the repository directory with a static web server, for example:
+## Using the iPad during the event
 
-    python -m http.server 8080
+- Open the live site on the **same iPad throughout the game**. Landscape is recommended; portrait is supported.
+- In Safari, **Share → Add to Home Screen** provides the most immersive display. Test the installed web app on the actual device.
+- Mirror the iPad display to the TV through a tested AirPlay or wired connection. The iPad is the controller and the mirrored TV is the display. **Two separate browsers do not synchronise.**
+- Tap **♪** to enable or mute the original generated ambience and interactive tones. Sound is off by default until a real user gesture because iPadOS blocks autoplay.
+- The app requests a screen wake lock while playing if the browser supports it. Also disable Auto-Lock on the event iPad when permitted; wake-lock support is not universal on iPadOS.
+- Avoid Private Browsing and clearing Safari website data mid-game: the session is saved on that device in browser local storage.
 
-Then visit http://localhost:8080/. The service worker and offline caching require HTTPS; localhost is also a secure context in supporting browsers.
+### Organiser console
 
-## Organiser use
+Tap **⚙** and enter the default PIN **1473** (change it under Settings). The PIN prevents accidental settings changes; it is **not strong authentication**.
 
-1. Open the deployed site on the **event iPad** in landscape mode.
-2. Tap the small **⚙** at the top right. Default organiser code: **1473**. Change this in **Settings** before the event. This code only prevents accidental taps; it is not security against determined access.
-3. Open **Locations** to rename each of the seven destinations, edit its description/rune and change its accent colour. Open **Objects** to edit the nine relics and assign each to a destination. Save each entry.
-4. Open **Glitch content** to add or edit a random text, image or video interruption. Preview it to check dimensions and compatibility.
-5. Open **Settings** to select the overall time, emergency countdown length, trigger points in **minutes remaining**, failure loss count, and random glitch frequency.
-6. Use **EXPORT CONFIG.JSON** as a backup. Organiser edits are saved locally on this browser, **not to the GitHub repository**. For a different iPad, load the exported JSON through **IMPORT CONFIG.JSON**.
-7. Under **Session**, choose **START NEW SESSION** when the performance begins.
-8. Mirror the iPad display to the TV. Keep it in landscape and prevent sleep/auto-lock during play. Rehearse all interactions on the actual hardware.
+**Session:** start a fresh performance, pause/resume, manually trigger or resolve instability, preview a random glitch, advance the timer, reset the game, and read the event log.
 
-The organiser can pause/resume the countdown, trigger or stabilise an emergency, preview glitches, skip 60 seconds of the main timer, and reset the whole session. Pausing freezes both main and active emergency timers. Without pausing, closing/reopening the browser does **not** stop the countdown.
+**Objects:** edit all ten relics (name, illustration path, description, Power, Catch, Consequence, and destination assignment). The maximum is ten; deleting an item frees a slot for a new one.
 
-To start another performance after the final reveal, use **ORGANISER CONSOLE** on the ending screen, then **RESET SESSION** or **START NEW SESSION**.
+**Locations:** edit the names, lore, rune symbols and accent colours of exactly seven destinations.
 
+**Glitches:** add/change short warning messages, images or muted MP4 videos without editing application code.
 
-## Journey sequence (new)
+**Settings:** change total session time, emergency window, failure count, instability trigger points, random glitch timing and organiser PIN.
 
-1. **The Gate** — players see a Norse-inspired original portal and tap **STEP THROUGH THE PORTAL**.
-2. **Outside Space** — the screen shifts into an atmospheric void; players tap/hold **HOLD TO WALK FORWARD** (or use ↑ / W on a keyboard). The walk takes roughly nine taps. It is a 2D/2.5D cinematic traversal, **not a first-person 3D game**.
-3. **The Runestone** — players arrive at an ancient rock slab with seven touchable rune positions. Tapping a rune reveals its destination name, story and number of remaining relics.
-4. **Destination** — tapping **OPEN THIS DESTINATION** opens its illustrated location and the relics assigned to it. Use **VIEW ALL REMAINING RELICS** for the entire shared pool or **RETURN TO RUNESTONE** to choose another location.
-5. **Sacrifice / final choice** — destroying an object removes it across **every** destination. At exactly one surviving relic, destruction disappears and the player must confirm final retention separately.
+**Export/Import JSON:** backup/transfer organiser content. Changes in the console are stored locally and are *not* automatically written to GitHub.
 
-The global countdown continues across the gate, void, runestone and destinations once the organiser starts the game. If an instability event triggers while walking or selecting a destination, it temporarily switches to **the full relic archive** so a sacrifice is always possible. After the crisis resolves, the journey resumes where it was interrupted. The final relic is protected against automatic erasure.
+### Offline play
 
-**Sample realm assignments** (editable under Organiser → Locations and Objects):
+A service worker precaches the site, styles, original ambience engine, all ten illustrated objects, the seven destination panoramas and journey scenery after the first **successful HTTPS visit**.
 
-| Destination | Sample relics |
-| --- | --- |
-| Emberfall Keep | Smartphone, History Book |
-| Glasswind Bazaar | Digital Camera |
-| Verdant Hollow | Seed Collection, Field Microscope |
-| Stormglass Spire | Portable Solar Charger |
-| Bleakwater Crossing | Portable Water Filter |
-| The Quiet Sanctum | Antibiotic Medicine Kit |
-| Echoes of Iron | Wind-up Emergency Radio |
+For a reliably offline LARP, load the site online once on the actual event iPad, wait for caching to finish, then test it in Airplane Mode. Custom HTTPS media and new video files are **not guaranteed offline** unless included in the deployed offline package. The supplied illustrations require no remote image host.
 
-These are invented location names and original visual assets, not God of War game assets. Saule should replace names and lore with the seven destinations used in the LARP.
+## Game reliability and limitations
 
-### Compatibility with earlier configurations
+- One active browser/device is the source of truth. The app is not multiplayer networking software.
+- A destructive choice requires a second explicit tap, while the final object has its own separate retention confirmation.
+- The organiser can pause and override an instability. A failed instability erases random relics but cannot erase the final one.
+- Glitch overlays are visual and never directly remove game items.
+- Session, inventory state, countdown end time, rune dial selection, walk progress and visited locations survive a reload on the same browser.
+- **Content migration:** upgrading an older nine-item prototype replaces its fictional starter object library with these ten supplied relics and safely resets the old game state. It preserves customised destination information where compatible. Export any important previous configuration before installing the upgrade.
+- The in-browser default PIN is a convenience rather than account-level security; use the same trusted event iPad.
+- Original artwork is an illustrated interpretation, not licensed *God of War* material.
 
-On the same iPad, the app will automatically migrate the initial unedited twelve-item sample inventory to the new nine-item set. It removes the sample **Modern Eyeglasses**, **Folding Bicycle**, and **Encrypted USB Drive** entries, but preserves edits to the other sample objects where possible. **Export any important old configuration before upgrading.** New imported configurations must contain no more than nine items, while the seven destination slots remain fixed.
+## Event-day checks
 
-## Adding photographs and videos without modifying code
+- [ ] Open the installed website on the target iPad; verify portrait, landscape, touch controls and TV mirroring.
+- [ ] Test the portal entry, hold-to-walk and vertical swipe; verify all seven rune sockets and horizontal dial swipe.
+- [ ] Visit every location; verify all ten relics and their Power, Catch and Consequence descriptions.
+- [ ] Cancel a destruction, confirm a different destruction, and ensure the item disappears everywhere.
+- [ ] Trigger an emergency in the middle of the void; confirm that the game offers a sacrifice and restores the scene.
+- [ ] Let a test emergency expire to confirm the automatic consequence.
+- [ ] Reduce to a single relic, verify destruction is impossible, and confirm final retention.
+- [ ] Reload halfway through play; ensure countdown and journey progress persist.
+- [ ] Test audio on/off, local asset loads, screen sleep behaviour, and Airplane Mode.
+- [ ] Export the final configuration, change the organiser PIN, and reset to the starting screen for players.
 
-An organiser can enter or change media URLs in the on-screen editor, without editing JavaScript or HTML. The easiest **portable/offline-friendly** method is:
+## Technical
 
-1. Upload the media file into the repository's \`assets/\` directory using GitHub's **Add file → Upload files** interface.
-2. Enter its path in the organiser console, such as \`./assets/smartphone.jpg\` or \`./assets/future-glitch.mp4\`.
-3. Save it, preview it, and export the resulting configuration JSON.
-4. Load the final config JSON on the performance iPad.
+Static HTML, CSS and JavaScript. No external runtime libraries, build process, tracking, account or backend required.
 
-For remote media, HTTPS URLs are supported, but internet access will be required. Video is best supplied as a short, muted, iPad-compatible MP4. Huge files may take too long to load.
+- \`index.html\` — player scene, rune dial, object dossier, organiser console
+- \`world.css\`, \`styles.css\`, \`experience.css\` — adaptive world and iPad styling
+- \`app.js\` — gameplay rules, timer, events, state persistence, editing
+- \`sound.js\` — locally generated, user-initiated ambient/signal sounds
+- \`assets/world/\`, \`assets/realms/\`, \`assets/objects/\` — original offline illustrations
+- \`sw.js\` and \`manifest.webmanifest\` — offline app shell and installable web app
+- \`tests/portal.test.cjs\` — automated gameplay checks
+- \`.github/workflows/\` — CI verification and GitHub Pages deployment
 
-**Important offline limitation:** the app shell, all 12 included future-object SVGs and the demonstration glitch SVG are cached after the first online visit, but newly added media, particularly videos, are **not guaranteed to be available offline** just because they appear in the editor. Test airplane-mode playback with the final assets on the actual iPad well before the event. For a mission-critical fully offline show, host and precache every final media asset, and run a complete offline test.
+Run checks with \`npm test\` (Node 20+). To test locally, run \`python -m http.server 8080\` in the project folder and open \`http://localhost:8080\`.
 
-## Configuration example
-
-The export file has an outer \`config\` object with these important fields:
-
-| Field | Meaning |
-| --- | --- |
-| \`durationMinutes\` | Overall time before the portal closes |
-| \`instabilityAtMinutesRemaining\` | Trigger points, e.g. \`[15,10,5]\` |
-| \`emergencySeconds\` | Time players have to destroy one object |
-| \`failureDestroyCount\` | Random objects lost if an emergency expires (final item protected) |
-| \`glitchMinSeconds\` / \`glitchMaxSeconds\` | Random gap between purely visual interruptions |
-| \`objects\` | Object text, image path, icon, benefit and limitation |
-| \`glitches\` | Glitch type (\`message\`, \`image\`, \`video\`), caption, media path and duration |
-
-The editable content format can also be shared between organisers as a plain JSON file.
-
-## Game rules and safeguards
-
-- Players may inspect objects before activation but cannot destroy them until the organiser starts the timer.
-- Destroy requires a separate confirmation. During emergencies, **the same two-step destruction counts as the required sacrifice**.
-- If the emergency clock runs out, the organiser-configured number of random objects is lost, up to **one less than the number remaining**. This protects the final candidate.
-- When only one object remains, destruction is disabled. The player must explicitly confirm **RETAIN AS FINAL OBJECT**.
-- If the overall portal timer ends first, the connection closes without a successful final selection.
-- Glitch overlays use **pointer-events: none** and have no object-deletion logic. They may overlap normal interaction visually but cannot click or destroy anything.
-- If an iPad was asleep through multiple scheduled trigger points, the app consolidates overdue events rather than firing several emergencies in immediate succession.
-
-## Event-day rehearsal checklist
-
-- [ ] Verify all nine bundled relic illustrations, seven destination panoramas, both journey scenes, any replacement media and glitch videos on the actual iPad.
-- [ ] Import and back up the final configuration JSON.
-- [ ] Confirm the iPad/TV display route and sound needs; no sound is required by this build.
-- [ ] Disable auto-lock, notifications and unexpected app switching as appropriate for the event setup.
-- [ ] Start a test session, inspect an object, cancel destruction, then confirm a different destruction.
-- [ ] Trigger an emergency and successfully sacrifice an object before its timer reaches zero.
-- [ ] Trigger another emergency with a short deadline and verify the automatic consequence.
-- [ ] Reduce the archive to one object; confirm that **DESTROY** is absent and **RETAIN** works.
-- [ ] Test pause/resume, reloading the page, and recovering from a mistaken organiser action.
-- [ ] Test connection loss, offline availability and custom-media playback on the event iPad.
-- [ ] Reset the session before players arrive.
-
-## Scope / next improvements
-
-This is designed for **one active iPad with a mirrored TV**. If the organiser needs the iPad as a separate controller while another laptop/TV browser shows the game, the next version should add a shared session service (WebSocket/Supabase/Firebase or a local-network equivalent), role-based player/display views, and explicit reconnect logic.
-
-Other desirable improvements after rehearsal: a true in-app media upload library (rather than asset paths), optional sound effects, a guided rehearsal mode, fully offline bundled videos, and organiser-configurable non-destruction consequences.
-
-## Project structure
-
-- \`index.html\` — app screens, player details, confirmation, organiser console.
-- \`styles.css\` — atmospheric visuals, responsive layout, touch sizes.
-- \`app.js\` — gameplay, persistence, object editor and glitch engine.
-- \`assets/\` — packaged image/video files.
-- \`sw.js\` and \`manifest.webmanifest\` — installable/offline-friendly app shell.
-
-No player data or identifying information is collected by this prototype.
+GitHub Pages deployment is handled by the repository's existing workflow when changes reach \`main\`.
