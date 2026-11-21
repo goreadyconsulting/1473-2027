@@ -192,6 +192,19 @@
   }
 
 
+  var screenWake=null;
+  function requestScreenWake() {
+    if(!navigator.wakeLock||!navigator.wakeLock.request||state.phase!=="running"||document.hidden||screenWake)return;
+    navigator.wakeLock.request("screen").then(function(lock){
+      screenWake=lock;
+      if(lock.addEventListener)lock.addEventListener("release",function(){screenWake=null;});
+    }).catch(function(){screenWake=null;});
+  }
+  function releaseScreenWake() {
+    if(screenWake&&screenWake.release)screenWake.release().catch(function(){});
+    screenWake=null;
+  }
+
   function soundCue(kind) {
     if(window.PortalAudio&&typeof window.PortalAudio.cue==="function")window.PortalAudio.cue(kind);
   }
@@ -271,7 +284,7 @@
       nextGlitch();
     }
     state.scene="path";state.walkProgress=0;
-    soundCue("enter");ritualFlash("travel");
+    requestScreenWake();soundCue("enter");ritualFlash("travel");
     log("The ancient gateway opens to the space between worlds.");
     saveSession();render();
   }
@@ -360,7 +373,7 @@
     if(state.phase!=="running"||state.paused||state.emergency)return toast("Cannot finalise during an inactive or unstable connection.");
     var all=activeObjects();
     if(all.length!==1||all[0].id!==id)return toast("Only the last surviving object may be retained.");
-    state.phase="completed";state.finalId=id;log(all[0].name+" retained. Transmission complete.");soundCue("final");ritualFlash("success");
+    state.phase="completed";state.finalId=id;log(all[0].name+" retained. Transmission complete.");releaseScreenWake();soundCue("final");ritualFlash("success");
     saveSession();closeGameplayDialogs();render();
   }
   function randomised(items) {
@@ -404,7 +417,7 @@
   function closePortal() {
     if(state.phase!=="running")return;
     state.phase="closed";state.emergency=null;state.endsAt=Date.now();state.paused=false;
-    soundCue("close");ritualFlash("warning");
+    releaseScreenWake();soundCue("close");ritualFlash("warning");
     log("Connection terminated. Temporal window sealed.");
     saveSession();closeGameplayDialogs();render();
   }
@@ -452,18 +465,19 @@
   function startSession() {
     if(state.phase==="running"&&!window.confirm("Restart the running session? This restores all objects and resets the timer."))return;
     state=freshSession();state.phase="running";state.endsAt=Date.now()+config.durationMinutes*60000;
+    requestScreenWake();
     log("Temporal connection established. Archive unlocked.");
     nextGlitch();persist();closeGameplayDialogs();render();notice("Session started.");
   }
   function pauseSession() {
     if(state.phase!=="running")return notice("Start a session first.");
-    if(state.paused){state.endsAt=Date.now()+state.remainingMs;if(state.emergency)state.emergency.endsAt=Date.now()+state.emergency.remainingMs;state.paused=false;log("Transmission resumed.");}
-    else{state.remainingMs=remainingMs();if(state.emergency)state.emergency.remainingMs=emergencyMs();state.paused=true;stopGlitch();log("Transmission paused by organiser.");}
+    if(state.paused){state.endsAt=Date.now()+state.remainingMs;requestScreenWake();if(state.emergency)state.emergency.endsAt=Date.now()+state.emergency.remainingMs;state.paused=false;log("Transmission resumed.");}
+    else{state.remainingMs=remainingMs();if(state.emergency)state.emergency.remainingMs=emergencyMs();state.paused=true;releaseScreenWake();stopGlitch();log("Transmission paused by organiser.");}
     saveSession();render();
   }
   function resetSession() {
     if(!window.confirm("Reset this game? All destroyed objects will return and the current countdown will be cleared."))return;
-    state=freshSession();stopGlitch();saveSession();closeGameplayDialogs();render();notice("Session reset. Ready for a new performance.");
+    state=freshSession();releaseScreenWake();stopGlitch();saveSession();closeGameplayDialogs();render();notice("Session reset. Ready for a new performance.");
   }
   function renderSessionAdmin() {
     if(!$("adminContent")||!adminUnlocked)return;
@@ -703,7 +717,7 @@
       if(event.key===SESSION_KEY){state=loadSession();closeGameplayDialogs();render();}
       if(event.key===CONFIG_KEY){try{config=normalizeConfig(readStored(CONFIG_KEY));render();}catch(e){}}
     });
-    document.addEventListener("visibilitychange",function(){if(!document.hidden)tick();});
+    document.addEventListener("visibilitychange",function(){if(!document.hidden){tick();requestScreenWake();}});
   }
   wireEvents();
   nextGlitch();
