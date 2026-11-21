@@ -168,8 +168,8 @@
     $("emergencyStrip").hidden=!emergency;
     $("portal").classList.toggle("in-emergency",emergency);
     $("emergencyClock").textContent=timeText(emergencyMs());
-    $("footerState").textContent=state.phase==="standby"?"AWAITING ORGANISER ACTIVATION":state.phase==="completed"?"OBJECT RETAINED":state.phase==="closed"?"LINK TERMINATED":state.paused?"TRANSMISSION PAUSED":emergency?"STABILITY CRITICAL":"LINK ESTABLISHED";
-    $("logText").textContent=state.log.length?state.log[0].text:"Temporal archive synchronised. Awaiting activation.";
+    $("footerState").textContent=state.phase==="standby"?"AWAITING THE FIRST TRAVELLER":state.phase==="completed"?"OBJECT RETAINED":state.phase==="closed"?"LINK TERMINATED":state.paused?"TRANSMISSION PAUSED":emergency?"STABILITY CRITICAL":"LINK ESTABLISHED";
+    $("logText").textContent=state.log.length?state.log[0].text:"The crossing lies dormant. Touch the ancient gate.";
   }
   function renderEnding() {
     var open=state.phase==="completed"||state.phase==="closed";
@@ -256,7 +256,7 @@
     });
     if(inArchive){
       $("realmEyebrow").textContent=state.viewAll?"NEXUS ARCHIVE · ALL LOCATIONS":"DESTINATION "+String(index+1).padStart(2,"0")+" / 07";
-      $("realmName").textContent=state.viewAll?"THE NINE FUTURE RELICS":loc.name;
+      $("realmName").textContent=state.viewAll?"THE TEN FUTURE RELICS":loc.name;
       $("realmDescription").textContent=state.viewAll?"Showing every surviving object across all seven destinations.":loc.description;
       $("worldAll").textContent=state.viewAll?"SHOW THIS LOCATION":"VIEW ALL REMAINING RELICS";
     }
