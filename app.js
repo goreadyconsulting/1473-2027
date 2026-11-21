@@ -227,6 +227,7 @@
   }
   function startEmergency(manual) {
     if(state.phase!=="running"||state.paused||state.emergency||activeObjects().length<=1)return;
+    stopGlitch();
     state.emergency={endsAt:Date.now()+config.emergencySeconds*1000,remainingMs:null};
     log(manual?"Organiser triggered a critical instability.":"CRITICAL INSTABILITY — sacrifice required.");
     saveSession();closeGameplayDialogs();render();
