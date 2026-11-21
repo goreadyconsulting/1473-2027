@@ -454,7 +454,27 @@
     document.querySelectorAll(".admin-tab").forEach(function(b){b.classList.toggle("active",b.dataset.tab===tab);});
     document.querySelectorAll(".admin-panel").forEach(function(p){p.hidden=p.dataset.panel!==tab;});
   }
-  function renderEditors() {renderObjectEditor();renderGlitchEditor();renderSettingsEditor();}
+  function renderEditors() {renderLocationEditor();renderObjectEditor();renderGlitchEditor();renderSettingsEditor();}
+
+  function renderLocationEditor() {
+    var selector=$("locationSelect");
+    if(!config.locations.some(function(l){return l.id===selectedLocEditor;}))selectedLocEditor=config.locations[0].id;
+    selector.innerHTML=config.locations.map(function(l,i){return '<option value="'+html(l.id)+'">'+String(i+1).padStart(2,"0")+' — '+html(l.name)+'</option>';}).join("");
+    selector.value=selectedLocEditor;
+    var l=config.locations.find(function(x){return x.id===selectedLocEditor;});
+    $("locName").value=l.name;$("locRune").value=l.rune;$("locDescription").value=l.description;$("locColour").value=l.colour;
+  }
+  function saveLocation() {
+    var l=config.locations.find(function(x){return x.id===selectedLocEditor;});
+    if(!l)return;
+    l.name=$("locName").value.trim().slice(0,55)||l.name;
+    l.rune=$("locRune").value.trim().slice(0,5)||l.rune;
+    l.description=$("locDescription").value.trim().slice(0,260);
+    l.colour=/^#[0-9a-fA-F]{6}$/.test($("locColour").value)?$("locColour").value:l.colour;
+    persist();render();renderLocationEditor();renderObjectEditor();
+    notice("Destination saved. All seven runes remain available.");
+  }
+
   function renderObjectEditor() {
     var select=$("objectSelect");
     if(!config.objects.some(function(o){return o.id===selectedObjEditor;}))selectedObjEditor=config.objects[0].id;
@@ -463,6 +483,8 @@
     var obj=config.objects.find(function(o){return o.id===selectedObjEditor;});
     if(!obj)return;
     $("objName").value=obj.name;$("objIcon").value=obj.icon;$("objDescription").value=obj.description;$("objBenefit").value=obj.benefit;$("objLimitation").value=obj.limitation;$("objImage").value=obj.image;
+    $("objLocation").innerHTML=config.locations.map(function(loc){return '<option value="'+html(loc.id)+'">'+html(loc.name)+'</option>';}).join("");
+    $("objLocation").value=obj.locationId;
   }
   function saveObject() {
     var obj=config.objects.find(function(o){return o.id===selectedObjEditor;});if(!obj)return;
@@ -470,12 +492,14 @@
     obj.description=$("objDescription").value.trim().slice(0,220);obj.benefit=$("objBenefit").value.trim().slice(0,260);obj.limitation=$("objLimitation").value.trim().slice(0,260);
     var img=$("objImage").value.trim();
     if(img&&!mediaUrl(img))return notice("Invalid image URL. Use HTTPS or a relative asset path.");
-    obj.image=img;persist();render();renderObjectEditor();notice("Object saved locally. Export your configuration for backup.");
+    obj.image=img;
+    obj.locationId=config.locations.some(function(l){return l.id===$("objLocation").value;})?$("objLocation").value:config.locations[0].id;
+    persist();render();renderObjectEditor();notice("Object saved locally. Export your configuration for backup.");
   }
   function addObject() {
-    if(config.objects.length>=36)return notice("Maximum 36 objects supported.");
+    if(config.objects.length>=9)return notice("All nine object slots are filled. Remove an object before adding a replacement.");
     var id="item-"+Date.now();
-    config.objects.push({id:id,name:"New Future Object",icon:"✦",description:"Describe the artefact from 2027.",benefit:"",limitation:"",image:""});
+    config.objects.push({id:id,locationId:config.locations[0].id,name:"New Future Object",icon:"✦",description:"Describe the artefact from 2027.",benefit:"",limitation:"",image:""});
     selectedObjEditor=id;persist();render();renderObjectEditor();notice("New object added.");
   }
   function deleteObject() {
@@ -604,6 +628,8 @@
     });
     $("sessionReset").addEventListener("click",resetSession);
     $("objectSelect").addEventListener("change",function(e){selectedObjEditor=e.target.value;renderObjectEditor();});
+    $("locationSelect").addEventListener("change",function(e){selectedLocEditor=e.target.value;renderLocationEditor();});
+    $("locationSave").addEventListener("click",saveLocation);
     $("objectAdd").addEventListener("click",addObject);
     $("objectSave").addEventListener("click",saveObject);
     $("objectDelete").addEventListener("click",deleteObject);
