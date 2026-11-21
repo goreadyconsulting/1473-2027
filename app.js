@@ -4,7 +4,7 @@
   var CONFIG_KEY = "chronos1473_config_v1";
   var SESSION_KEY = "chronos1473_session_v1";
   var DEFAULT_CONFIG = {
-    version: 1,
+    version: 2,
     title: "TEMPORAL CONNECTION",
     durationMinutes: 20,
     emergencySeconds: 45,
@@ -13,19 +13,25 @@
     glitchMinSeconds: 35,
     glitchMaxSeconds: 75,
     adminPin: "1473",
+    locations: [
+      {id:"emberfall",name:"Emberfall Keep",rune:"ᚠ",description:"A ruined stronghold above a sea of embers, where impossible records lie buried.",colour:"#e5bb83"},
+      {id:"glasswind",name:"Glasswind Bazaar",rune:"ᚹ",description:"An abandoned market of crystal mirrors and memories carried on the wind.",colour:"#93d4d4"},
+      {id:"verdant",name:"Verdant Hollow",rune:"ᛉ",description:"An ancient living valley where the soil remembers futures yet to bloom.",colour:"#a3d49c"},
+      {id:"stormglass",name:"Stormglass Spire",rune:"ᚱ",description:"A tower beneath a permanent storm, lit by lightning and stolen sunlight.",colour:"#b2bdf0"},
+      {id:"bleakwater",name:"Bleakwater Crossing",rune:"ᛚ",description:"A silent crossing over black water, guarded by echoes and silver mist.",colour:"#90d6dd"},
+      {id:"sanctum",name:"The Quiet Sanctum",rune:"ᛟ",description:"A forgotten hall of healers where forbidden remedies are kept.",colour:"#e4b9d7"},
+      {id:"iron",name:"Echoes of Iron",rune:"ᚨ",description:"A cavern of dormant machines whose voices may never sound again.",colour:"#e8c59e"}
+    ],
     objects: [
-      {id:"smartphone", name:"Smartphone", icon:"📱", image:"./assets/objects/smartphone.svg", description:"A pocket-sized glass screen. Its battery holds 37% charge. There is no charger.", benefit:"Displays maps, photographs, notes and stored knowledge while powered.", limitation:"The battery will die. No network, repair parts or compatible charging infrastructure exists in 1473."},
-      {id:"history", name:"History Book: 1300–2027", icon:"📖", image:"./assets/objects/history.svg", description:"A printed record of wars, discoveries, rulers and events that have not yet happened.", benefit:"Could warn of future disasters and reveal centuries of discoveries.", limitation:"Events might change when acted upon; predictions could be incomplete or dangerously misunderstood."},
-      {id:"seeds", name:"Agricultural Seed Collection", icon:"🌱", image:"./assets/objects/seeds.svg", description:"Sealed packets of crop varieties selected and preserved in the future.", benefit:"Potential for improved yields, food diversity and resilience over generations.", limitation:"Climate and soil suitability are uncertain; seeds can fail, spread disease or be used up."},
-      {id:"camera", name:"Digital Camera", icon:"📷", image:"./assets/objects/camera.svg", description:"A compact device that records the world as moving or still images.", benefit:"A powerful tool for documenting people, places and evidence.", limitation:"It has a finite battery and limited storage, with no simple way to reproduce the technology."},
-      {id:"filter", name:"Portable Water Filter", icon:"💧", image:"./assets/objects/filter.svg", description:"A small modern system for filtering contaminated water.", benefit:"Could reduce some waterborne illness immediately.", limitation:"Filters wear out; it will not eliminate every pathogen or chemical contaminant."},
-      {id:"medicine", name:"Antibiotic Medicine Kit", icon:"💊", image:"./assets/objects/medicine.svg", description:"A limited supply of modern antibacterial medicines.", benefit:"May treat certain bacterial infections that were often fatal in 1473.", limitation:"Finite supply, allergies, dosing risks and resistance; effectiveness depends on proper medical use."},
-      {id:"solar", name:"Portable Solar Charger", icon:"☀️", image:"./assets/objects/solar.svg", description:"A folding panel that turns sunlight into usable electrical power.", benefit:"Can power some small modern electronics without fuel.", limitation:"Requires sunlight and compatible devices; electrical components are hard to repair."},
-      {id:"microscope", name:"Field Microscope", icon:"🔬", image:"./assets/objects/microscope.svg", description:"A compact optical instrument for examining things too small to see.", benefit:"Might accelerate learning about plants, water and the causes of disease.", limitation:"Requires careful use and interpretation; lenses and precise parts are fragile."},
-      {id:"glasses", name:"Modern Eyeglasses", icon:"👓", image:"./assets/objects/glasses.svg", description:"Precision-made lenses in a lightweight frame.", benefit:"Can immediately restore clearer vision for a person with a matching prescription.", limitation:"Useful to only some people; fragile and nearly impossible to duplicate precisely."},
-      {id:"radio", name:"Wind-up Emergency Radio", icon:"📻", image:"./assets/objects/radio.svg", description:"A hand-powered device designed to receive distant voices.", benefit:"A striking demonstration of electromagnetic technology and portable power.", limitation:"There are no radio broadcasters in 1473; it has little immediate practical use."},
-      {id:"bicycle", name:"Folding Bicycle", icon:"🚲", image:"./assets/objects/bicycle.svg", description:"A compact, human-powered transport machine.", benefit:"Potentially faster local travel and a model for mechanical innovation.", limitation:"Poor roads, difficult maintenance and no supply of compatible replacement parts."},
-      {id:"drive", name:"Encrypted USB Drive", icon:"💾", image:"./assets/objects/drive.svg", description:"A tiny storage device containing an unknown archive from 2027.", benefit:"Might hold books, scientific knowledge or records from the future.", limitation:"Without a compatible computer, power and credentials, its contents are inaccessible."}
+      {id:"smartphone", locationId:"emberfall", name:"Smartphone", icon:"📱", image:"./assets/objects/smartphone.svg", description:"A pocket-sized glass screen. Its battery holds 37% charge. There is no charger.", benefit:"Displays maps, photographs, notes and stored knowledge while powered.", limitation:"The battery will die. No network, repair parts or compatible charging infrastructure exists in 1473."},
+      {id:"history", locationId:"emberfall", name:"History Book: 1300–2027", icon:"📖", image:"./assets/objects/history.svg", description:"A printed record of wars, discoveries, rulers and events that have not yet happened.", benefit:"Could warn of future disasters and reveal centuries of discoveries.", limitation:"Events might change when acted upon; predictions could be incomplete or dangerously misunderstood."},
+      {id:"seeds", locationId:"verdant", name:"Agricultural Seed Collection", icon:"🌱", image:"./assets/objects/seeds.svg", description:"Sealed packets of crop varieties selected and preserved in the future.", benefit:"Potential for improved yields, food diversity and resilience over generations.", limitation:"Climate and soil suitability are uncertain; seeds can fail, spread disease or be used up."},
+      {id:"camera", locationId:"glasswind", name:"Digital Camera", icon:"📷", image:"./assets/objects/camera.svg", description:"A compact device that records the world as moving or still images.", benefit:"A powerful tool for documenting people, places and evidence.", limitation:"It has a finite battery and limited storage, with no simple way to reproduce the technology."},
+      {id:"filter", locationId:"bleakwater", name:"Portable Water Filter", icon:"💧", image:"./assets/objects/filter.svg", description:"A small modern system for filtering contaminated water.", benefit:"Could reduce some waterborne illness immediately.", limitation:"Filters wear out; it will not eliminate every pathogen or chemical contaminant."},
+      {id:"medicine", locationId:"sanctum", name:"Antibiotic Medicine Kit", icon:"💊", image:"./assets/objects/medicine.svg", description:"A limited supply of modern antibacterial medicines.", benefit:"May treat certain bacterial infections that were often fatal in 1473.", limitation:"Finite supply, allergies, dosing risks and resistance; effectiveness depends on proper medical use."},
+      {id:"solar", locationId:"stormglass", name:"Portable Solar Charger", icon:"☀️", image:"./assets/objects/solar.svg", description:"A folding panel that turns sunlight into usable electrical power.", benefit:"Can power some small modern electronics without fuel.", limitation:"Requires sunlight and compatible devices; electrical components are hard to repair."},
+      {id:"microscope", locationId:"verdant", name:"Field Microscope", icon:"🔬", image:"./assets/objects/microscope.svg", description:"A compact optical instrument for examining things too small to see.", benefit:"Might accelerate learning about plants, water and the causes of disease.", limitation:"Requires careful use and interpretation; lenses and precise parts are fragile."},
+      {id:"radio", locationId:"iron", name:"Wind-up Emergency Radio", icon:"📻", image:"./assets/objects/radio.svg", description:"A hand-powered device designed to receive distant voices.", benefit:"A striking demonstration of electromagnetic technology and portable power.", limitation:"There are no radio broadcasters in 1473; it has little immediate practical use."},
     ],
     glitches: [
       {id:"signal01",type:"message",text:"ERROR 0x1473 // FUTURE SIGNAL LEAK DETECTED",source:"",durationSeconds:3},
@@ -60,14 +66,29 @@
       .map(Number).filter(function(n){return Number.isFinite(n)&&n>0&&n<c.durationMinutes;})
       .map(function(n){return Math.round(n*100)/100;})
       .filter(function(n,i,a){return a.indexOf(n)===i;}).sort(function(a,b){return b-a;});
+    c.version=2;
+    if(!Array.isArray(raw.locations)||raw.locations.length!==7) c.locations=clone(DEFAULT_CONFIG.locations);
+    else {
+      var uniqueLocations=new Set();
+      c.locations=raw.locations.map(function(l,i){
+        l=(l&&typeof l==="object")?l:{};
+        var stableId=DEFAULT_CONFIG.locations[i].id;
+        uniqueLocations.add(stableId);
+        var colour=/^#[0-9a-fA-F]{6}$/.test(asText(l.colour))?l.colour:DEFAULT_CONFIG.locations[i].colour;
+        return {id:stableId,name:asText(l.name).slice(0,55)||DEFAULT_CONFIG.locations[i].name,rune:asText(l.rune).slice(0,5)||DEFAULT_CONFIG.locations[i].rune,description:asText(l.description).slice(0,260),colour:colour};
+      });
+    }
     if (!Array.isArray(c.objects)) throw new Error("objects must be an array.");
+    var sourceObjects=c.objects;
+    if(raw.version!==2 && sourceObjects.length>9) sourceObjects=sourceObjects.filter(function(o){return o&&["glasses","bicycle","drive"].indexOf(o.id)<0;});
+    if(sourceObjects.length>9) throw new Error("This game supports exactly nine item slots. Remove extra objects before importing.");
     var used={};
-    c.objects=c.objects.slice(0,36).map(function(o,i){
+    c.objects=sourceObjects.map(function(o,i){
       o=(o&&typeof o==="object")?o:{};
       var id=asText(o.id)||("object-"+i);
       if(used[id]) id=id+"-"+i;
       used[id]=true;
-      return {id:id,name:asText(o.name).slice(0,70)||"Unknown Object",icon:asText(o.icon).slice(0,12)||"✦",image:mediaUrl(o.image),description:asText(o.description).slice(0,220),benefit:asText(o.benefit).slice(0,260),limitation:asText(o.limitation).slice(0,260)};
+      return {id:id,locationId:c.locations.some(function(l){return l.id===o.locationId;})?o.locationId:(DEFAULT_CONFIG.objects.find(function(x){return x.id===id;})||DEFAULT_CONFIG.objects[i%DEFAULT_CONFIG.objects.length]).locationId,name:asText(o.name).slice(0,70)||"Unknown Object",icon:asText(o.icon).slice(0,12)||"✦",image:mediaUrl(o.image),description:asText(o.description).slice(0,220),benefit:asText(o.benefit).slice(0,260),limitation:asText(o.limitation).slice(0,260)};
     });
     if(c.objects.length===0) throw new Error("At least one object is required.");
     if (!Array.isArray(c.glitches)) c.glitches=[];
@@ -80,7 +101,7 @@
   function readStored(key) { try {var s=localStorage.getItem(key);return s?JSON.parse(s):null;}catch(e){return null;} }
   var config;
   try {config=normalizeConfig(readStored(CONFIG_KEY)||DEFAULT_CONFIG);} catch(e){config=normalizeConfig(DEFAULT_CONFIG);}
-  function freshSession() {return {phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[]};}
+  function freshSession() {return {phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
   function loadSession() {
     var s=readStored(SESSION_KEY);
     if(!s||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
@@ -88,10 +109,16 @@
     merged.lost=Array.isArray(merged.lost)?merged.lost.filter(function(l){return l&&typeof l.id==="string";}):[];
     merged.fired=Array.isArray(merged.fired)?merged.fired:[];
     merged.log=Array.isArray(merged.log)?merged.log.slice(0,40):[];
+    merged.scene=["gate","path","dial","archive"].includes(merged.scene)?merged.scene:"gate";
+    merged.walkProgress=intRange(merged.walkProgress,0,100,0);
+    merged.selectedLocation=config.locations.some(function(l){return l.id===merged.selectedLocation;})?merged.selectedLocation:config.locations[0].id;
+    merged.visited=Array.isArray(merged.visited)?merged.visited.filter(function(id){return config.locations.some(function(l){return l.id===id;});}):[];
+    merged.viewAll=!!merged.viewAll;
+    if(merged.emergency){merged.scene="archive";merged.viewAll=true;}
     return merged;
   }
   var state=loadSession();
-  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null;
+  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null;
   function persist() {try{localStorage.setItem(CONFIG_KEY,JSON.stringify(config));localStorage.setItem(SESSION_KEY,JSON.stringify(state));return true;}catch(e){notice("Local storage is full or unavailable. Export your configuration.");return false;}}
   function saveSession() {try{localStorage.setItem(SESSION_KEY,JSON.stringify(state));}catch(e){notice("Session cannot be saved on this device.");}}
   function notice(message) {$("adminNotice").textContent=message; toast(message);}
