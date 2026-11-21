@@ -1,0 +1,218 @@
+const { test } = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+
+const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+const CONFIG_KEY = "chronos1473_config_v1";
+const SESSION_KEY = "chronos1473_session_v1";
+
+function harness(storage = new Map()) {
+  const elements = new Map();
+  let now = 1_000_000;
+  let intervalTick;
+  const browserDate = class extends Date { static now() { return now; } };
+  class Element {
+    constructor(id) {
+      this.id = id;
+      this.listeners = new Map();
+      this.hidden = false;
+      this.disabled = false;
+      this.open = false;
+      this.value = "";
+      this.dataset = {};
+      this.style = { setProperty() {} };
+      this.firstChild = { textContent: "" };
+      this.classNames = new Set();
+      this.classList = {
+        add: (name) => this.classNames.add(name),
+        remove: (name) => this.classNames.delete(name),
+        toggle: (name, force) => {
+          const on = force === undefined ? !this.classNames.has(name) : force;
+          if (on) this.classNames.add(name);
+          else this.classNames.delete(name);
+          return on;
+        },
+        contains: (name) => this.classNames.has(name)
+      };
+    }
+    addEventListener(name, fn) {
+      const callbacks = this.listeners.get(name) || [];
+      callbacks.push(fn);
+      this.listeners.set(name, callbacks);
+    }
+    emit(name, props = {}) {
+      for (const fn of this.listeners.get(name) || []) fn({ target: this, ...props });
+    }
+    showModal() { this.open = true; }
+    close() { this.open = false; this.emit("close"); }
+    querySelector() { return null; }
+  }
+  const get = (id) => {
+    if (!elements.has(id)) elements.set(id, new Element(id));
+    return elements.get(id);
+  };
+  const localStorage = {
+    getItem(key) { return storage.has(key) ? storage.get(key) : null; },
+    setItem(key, value) { storage.set(key, String(value)); },
+    removeItem(key) { storage.delete(key); }
+  };
+  const document = {
+    getElementById: get,
+    querySelectorAll() { return []; },
+    addEventListener() {},
+    body: { appendChild() {} }
+  };
+  const window = { addEventListener() {}, confirm() { return true; } };
+  const context = {
+    document, window, localStorage,
+    navigator: { serviceWorker: undefined },
+    location: { protocol: "http:" },
+    Date: browserDate, Math, Set, JSON, console, URL,
+    setInterval(fn) { intervalTick = fn; return 1; },
+    setTimeout() { return 1; },
+    clearTimeout() {}
+  };
+  vm.runInNewContext(source, context, { filename: "app.js", timeout: 1000 });
+  return {
+    get, storage,
+    state() { return JSON.parse(storage.get(SESSION_KEY)); },
+    config() { return JSON.parse(storage.get(CONFIG_KEY)); },
+    tick() { intervalTick(); },
+    moveClock(ms) { now += ms; },
+    click(id) { get(id).emit("click"); },
+    enterCode(code = "1473") {
+      this.click("adminOpen");
+      get("adminPin").value = code;
+      this.click("adminUnlock");
+    },
+    start() { this.enterCode(); this.click("sessionStart"); },
+    openObject(id) {
+      get("objectGrid").emit("click", { target: { closest() { return { dataset: { object: id } }; } } });
+    },
+    destroy(id, accept = true) {
+      this.openObject(id);
+      this.click("destroyRequest");
+      this.click(accept ? "confirmAccept" : "confirmCancel");
+    }
+  };
+}
+
+test("archive displays all objects and prevents destruction before activation", () => {
+  const app = harness();
+  assert.equal(app.get("remainingCount").textContent, "12");
+  assert.equal(app.get("statusText").textContent, "STANDBY");
+  assert.equal(app.get("mainTimer").textContent, "20:00");
+  app.openObject("smartphone");
+  assert.equal(app.get("destroyRequest").disabled, true);
+});
+
+test("destruction requires a second confirmation", () => {
+  const app = harness();
+  app.start();
+  assert.equal(app.state().phase, "running");
+  app.destroy("smartphone", false);
+  assert.equal(app.state().lost.length, 0);
+  app.destroy("smartphone", true);
+  assert.equal(app.state().lost.length, 1);
+  assert.equal(app.state().lost[0].id, "smartphone");
+  assert.equal(app.get("remainingCount").textContent, "11");
+});
+
+test("successful emergency sacrifice stabilises the portal", () => {
+  const app = harness();
+  app.start();
+  app.click("sessionInstability");
+  assert.ok(app.state().emergency);
+  assert.equal(app.get("statusText").textContent, "UNSTABLE");
+  app.destroy("camera");
+  assert.equal(app.state().emergency, null);
+  assert.equal(app.state().lost.length, 1);
+});
+
+test("failed emergency removes configured random objects", () => {
+  const app = harness();
+  app.start();
+  app.click("sessionInstability");
+  app.moveClock(46_000);
+  app.tick();
+  assert.equal(app.state().emergency, null);
+  assert.equal(app.state().lost.length, 2);
+  const lostIds = app.state().lost.map(x => x.id);
+  assert.equal(new Set(lostIds).size, 2);
+  assert.ok(app.state().log.some(x => x.text.includes("FAILURE")));
+});
+
+test("scheduled instability triggers at the threshold", () => {
+  const app = harness();
+  app.start();
+  app.moveClock(5 * 60_000 + 500);
+  app.tick();
+  assert.ok(app.state().emergency);
+  assert.ok(app.state().fired.includes(15));
+});
+
+test("pause freezes main clock and emergency; resume restores both", () => {
+  const app = harness();
+  app.start();
+  app.click("sessionInstability");
+  app.click("sessionPause");
+  assert.equal(app.state().paused, true);
+  app.moveClock(10 * 60_000);
+  app.tick();
+  assert.equal(app.get("mainTimer").textContent, "20:00");
+  assert.equal(app.get("emergencyClock").textContent, "00:45");
+  app.click("sessionPause");
+  app.moveClock(2000);
+  app.tick();
+  assert.equal(app.get("mainTimer").textContent, "19:58");
+  assert.equal(app.get("emergencyClock").textContent, "00:43");
+});
+
+test("last candidate is protected; final retention concludes the game", () => {
+  const app = harness();
+  app.start();
+  const all = app.config().objects.map(o => o.id);
+  for (const id of all.slice(0, -1)) app.destroy(id);
+  assert.equal(app.state().lost.length, all.length - 1);
+  app.openObject(all[all.length - 1]);
+  assert.equal(app.get("destroyRequest").hidden, true);
+  assert.equal(app.get("finalRequest").hidden, false);
+  app.click("finalRequest");
+  app.click("confirmAccept");
+  assert.equal(app.state().phase, "completed");
+  assert.equal(app.state().finalId, all[all.length - 1]);
+  assert.equal(app.get("endingOverlay").hidden, false);
+});
+
+test("portal closes at zero if no final choice is retained", () => {
+  const app = harness();
+  app.start();
+  app.moveClock(20 * 60_000 + 100);
+  app.tick();
+  assert.equal(app.state().phase, "closed");
+  assert.equal(app.state().finalId, null);
+  assert.equal(app.get("endingOverlay").hidden, false);
+});
+
+test("game state survives reopening in the same browser", () => {
+  const storage = new Map();
+  const first = harness(storage);
+  first.start();
+  first.destroy("smartphone");
+  const restored = harness(storage);
+  assert.equal(restored.state().phase, "running");
+  assert.equal(restored.get("remainingCount").textContent, "11");
+  assert.equal(restored.get("statusText").textContent, "STABLE");
+});
+
+test("edited object content persists for organiser export", () => {
+  const app = harness();
+  app.enterCode();
+  app.get("objName").value = "Future compass";
+  app.get("objDescription").value = "A device that finds its way.";
+  app.click("objectSave");
+  assert.equal(app.config().objects[0].name, "Future compass");
+  assert.equal(app.config().objects[0].description, "A device that finds its way.");
+});

@@ -1,0 +1,19 @@
+{
+  "name": "Temporal Connection 1473 / 2027",
+  "short_name": "Chronos Portal",
+  "description": "Interactive LARP future-object elimination portal",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#061016",
+  "theme_color": "#071219",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
