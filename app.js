@@ -142,7 +142,7 @@
     $("objectGrid").classList.toggle("low-count",count<=3);
   }
   function renderGrid() {
-    var active=activeObjects(),grid=$("objectGrid");
+    var all=activeObjects(),active=(state.scene==="archive"&&!state.viewAll&&!state.emergency)?all.filter(function(o){return o.locationId===state.selectedLocation;}):all,grid=$("objectGrid");
     layoutGrid(Math.max(1,active.length));
     grid.innerHTML=active.map(function(o,index){
       return '<button class="object-card" type="button" data-object="'+html(o.id)+'" aria-label="View '+html(o.name)+'">'+
@@ -150,7 +150,8 @@
         '<div class="card-foot"><div class="card-text"><div class="card-title">'+html(o.name)+'</div><div class="card-description">'+html(o.description)+'</div></div><span class="card-arrow">↗</span></div></button>';
     }).join("");
     $("archiveEmpty").hidden=active.length>0;
-    $("remainingCount").textContent=String(active.length);
+    $("archiveEmpty").textContent=all.length?"No surviving relics here. Return to the runestone and choose another destination.":"No relics remain in the archive.";
+    $("remainingCount").textContent=String(all.length);
     $("destroyedCount").textContent=String(state.lost.length);
   }
   function renderTelemetry() {
@@ -187,7 +188,97 @@
       $("endingText").textContent="The transmission has ended before a final object was secured.";
     }
   }
-  function render() {renderGrid();renderTelemetry();renderEnding();renderSessionAdmin();}
+
+  function getLocation() {
+    return config.locations.find(function(l){return l.id===state.selectedLocation;})||config.locations[0];
+  }
+  function renderWorld() {
+    var scene=state.scene||"gate",inArchive=scene==="archive",emergency=!!state.emergency;
+    $("worldStage").hidden=inArchive;
+    $("archiveSection").hidden=!inArchive;
+    $("realmNav").hidden=!inArchive||emergency;
+    ["gate","path","dial"].forEach(function(name){
+      $("scene"+name.charAt(0).toUpperCase()+name.slice(1)).hidden=scene!==name;
+    });
+    $("worldStage").dataset.scene=scene;
+    $("portal").classList.toggle("in-realm",inArchive);
+    var loc=getLocation(),index=config.locations.indexOf(loc),available=activeObjects(),inLoc=available.filter(function(o){return o.locationId===loc.id;});
+    $("portal").style.setProperty("--realm-accent",loc.colour);
+    $("worldWalkPct").textContent=state.walkProgress+"%";
+    $("worldWalkFill").style.width=state.walkProgress+"%";
+    $("voidWalkway").style.setProperty("--altar-scale",String(.38+state.walkProgress/100*.83));
+    $("worldLocationNo").textContent=String(index+1).padStart(2,"0")+" / 07";
+    $("worldLocationName").textContent=loc.name;
+    $("worldLocationDesc").textContent=loc.description;
+    $("worldLocationStock").textContent=inLoc.length+" OF "+available.length+" SURVIVING RELICS HERE";
+    $("worldSelectedRune").textContent=loc.rune;
+    $("worldLocationDial").querySelectorAll(".rune-socket").forEach(function(button){
+      var selected=button.dataset.location===loc.id;
+      button.classList.toggle("selected",selected);
+      button.setAttribute("aria-pressed",String(selected));
+    });
+    if(inArchive){
+      $("realmEyebrow").textContent=state.viewAll?"NEXUS ARCHIVE · ALL LOCATIONS":"DESTINATION "+String(index+1).padStart(2,"0")+" / 07";
+      $("realmName").textContent=state.viewAll?"THE NINE FUTURE RELICS":loc.name;
+      $("realmDescription").textContent=state.viewAll?"Showing every surviving object across all seven destinations.":loc.description;
+      $("worldAll").textContent=state.viewAll?"SHOW THIS LOCATION":"VIEW ALL REMAINING RELICS";
+    }
+  }
+  function renderDial() {
+    $("worldLocationDial").querySelectorAll(".rune-socket").forEach(function(node){node.remove();});
+    var circle=config.locations.map(function(loc,index){
+      var angle=(-90+360*index/7)*Math.PI/180;
+      var x=(50+39*Math.cos(angle)).toFixed(2),y=(50+39*Math.sin(angle)).toFixed(2);
+      return '<button type="button" class="rune-socket'+(loc.id===state.selectedLocation?" selected":"")+'" data-location="'+html(loc.id)+'" style="--x:'+x+'%;--y:'+y+'%" aria-label="Select '+html(loc.name)+'" aria-pressed="'+String(loc.id===state.selectedLocation)+'" title="'+html(loc.name)+'">'+html(loc.rune)+'</button>';
+    }).join("");
+    $("worldLocationDial").insertAdjacentHTML("beforeend",circle);
+    renderWorld();
+  }
+  function chooseLocation(id) {
+    if(!config.locations.some(function(loc){return loc.id===id;}))return;
+    state.selectedLocation=id;
+    saveSession();renderWorld();
+  }
+  function enterGateway() {
+    if(state.scene!=="gate")return;
+    state.scene="path";state.walkProgress=0;
+    log("The ancient gateway opens to the space between worlds.");
+    saveSession();render();
+  }
+  function walkStep() {
+    if(state.scene!=="path"||state.emergency||state.paused)return;
+    state.walkProgress=Math.min(100,state.walkProgress+12);
+    if(state.walkProgress>=100){state.scene="dial";log("An ancient runestone emerges from the void.");}
+    saveSession();renderWorld();
+  }
+  function stopWalking() {if(walkHandle){clearInterval(walkHandle);walkHandle=null;}}
+  function openDestination() {
+    if(state.scene!=="dial"||state.emergency)return;
+    var loc=getLocation();
+    state.scene="archive";state.viewAll=false;
+    if(state.visited.indexOf(loc.id)<0)state.visited.push(loc.id);
+    log("The stone reveals "+loc.name+".");
+    saveSession();render();toast("Destination opened: "+loc.name);
+  }
+  function returnToDial() {
+    if(state.emergency)return;
+    state.scene="dial";state.viewAll=false;
+    saveSession();render();
+  }
+  function toggleArchiveView() {
+    if(state.scene!=="archive"||state.emergency)return;
+    state.viewAll=!state.viewAll;
+    saveSession();render();
+  }
+  function restoreJourneyAfterEmergency() {
+    if(!state.preEmergencyScene)return;
+    state.scene=state.preEmergencyScene;
+    state.viewAll=!!state.preEmergencyViewAll;
+    state.preEmergencyScene=null;
+    state.preEmergencyViewAll=false;
+  }
+
+  function render() {renderGrid();renderDial();renderTelemetry();renderEnding();renderSessionAdmin();}
   function closeGameplayDialogs() {if($("confirmDialog").open)$("confirmDialog").close();if($("objectDialog").open)$("objectDialog").close();pendingConfirm=null;}
   function openObject(id) {
     if(state.phase==="closed"||state.phase==="completed")return;
@@ -227,7 +318,7 @@
     if(!obj)return toast("That object is no longer available.");
     state.lost.push({id:id,reason:reason||"PLAYER CHOICE",at:Date.now()});
     log(obj.name+" destroyed // "+(reason||"PLAYER CHOICE"));
-    if(state.emergency){state.emergency=null;log("Emergency sacrifice accepted. Portal stabilised.");}
+    if(state.emergency){state.emergency=null;restoreJourneyAfterEmergency();log("Emergency sacrifice accepted. Portal stabilised.");}
     if(activeObjects().length===1)log("One candidate remains. Final retention is now possible.");
     saveSession();render();
     toast(obj.name+" removed from archive.");
@@ -248,13 +339,16 @@
     if(!state.emergency)return;
     var active=activeObjects(),count=Math.min(config.failureDestroyCount,Math.max(0,active.length-1));
     randomised(active).slice(0,count).forEach(function(o){state.lost.push({id:o.id,reason:"AUTOMATED SYSTEM FAILURE",at:Date.now()});log(o.name+" erased by temporal backlash.");});
-    state.emergency=null;
+    state.emergency=null;restoreJourneyAfterEmergency();
     log(count?("FAILURE: "+count+" random object"+(count===1?"":"s")+" erased. Portal temporarily stable."):"FAILURE: no additional object erased.");
     saveSession();closeGameplayDialogs();render();toast("Emergency timer expired: "+count+" object(s) lost.");
   }
   function startEmergency(manual) {
     if(state.phase!=="running"||state.paused||state.emergency||activeObjects().length<=1)return;
     stopGlitch();
+    state.preEmergencyScene=state.scene;
+    state.preEmergencyViewAll=state.viewAll;
+    state.scene="archive";state.viewAll=true;
     state.emergency={endsAt:Date.now()+config.emergencySeconds*1000,remainingMs:null};
     log(manual?"Organiser triggered a critical instability.":"CRITICAL INSTABILITY — sacrifice required.");
     saveSession();closeGameplayDialogs();render();
@@ -262,7 +356,7 @@
   }
   function resolveEmergency() {
     if(!state.emergency)return;
-    state.emergency=null;log("Organiser override: portal stabilised.");saveSession();closeGameplayDialogs();render();
+    state.emergency=null;restoreJourneyAfterEmergency();log("Organiser override: portal stabilised.");saveSession();closeGameplayDialogs();render();
   }
   function checkTriggers(rem) {
     if(state.emergency||state.phase!=="running"||state.paused)return;
@@ -338,7 +432,7 @@
   function renderSessionAdmin() {
     if(!$("adminContent")||!adminUnlocked)return;
     var items=activeObjects().length;
-    $("sessionSummary").textContent="PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+timeText(remainingMs())+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
+    $("sessionSummary").textContent="SCENE: "+state.scene.toUpperCase()+"  •  PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+timeText(remainingMs())+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
     $("adminHistory").innerHTML=state.log.length?state.log.map(function(entry){return "<p>"+html(entry.time)+" — "+html(entry.text)+"</p>";}).join(""):"<p>No events recorded yet.</p>";
     $("sessionPause").disabled=state.phase!=="running";
     $("sessionInstability").disabled=state.phase!=="running"||state.paused||!!state.emergency||items<=1;
@@ -452,6 +546,30 @@
     reader.readAsText(file);$("configImport").value="";
   }
   function wireEvents() {
+    $("worldEnter").addEventListener("click",enterGateway);
+    $("worldWalk").addEventListener("pointerdown",function(e){
+      if(e.pointerType==="mouse"&&e.button!==0)return;
+      e.preventDefault();
+      walkStep();stopWalking();
+      walkHandle=setInterval(walkStep,220);
+    });
+    ["pointerup","pointercancel","pointerleave","lostpointercapture"].forEach(function(evt){
+      $("worldWalk").addEventListener(evt,stopWalking);
+    });
+    $("worldWalk").addEventListener("click",walkStep);
+    document.addEventListener("keydown",function(e){
+      if(state.scene!=="path"||$("adminDialog").open||$("objectDialog").open||$("confirmDialog").open)return;
+      if(e.target&&["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName))return;
+      if(e.key==="ArrowUp"||e.key.toLowerCase()==="w"){e.preventDefault();walkStep();}
+    });
+    $("worldLocationDial").addEventListener("click",function(e){
+      var rune=e.target.closest("[data-location]");
+      if(rune)chooseLocation(rune.dataset.location);
+    });
+    $("worldTravel").addEventListener("click",openDestination);
+    $("worldBackPath").addEventListener("click",function(){if(!state.emergency){state.scene="path";state.walkProgress=70;saveSession();render();}});
+    $("worldReturn").addEventListener("click",returnToDial);
+    $("worldAll").addEventListener("click",toggleArchiveView);
     $("objectGrid").addEventListener("click",function(e){var card=e.target.closest("[data-object]");if(card)openObject(card.dataset.object);});
     $("detailClose").addEventListener("click",function(){$("objectDialog").close();});
     $("detailBack").addEventListener("click",function(){$("objectDialog").close();});
