@@ -8,7 +8,7 @@ The experience uses original Norse-inspired scenery and generated sound rather t
 
 ## The player journey
 
-1. **Awaken the gate** — tap **STEP THROUGH THE PORTAL**. This *automatically starts* the 20-minute countdown; no organiser PIN is required for play.
+1. **Awaken the gate** — tap **STEP THROUGH THE PORTAL**. This *automatically starts* the seven-hour countdown; no organiser PIN is required for play.
 2. **Cross the void** — tap/hold **HOLD TO WALK FORWARD**, swipe upward, or press ↑ / W to reach the runestone. Nine taps are enough.
 3. **Choose a destination** — touch one of seven rune sockets on the carved stone dial, or swipe horizontally between destinations. Each rune reveals its location, lore, and surviving relic count.
 4. **Explore the selected realm** — the destination reveals its distinct illustrated landscape and available objects. Tap a relic for its illustration, background, **Power**, **Catch** and **Echo Through Time (Consequence)**.
@@ -16,9 +16,26 @@ The experience uses original Norse-inspired scenery and generated sound rather t
 6. **Return to the runestone**, choose other destinations, or tap **VIEW ALL REMAINING RELICS** to compare the surviving objects together.
 7. **Seal the final fate** — the final relic cannot be destroyed. Tap **RETAIN AS FINAL OBJECT** and confirm to end the story.
 
-A live timer, intermittent signal glitches and scheduled instability events add urgency. During critical instability, the entire surviving archive is revealed, so players can sacrifice one relic in time. If they do not, the portal randomly destroys a configured number of relics but never the final survivor. Normal navigation resumes after the instability is resolved.
+A live **seven-hour** clock and **one automatic random relic elimination every completed hour** create the central pressure. The next-hour timer remains visible during play. The toll occurs at hours 1, 2, 3, 4, 5, 6 and 7, with the seventh taking place as the portal closes. Every eliminated object disappears from all realms and cannot be lost a second time. Intermittent visual glitches and manually invoked instability events can add drama. During critical instability, the entire surviving archive is revealed, so players can sacrifice one relic in time. If they do not, the portal randomly destroys a configured number of relics but never the final survivor. Normal navigation resumes after the instability is resolved.
 
-The countdown continues across journey scenes, page refreshes, and app backgrounding unless the organiser explicitly pauses the session.
+The countdown and hourly schedule continue across journey scenes, page refreshes, and app backgrounding unless the organiser explicitly pauses the session. When iPad Safari suspends the page, missed hourly eliminations are reconciled on the next active tick. At seven hours the last hourly loss is processed, then the portal closes if the final relic has not been secured.
+
+## Seven-hour elimination schedule
+
+| Elapsed time | Time remaining | Portal behaviour |
+| --- | --- | --- |
+| Start | 07:00:00 | The player activates the gateway |
+| Hour 1 | 06:00:00 | One random surviving relic vanishes |
+| Hour 2 | 05:00:00 | One more relic vanishes |
+| Hour 3 | 04:00:00 | One more relic vanishes |
+| Hour 4 | 03:00:00 | One more relic vanishes |
+| Hour 5 | 02:00:00 | One more relic vanishes |
+| Hour 6 | 01:00:00 | One more relic vanishes |
+| Hour 7 | 00:00:00 | Seventh loss; the time window closes |
+
+**Ten starting relics → three surviving after seven automatic eliminations**, assuming nobody voluntarily sacrifices additional objects. Players must still decide which **single** object to preserve before the seven-hour closure. The final survivor cannot be automatically or manually destroyed.
+
+The hour marks use real elapsed game time, not fixed clock-of-day hours. An organiser pause freezes both the main timer and the next-elimination timer. The interval can be configured for a different performance in the organiser's Settings tab. The default former 15/10/5-minute emergency triggers are disabled to avoid competing with hourly eliminations; manual emergency controls remain available.
 
 ## Ten relics from Saulė's item list
 
@@ -50,7 +67,7 @@ All ten objects include **illustrated local assets and three complete story fiel
 
 Tap **⚙** and enter the default PIN **1473** (change it under Settings). The PIN prevents accidental settings changes; it is **not strong authentication**.
 
-**Session:** start a fresh performance, pause/resume, manually trigger or resolve instability, preview a random glitch, advance the timer, reset the game, and read the event log.
+**Session:** start a fresh performance, pause/resume, manually trigger or resolve instability, preview a random glitch, simulate another hour of play for rehearsal, reset the game, and read the event log.
 
 **Objects:** edit all ten relics (name, illustration path, description, Power, Catch, Consequence, and destination assignment). The maximum is ten; deleting an item frees a slot for a new one.
 
@@ -58,7 +75,7 @@ Tap **⚙** and enter the default PIN **1473** (change it under Settings). The P
 
 **Glitches:** add/change short warning messages, images or muted MP4 videos without editing application code.
 
-**Settings:** change total session time, emergency window, failure count, instability trigger points, random glitch timing and organiser PIN.
+**Settings:** change the session length (**420 minutes** by default), automatic elimination interval (**60 minutes** by default), emergency window, failure count, optional instability trigger points, random glitch timing and organiser PIN.
 
 **Export/Import JSON:** backup/transfer organiser content. Changes in the console are stored locally and are *not* automatically written to GitHub.
 
@@ -71,11 +88,12 @@ For a reliably offline LARP, load the site online once on the actual event iPad,
 ## Game reliability and limitations
 
 - One active browser/device is the source of truth. The app is not multiplayer networking software.
-- A destructive choice requires a second explicit tap, while the final object has its own separate retention confirmation.
+- The **automatic hourly toll** is independent of player choices: exactly one randomly selected surviving relic is eliminated at each completed hour, provided at least two remain. A unique relic is chosen each time, and the final survivor is always protected.
+- A player-initiated destructive choice requires a second explicit tap, while the final object has its own separate retention confirmation.
 - The organiser can pause and override an instability. A failed instability erases random relics but cannot erase the final one.
 - Glitch overlays are visual and never directly remove game items.
 - Session, inventory state, countdown end time, rune dial selection, walk progress and visited locations survive a reload on the same browser.
-- **Content migration:** upgrading an older nine-item prototype replaces its fictional starter object library with these ten supplied relics and safely resets the old game state. It preserves customised destination information where compatible. Export any important previous configuration before installing the upgrade.
+- **Content migration:** upgrading an existing version 3 ten-relic portal preserves the item and realm edits, updates the default session to seven hours, removes old scheduled 15/10/5-minute instabilities, and resets the running session so the new hourly schedule starts cleanly. Export any important previous configuration before installing the upgrade.
 - The in-browser default PIN is a convenience rather than account-level security; use the same trusted event iPad.
 - Original artwork is an illustrated interpretation, not licensed *God of War* material.
 
@@ -88,7 +106,9 @@ For a reliably offline LARP, load the site online once on the actual event iPad,
 - [ ] Trigger an emergency in the middle of the void; confirm that the game offers a sacrifice and restores the scene.
 - [ ] Let a test emergency expire to confirm the automatic consequence.
 - [ ] Reduce to a single relic, verify destruction is impossible, and confirm final retention.
-- [ ] Reload halfway through play; ensure countdown and journey progress persist.
+- [ ] Use the rehearsal button to simulate each of the seven hour marks; confirm a new relic disappears at each mark and the portal closes at hour seven.
+- [ ] Pause halfway to an hour mark, resume, and confirm the next hourly loss is still correctly timed.
+- [ ] Reload halfway through play or resume after iPad sleep; ensure the countdown, hour count, and journey progress persist.
 - [ ] Test audio on/off, local asset loads, screen sleep behaviour, and Airplane Mode.
 - [ ] Export the final configuration, change the organiser PIN, and reset to the starting screen for players.
 
