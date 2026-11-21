@@ -653,6 +653,7 @@
   }
   wireEvents();
   nextGlitch();
+  persist();
   render();
   tick();
   setInterval(tick,250);
