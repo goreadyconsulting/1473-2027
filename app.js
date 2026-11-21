@@ -4,7 +4,7 @@
   var CONFIG_KEY = "chronos1473_config_v1";
   var SESSION_KEY = "chronos1473_session_v1";
   var DEFAULT_CONFIG = {
-    version: 2,
+    version: 3,
     title: "TEMPORAL CONNECTION",
     durationMinutes: 20,
     emergencySeconds: 45,
@@ -23,15 +23,16 @@
       {id:"iron",name:"Echoes of Iron",rune:"ᚨ",description:"A cavern of dormant machines whose voices may never sound again.",colour:"#e8c59e"}
     ],
     objects: [
-      {id:"smartphone", locationId:"emberfall", name:"Smartphone", icon:"📱", image:"./assets/objects/smartphone.svg", description:"A pocket-sized glass screen. Its battery holds 37% charge. There is no charger.", benefit:"Displays maps, photographs, notes and stored knowledge while powered.", limitation:"The battery will die. No network, repair parts or compatible charging infrastructure exists in 1473."},
-      {id:"history", locationId:"emberfall", name:"History Book: 1300–2027", icon:"📖", image:"./assets/objects/history.svg", description:"A printed record of wars, discoveries, rulers and events that have not yet happened.", benefit:"Could warn of future disasters and reveal centuries of discoveries.", limitation:"Events might change when acted upon; predictions could be incomplete or dangerously misunderstood."},
-      {id:"seeds", locationId:"verdant", name:"Agricultural Seed Collection", icon:"🌱", image:"./assets/objects/seeds.svg", description:"Sealed packets of crop varieties selected and preserved in the future.", benefit:"Potential for improved yields, food diversity and resilience over generations.", limitation:"Climate and soil suitability are uncertain; seeds can fail, spread disease or be used up."},
-      {id:"camera", locationId:"glasswind", name:"Digital Camera", icon:"📷", image:"./assets/objects/camera.svg", description:"A compact device that records the world as moving or still images.", benefit:"A powerful tool for documenting people, places and evidence.", limitation:"It has a finite battery and limited storage, with no simple way to reproduce the technology."},
-      {id:"filter", locationId:"bleakwater", name:"Portable Water Filter", icon:"💧", image:"./assets/objects/filter.svg", description:"A small modern system for filtering contaminated water.", benefit:"Could reduce some waterborne illness immediately.", limitation:"Filters wear out; it will not eliminate every pathogen or chemical contaminant."},
-      {id:"medicine", locationId:"sanctum", name:"Antibiotic Medicine Kit", icon:"💊", image:"./assets/objects/medicine.svg", description:"A limited supply of modern antibacterial medicines.", benefit:"May treat certain bacterial infections that were often fatal in 1473.", limitation:"Finite supply, allergies, dosing risks and resistance; effectiveness depends on proper medical use."},
-      {id:"solar", locationId:"stormglass", name:"Portable Solar Charger", icon:"☀️", image:"./assets/objects/solar.svg", description:"A folding panel that turns sunlight into usable electrical power.", benefit:"Can power some small modern electronics without fuel.", limitation:"Requires sunlight and compatible devices; electrical components are hard to repair."},
-      {id:"microscope", locationId:"verdant", name:"Field Microscope", icon:"🔬", image:"./assets/objects/microscope.svg", description:"A compact optical instrument for examining things too small to see.", benefit:"Might accelerate learning about plants, water and the causes of disease.", limitation:"Requires careful use and interpretation; lenses and precise parts are fragile."},
-      {id:"radio", locationId:"iron", name:"Wind-up Emergency Radio", icon:"📻", image:"./assets/objects/radio.svg", description:"A hand-powered device designed to receive distant voices.", benefit:"A striking demonstration of electromagnetic technology and portable power.", limitation:"There are no radio broadcasters in 1473; it has little immediate practical use."},
+      {id:"smartphone", locationId:"iron", name:"Smartphone", icon:"📱", image:"./assets/objects/smartphone.svg", description:"A small glass-and-metal device, its bright screen holding knowledge that should not exist for another five centuries.", benefit:"Photographs, recordings, maps, calculations, translated words, music and stored books. More information than the people of 1473 can imagine.", limitation:"Only 37% battery remains. No electricity, charger, Wi-Fi or mobile network exists here. Once the battery runs out, it becomes a costly piece of glass.", consequence:"Even a few hours of its knowledge might advance technology, reveal coming disasters, change bloodlines and rewrite the path from 1473 to 2027."},
+      {id:"toilet", locationId:"glasswind", name:"A Giant Pack of Toilet Paper", icon:"🧻", image:"./assets/objects/toilet.svg", description:"An enormous and surprisingly luxurious supply of soft white paper, once considered exceptionally valuable in 2020.", benefit:"Soft. Absorbent. Clean. A revolutionary improvement to medieval bathroom life.", limitation:"Nobody in 1473 can manufacture more. Fortunately, this enormous pack might last its owner a lifetime.", consequence:"Probably none whatsoever. Except an unusually comfortable lifetime."},
+      {id:"history", locationId:"emberfall", name:"History Book (1300–2027)", icon:"📖", image:"./assets/objects/history.svg", description:"A book describing centuries that have yet to pass, with dates, names and accounts that could shape the fate of kingdoms.", benefit:"Foreknowledge of wars, rulers, discoveries, disasters, diseases and inventions from the medieval period to 2027.", limitation:"The moment anyone changes history, its predictions become increasingly unreliable.", consequence:"A disaster could be prevented — or a completely different catastrophe could be set in motion."},
+      {id:"medical", locationId:"sanctum", name:"Modern Doctor's Kit", icon:"🩺", image:"./assets/objects/medical.svg", description:"A collection of medical instruments and supplies from an age far beyond medieval healing.", benefit:"A healer gains equipment centuries ahead of their time, potentially making treatment and surgery safer.", limitation:"The tools do not include the knowledge or training to use them safely. Some supplies will run out.", consequence:"Surgery and medical care could change dramatically, but only if people learn how to use the equipment."},
+      {id:"worldmap", locationId:"glasswind", name:"Modern World Map", icon:"🗺️", image:"./assets/objects/worldmap.svg", description:"The world as it appears in 2027 — continents, oceans, countries and distant places revealed in a single sheet.", benefit:"Knowledge of the true geography of the world and the locations of lands beyond the familiar medieval horizon.", limitation:"Political borders, names and countries may be very different from those in 1473.", consequence:"Exploration, trade, and colonisation could unfold along entirely different paths."},
+      {id:"firearm", locationId:"emberfall", name:"Modern Firearm", icon:"⚔️", image:"./assets/objects/firearm.svg", description:"A compact mechanical weapon from the future, unlike anything a medieval warrior has handled.", benefit:"A weapon centuries ahead of the arms and armour available in 1473.", limitation:"A strictly limited supply of ammunition, with no realistic ability to make more or repair the mechanism.", consequence:"Its brief advantage could change a confrontation — and spark fear, conflict or a dangerous struggle for power."},
+      {id:"led", locationId:"stormglass", name:"Portable LED Lights", icon:"💡", image:"./assets/objects/led.svg", description:"A string of glittering electric lights, bright as little captive stars and entirely without flame.", benefit:"Bright, efficient, safer lighting without smoke or fire. Preeeeeeety. So many sparkles.", limitation:"The batteries or power supply will eventually run out.", consequence:"Probably little lasting historical change — but nights could become considerably more beautiful."},
+      {id:"condoms", locationId:"sanctum", name:"Condoms / Contraceptive Supplies", icon:"✧", image:"./assets/objects/condoms.svg", description:"Small sealed modern supplies whose purpose may be unfamiliar to the people of 1473.", benefit:"Contraception that gives people more control over pregnancy and family planning, while also reducing the risk of some infections.", limitation:"They are single-use, limited in number and may not be understood without explanation.", consequence:"If their purpose becomes known, marriage, inheritance, family size and women's lives might change profoundly."},
+      {id:"filter", locationId:"bleakwater", name:"Portable Water Purifier", icon:"💧", image:"./assets/objects/filter.svg", description:"A portable device made to remove many contaminants from drinking water.", benefit:"Safer water could reduce disease and deaths, improving the health of an entire settlement.", limitation:"Maintenance, filters and replacement parts cannot readily be found in 1473. It will eventually fail and cannot remove every contaminant.", consequence:"A village could grow around a source of safer drinking water, transforming its health, agriculture and prosperity."},
+      {id:"seeds", locationId:"verdant", name:"Agricultural Seed Collection", icon:"🌱", image:"./assets/objects/seeds.svg", description:"An assortment of modern crop seeds, preserved for a world very different from the one they now inhabit.", benefit:"Modern varieties could bring better harvests, new foods and greater resilience.", limitation:"Successful cultivation depends on suitable soil, climate, knowledge, time and care.", consequence:"If the crops thrive, farming, diets and the ability of communities to survive may be transformed for generations."}
     ],
     glitches: [
       {id:"signal01",type:"message",text:"ERROR 0x1473 // FUTURE SIGNAL LEAK DETECTED",source:"",durationSeconds:3},
@@ -66,7 +67,7 @@
       .map(Number).filter(function(n){return Number.isFinite(n)&&n>0&&n<c.durationMinutes;})
       .map(function(n){return Math.round(n*100)/100;})
       .filter(function(n,i,a){return a.indexOf(n)===i;}).sort(function(a,b){return b-a;});
-    c.version=2;
+    c.version=3;
     if(!Array.isArray(raw.locations)||raw.locations.length!==7) c.locations=clone(DEFAULT_CONFIG.locations);
     else {
       var uniqueLocations=new Set();
@@ -79,16 +80,17 @@
       });
     }
     if (!Array.isArray(c.objects)) throw new Error("objects must be an array.");
-    var sourceObjects=c.objects;
-    if(raw.version!==2 && sourceObjects.length>9) sourceObjects=sourceObjects.filter(function(o){return o&&["glasses","bicycle","drive"].indexOf(o.id)<0;});
-    if(sourceObjects.length>9) throw new Error("This game supports exactly nine item slots. Remove extra objects before importing.");
+    // A one-time upgrade from the old sample inventory installs Saulė's ten approved relics.
+    // Existing custom location descriptions remain intact; older game sessions reset safely.
+    var sourceObjects=Number(raw.version)<3?clone(DEFAULT_CONFIG.objects):c.objects;
+    if(sourceObjects.length>10) throw new Error("This crossing holds at most ten relics.");
     var used={};
     c.objects=sourceObjects.map(function(o,i){
       o=(o&&typeof o==="object")?o:{};
       var id=asText(o.id)||("object-"+i);
       if(used[id]) id=id+"-"+i;
       used[id]=true;
-      return {id:id,locationId:c.locations.some(function(l){return l.id===o.locationId;})?o.locationId:(DEFAULT_CONFIG.objects.find(function(x){return x.id===id;})||DEFAULT_CONFIG.objects[i%DEFAULT_CONFIG.objects.length]).locationId,name:asText(o.name).slice(0,70)||"Unknown Object",icon:asText(o.icon).slice(0,12)||"✦",image:mediaUrl(o.image),description:asText(o.description).slice(0,220),benefit:asText(o.benefit).slice(0,260),limitation:asText(o.limitation).slice(0,260)};
+      return {id:id,locationId:c.locations.some(function(l){return l.id===o.locationId;})?o.locationId:(DEFAULT_CONFIG.objects.find(function(x){return x.id===id;})||DEFAULT_CONFIG.objects[i%DEFAULT_CONFIG.objects.length]).locationId,name:asText(o.name).slice(0,70)||"Unknown Object",icon:asText(o.icon).slice(0,12)||"✦",image:mediaUrl(o.image),description:asText(o.description).slice(0,480),benefit:asText(o.benefit).slice(0,780),limitation:asText(o.limitation).slice(0,780),consequence:asText(o.consequence).slice(0,780)};
     });
     if(c.objects.length===0) throw new Error("At least one object is required.");
     if (!Array.isArray(c.glitches)) c.glitches=[];
@@ -101,10 +103,10 @@
   function readStored(key) { try {var s=localStorage.getItem(key);return s?JSON.parse(s):null;}catch(e){return null;} }
   var config;
   try {config=normalizeConfig(readStored(CONFIG_KEY)||DEFAULT_CONFIG);} catch(e){config=normalizeConfig(DEFAULT_CONFIG);}
-  function freshSession() {return {phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
+  function freshSession() {return {version:3,phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
   function loadSession() {
     var s=readStored(SESSION_KEY);
-    if(!s||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
+    if(!s||s.version!==3||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
     var merged=Object.assign(freshSession(),s);
     merged.lost=Array.isArray(merged.lost)?merged.lost.filter(function(l){return l&&typeof l.id==="string";}):[];
     merged.fired=Array.isArray(merged.fired)?merged.fired:[];
@@ -292,6 +294,7 @@
     $("detailDescription").textContent=obj.description;
     $("detailBenefit").textContent=obj.benefit||"Unknown";
     $("detailLimitation").textContent=obj.limitation||"Unknown";
+    $("detailConsequence").textContent=obj.consequence||"The consequences are not yet known.";
     var canPlay=state.phase==="running"&&!state.paused;
     var last=activeObjects().length===1;
     $("destroyRequest").hidden=last;
@@ -483,14 +486,14 @@
     select.value=selectedObjEditor;
     var obj=config.objects.find(function(o){return o.id===selectedObjEditor;});
     if(!obj)return;
-    $("objName").value=obj.name;$("objIcon").value=obj.icon;$("objDescription").value=obj.description;$("objBenefit").value=obj.benefit;$("objLimitation").value=obj.limitation;$("objImage").value=obj.image;
+    $("objName").value=obj.name;$("objIcon").value=obj.icon;$("objDescription").value=obj.description;$("objBenefit").value=obj.benefit;$("objLimitation").value=obj.limitation;$("objConsequence").value=obj.consequence||"";$("objImage").value=obj.image;
     $("objLocation").innerHTML=config.locations.map(function(loc){return '<option value="'+html(loc.id)+'">'+html(loc.name)+'</option>';}).join("");
     $("objLocation").value=obj.locationId;
   }
   function saveObject() {
     var obj=config.objects.find(function(o){return o.id===selectedObjEditor;});if(!obj)return;
     obj.name=$("objName").value.trim().slice(0,70)||"Unknown Object";obj.icon=$("objIcon").value.trim().slice(0,12)||"✦";
-    obj.description=$("objDescription").value.trim().slice(0,220);obj.benefit=$("objBenefit").value.trim().slice(0,260);obj.limitation=$("objLimitation").value.trim().slice(0,260);
+    obj.description=$("objDescription").value.trim().slice(0,480);obj.benefit=$("objBenefit").value.trim().slice(0,780);obj.limitation=$("objLimitation").value.trim().slice(0,780);obj.consequence=$("objConsequence").value.trim().slice(0,780);
     var img=$("objImage").value.trim();
     if(img&&!mediaUrl(img))return notice("Invalid image URL. Use HTTPS or a relative asset path.");
     obj.image=img;
@@ -498,9 +501,9 @@
     persist();render();renderObjectEditor();notice("Object saved locally. Export your configuration for backup.");
   }
   function addObject() {
-    if(config.objects.length>=9)return notice("All nine object slots are filled. Remove an object before adding a replacement.");
+    if(config.objects.length>=10)return notice("The crossing already holds ten relics.");
     var id="item-"+Date.now();
-    config.objects.push({id:id,locationId:config.locations[0].id,name:"New Future Object",icon:"✦",description:"Describe the artefact from 2027.",benefit:"",limitation:"",image:""});
+    config.objects.push({id:id,locationId:config.locations[0].id,name:"Unidentified Relic",icon:"✦",description:"",benefit:"",limitation:"",consequence:"",image:""});
     selectedObjEditor=id;persist();render();renderObjectEditor();notice("New object added.");
   }
   function deleteObject() {
