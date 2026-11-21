@@ -1,0 +1,94 @@
+/* Journey between worlds — original mythic portal visuals, no external art/runtime. */
+:root{--world-gold:#ead2a0;--world-teal:#b0f7e8;--world-ink:#030a10}
+.world-stage{flex:1;min-height:360px;position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(179,233,214,.18);background:#080e17;box-shadow:inset 0 0 0 1px rgba(194,234,223,.06),0 22px 70px rgba(0,0,0,.3)}
+.world-stage:after{content:"";position:absolute;pointer-events:none;inset:0;z-index:8;border:11px solid transparent;border-image:linear-gradient(135deg,rgba(239,203,150,.5),transparent 21%,transparent 79%,rgba(239,203,150,.35)) 1;opacity:.65}
+.world-scene{position:absolute;inset:0;overflow:hidden;animation:worldArrival .6s ease both}
+.world-scene[hidden],.world-stage[hidden],.realm-nav[hidden]{display:none!important}
+.world-scene h2{font:normal clamp(32px,4.7vw,84px)/.99 Georgia,"Times New Roman",serif;letter-spacing:.03em;text-shadow:0 4px 27px #01050a;color:#f2e6d1;margin:15px 0 16px}
+.world-scene h2 em{font-style:normal;color:var(--world-gold)}
+.world-eyebrow{font:700 11px/1.4 "Courier New",monospace;letter-spacing:.23em;color:#b0e7d2}
+.world-button,.world-secondary{font:700 12px/1.2 "Courier New",monospace;letter-spacing:1.3px;min-height:51px;padding:14px 19px;display:inline-flex;align-items:center;justify-content:space-between;gap:23px;touch-action:manipulation}
+.world-button{border:1px solid #e4c48a;color:#071a1d;background:linear-gradient(125deg,#d7b784,#ffe1a8 48%,#c8a574);box-shadow:0 5px 24px rgba(231,176,108,.17),inset 0 0 0 2px rgba(14,32,36,.3);text-shadow:none}
+.world-button:hover{box-shadow:0 0 35px rgba(234,199,139,.35);filter:brightness(1.1)}
+.world-button span:last-child{font-size:24px;line-height:1}
+.world-secondary{color:#c9e9da;background:rgba(5,24,31,.7);border:1px solid rgba(156,217,201,.4);justify-content:center}
+.world-secondary:hover{border-color:#ead2a0;color:#fff0c7}
+.world-scene p{line-height:1.6;color:#bbd2ce}
+.world-gate{background:linear-gradient(90deg,rgba(2,9,15,.95) 0%,rgba(2,9,15,.78) 42%,rgba(4,12,17,.15) 100%),url("./assets/world/gate-landscape.svg") center/cover no-repeat}
+.world-gate:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#040b10 0%,transparent 27%),radial-gradient(ellipse at 78% 45%,rgba(75,225,195,.13),transparent 40%)}
+.world-entry-copy{position:absolute;z-index:4;left:clamp(24px,5vw,100px);top:50%;transform:translateY(-50%);max-width:min(49%,640px);display:flex;flex-direction:column;align-items:flex-start}
+.world-entry-copy h2{font-size:clamp(39px,5.1vw,93px)}
+.world-entry-copy p{max-width:480px;font-size:clamp(13px,1.17vw,19px);margin:0 0 26px}
+.world-entry-copy .world-button{min-width:min(420px,100%)}
+.world-entry-copy small{font:700 10px/1.6 "Courier New",monospace;color:#8eafa7;letter-spacing:2px;margin-top:23px}
+.world-entry-copy small span{color:#f3d19a;margin:0 8px}
+.gate-composition{position:absolute;z-index:2;right:3.5%;top:48%;transform:translateY(-50%);width:min(51vw,660px);height:min(51vw,660px);max-height:96%;display:grid;place-items:center;filter:drop-shadow(0 0 42px rgba(111,235,201,.17))}
+.gate-backglow{position:absolute;width:79%;height:82%;border-radius:50%;background:radial-gradient(ellipse,#d6ffd9 0%,#a1ece1 14%,#3c99a5 34%,rgba(35,92,104,.6) 51%,rgba(31,55,65,.18) 67%,transparent 72%);filter:blur(15px);animation:gateBreath 5s ease-in-out infinite}
+.gate-ring{position:absolute;border-radius:50%;box-shadow:inset 0 0 35px rgba(175,250,222,.09),0 0 18px rgba(95,210,188,.2);border:9px solid rgba(157,173,150,.58)}
+.gate-ring-outer{width:95%;height:95%;border:24px ridge #3c4946;background:repeating-conic-gradient(from 0deg,transparent 0 8deg,rgba(209,212,162,.35) 8.5deg 9deg,transparent 9.5deg 22deg);box-shadow:inset 0 0 0 3px #809386,inset 0 0 0 16px #1d3433,inset 0 0 25px 20px rgba(115,253,233,.24),0 0 0 3px #1b2928,0 0 49px 8px rgba(119,246,208,.22)}
+.gate-ring-outer span{display:block;width:100%;text-align:center;position:absolute;top:4%;font-size:clamp(10px,1.8vw,25px);letter-spacing:9px;color:#d8d6ac;text-shadow:0 0 11px #aafad6}
+.gate-ring-middle{width:79%;height:79%;border:9px dashed rgba(202,240,213,.7);animation:gateSpin 50s linear infinite}
+.gate-ring-inner{width:61%;height:61%;border:5px solid rgba(170,249,225,.65);animation:gateSpin 40s linear infinite reverse}
+.gate-core{position:absolute;width:50%;height:50%;border-radius:50%;box-shadow:0 0 35px rgba(168,255,226,.68),inset 0 0 40px rgba(208,255,247,.35);background:radial-gradient(ellipse,#d2fff0 0%,#8de5db 13%,#468e9e 27%,#244b60 54%,#0b2331 72%);opacity:.7;animation:gateShimmer 6s ease-in-out infinite}
+.gate-foundation{position:absolute;bottom:-6%;width:112%;height:14%;background:radial-gradient(ellipse,#1b292c 20%,#080d10 69%,transparent 71%);border-radius:50%}
+.world-corner-mark{position:absolute;z-index:3;bottom:24px;right:28px;font:700 10px "Courier New",monospace;letter-spacing:2px;color:#e2cfaa}.world-corner-mark span{display:block;color:#99c6bf;text-align:right;margin-top:6px}
+.world-path{background:linear-gradient(0deg,rgba(2,6,12,.4),transparent 48%),url("./assets/world/void-landscape.svg") center/cover no-repeat}
+.world-path:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 51% 56%,rgba(168,232,222,.12),transparent 43%);animation:gateBreath 6s ease-in-out infinite}
+.path-title{position:absolute;z-index:4;text-align:center;left:10%;right:10%;top:6%}
+.path-title h2{font-size:clamp(35px,3.7vw,64px);margin:8px 0}
+.path-title p{margin:0;font-size:clamp(12px,1vw,16px)}
+.void-walkway{position:absolute;inset:8% 0 9%;z-index:2;perspective:500px;pointer-events:none}
+.void-track{position:absolute;width:min(100%,1000px);left:50%;transform:translateX(-50%) perspective(400px) rotateX(55deg);bottom:-45%;height:92%;clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);border:1px solid #8bf6d8;background:repeating-linear-gradient(180deg,transparent 0 40px,rgba(149,236,208,.42) 42px,transparent 44px 72px),linear-gradient(90deg,rgba(71,145,160,.08),rgba(124,218,218,.26),rgba(71,145,160,.08));box-shadow:0 0 50px rgba(100,246,216,.15);opacity:.75}
+.void-track:before,.void-track:after{content:"";position:absolute;inset:0;border-left:6px solid rgba(167,243,223,.59);border-right:6px solid rgba(167,243,223,.59);filter:drop-shadow(0 0 13px #7ec9bd)}
+.void-altar{position:absolute;top:33%;left:50%;transform:translateX(-50%) scale(var(--altar-scale,.4));transform-origin:center 100%;width:210px;height:255px;clip-path:polygon(19% 8%,73% 1%,91% 21%,88% 90%,73% 99%,15% 96%,4% 78%,8% 22%);background:linear-gradient(120deg,#131e25,#556366 43%,#1f343a 73%,#0d151c);border:7px solid rgba(235,211,162,.5);box-shadow:0 0 35px rgba(126,239,205,.4);display:grid;place-items:center;filter:drop-shadow(0 0 22px rgba(185,243,212,.5))}
+.void-altar-symbol{font:110px/1 Georgia,serif;color:#dfe6c0;text-shadow:0 0 30px #a3f9cc}
+.walk-console{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:5;text-align:center;width:min(440px,90%)}
+.walk-progress-line{display:flex;justify-content:space-between;color:#f4daa9;margin-bottom:6px;font:700 12px "Courier New",monospace}
+.walk-track{width:100%;height:7px;border:1px solid rgba(184,232,215,.6);background:rgba(0,0,0,.5);margin:12px 0 14px}
+.walk-track>div{height:100%;width:0;background:linear-gradient(90deg,#4bada5,#e8ce9e);box-shadow:0 0 14px rgba(135,244,217,.5);transition:width .2s ease}
+.walk-console .world-button{width:100%}
+.walk-console p{font:11px/1.4 "Courier New",monospace;color:#93b5b0;margin:9px 0 0}
+.world-dial{display:grid;grid-template-columns:44% 56%;align-items:center;background:radial-gradient(ellipse at 75% 38%,rgba(119,149,146,.22),transparent 55%),linear-gradient(135deg,#071119 5%,#10232a 51%,#07151b 100%)}
+.world-dial:before{content:"";position:absolute;inset:0;background:url("./assets/world/void-landscape.svg") center/cover;opacity:.18;pointer-events:none}
+.dial-left{position:relative;z-index:3;padding:clamp(18px,4vw,64px);padding-right:0;min-width:0}
+.dial-left h2{font-size:clamp(32px,4.2vw,70px)}
+.dial-left>p{font-size:clamp(12px,1.06vw,17px);max-width:470px}
+.location-readout{border-top:1px solid rgba(234,210,160,.4);margin:24px 0 12px;padding-top:19px;max-width:450px}
+.location-readout .world-eyebrow{display:flex;justify-content:space-between;gap:12px}
+.location-readout h3{font:normal clamp(24px,2.6vw,43px)/1.12 Georgia,serif;margin:10px 0;color:#f4daac}
+.location-readout p{font-size:clamp(12px,1vw,15px);min-height:44px;margin:0 0 9px}
+.location-stock{font:700 11px "Courier New",monospace;letter-spacing:2px;color:#9ff2d7}
+.dial-commands{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.dial-commands .world-secondary{font-size:10px;min-height:50px}
+.slab-area{position:relative;min-width:0;height:100%;display:grid;place-items:center;padding:15px 30px}
+.slab-halo{position:absolute;width:80%;height:86%;border-radius:50%;background:radial-gradient(ellipse,rgba(183,231,196,.13),transparent 60%);filter:blur(20px)}
+.stone-slab{position:relative;width:min(100%,640px);height:min(95%,690px);max-height:100%;aspect-ratio:.94;display:flex;flex-direction:column;align-items:center;justify-content:center;clip-path:polygon(11% 3%,84% 0,96% 13%,100% 88%,87% 100%,9% 96%,0 82%,3% 17%);background:repeating-linear-gradient(152deg,transparent 0 45px,rgba(245,244,218,.025) 46px 48px),radial-gradient(ellipse at 30% 15%,#536463,#273b3d 48%,#101c24 90%);box-shadow:inset 0 0 50px rgba(0,0,0,.6);border:3px solid rgba(213,212,173,.35)}
+.stone-slab:before{content:"";position:absolute;inset:14px;pointer-events:none;clip-path:polygon(10% 2%,85% 2%,95% 14%,99% 86%,87% 99%,10% 95%,1% 81%,3% 17%);border:2px solid rgba(218,212,161,.26);background:repeating-linear-gradient(34deg,transparent 0 68px,rgba(0,0,0,.06) 69px,transparent 74px)}
+.slab-rune-title{position:relative;z-index:2;text-align:center;color:rgba(232,214,172,.66);font-size:clamp(11px,1.6vw,24px);letter-spacing:1vw;margin-bottom:12px}
+.stone-dial{position:relative;z-index:2;width:min(77%,465px);aspect-ratio:1;border-radius:50%;border:13px ridge #66716a;background:radial-gradient(ellipse at center,#152a32 0%,#0c1f28 36%,#3f514f 37%,#1e3538 44%,#132a34 45%,#273d41 70%,#141e27 71%,#273d3e 100%);box-shadow:inset 0 0 12px 2px #031017,inset 0 0 48px #000,0 0 0 5px rgba(15,26,32,.8),0 0 30px rgba(165,248,214,.19)}
+.stone-dial:before{content:"";position:absolute;inset:5%;border-radius:50%;border:3px dashed rgba(238,217,157,.37);pointer-events:none}
+.dial-outer-etching{position:absolute;inset:16%;border:4px solid rgba(193,212,174,.18);border-radius:50%;box-shadow:0 0 12px #081e22}
+.dial-interior{position:absolute;inset:33%;border:3px ridge rgba(217,185,132,.72);border-radius:50%;background:radial-gradient(circle at 45% 32%,#4b6260,#142a31 64%,#07151c);box-shadow:inset 0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#f0d5a6;text-shadow:0 0 18px #b5f6ce}
+.dial-interior>div{font-size:clamp(29px,5.2vw,78px);line-height:1}.dial-interior small{font:700 8px "Courier New",monospace;letter-spacing:1px;color:#bad9c6}
+.rune-socket{position:absolute;z-index:5;left:var(--x);top:var(--y);transform:translate(-50%,-50%);display:grid;place-items:center;width:clamp(44px,4.8vw,69px);height:clamp(44px,4.8vw,69px);border-radius:50%;border:3px solid #777d6b;background:radial-gradient(circle at 30% 22%,#56645d,#1b3137 73%);box-shadow:0 3px 10px rgba(0,0,0,.7),inset 0 0 11px #08141b;color:#d2d9b7;font:35px/1 Georgia,serif;text-shadow:0 1px 6px #000}
+.rune-socket:hover,.rune-socket.selected{color:#ffeac1;border-color:#ffdea5;box-shadow:0 0 26px rgba(248,219,157,.7),inset 0 0 13px rgba(215,191,131,.4);background:radial-gradient(circle,#354d4a,#1d3439)}
+.rune-socket.selected:before{content:"";position:absolute;inset:-8px;border:2px solid rgba(248,212,149,.4);border-radius:50%;animation:gateBreath 2.4s infinite}
+.slab-instruction{position:relative;z-index:2;margin-top:16px;font:700 10px/1.4 "Courier New",monospace;letter-spacing:2.3px;color:#d9cbaa;text-align:center}
+.realm-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;border:1px solid var(--line);background:radial-gradient(ellipse at 25% 15%,rgba(193,222,199,.12),transparent 52%),rgba(8,22,29,.86)}
+.realm-identity{display:flex;flex-direction:column;gap:3px;min-width:0}.realm-identity strong{font:normal 24px Georgia,serif;color:var(--world-gold)}.realm-identity>span:last-child{font-size:11px;color:#b0c8c3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:440px}
+.realm-buttons{display:flex;gap:8px;flex-wrap:wrap}.realm-buttons button{min-height:42px;padding:9px 13px;font-size:10px}
+.portal.in-realm .archive-section{border:1px solid rgba(218,198,148,.2);padding:15px;background:radial-gradient(ellipse at top right,color-mix(in srgb,var(--realm-accent,#a9d9c1),transparent 85%),transparent 56%),linear-gradient(170deg,rgba(3,11,16,.88),rgba(3,12,17,.69)),var(--realm-backdrop) center / cover no-repeat;background-attachment:scroll}
+.portal.in-realm .object-card{border-color:color-mix(in srgb,var(--realm-accent,#a9d9c1),transparent 65%)}
+.portal.in-realm .section-kicker{color:var(--realm-accent,#a9d9c1)}
+.world-stage.in-emergency{filter:grayscale(.15)}.emergency-strip{z-index:10}
+@keyframes worldArrival{from{opacity:.15;filter:blur(11px);transform:scale(1.018)}to{opacity:1;filter:none;transform:scale(1)}}
+@keyframes gateBreath{50%{opacity:.57;filter:brightness(1.25)}}
+@keyframes gateSpin{to{transform:rotate(360deg)}}
+@keyframes gateShimmer{50%{opacity:.4;transform:scale(.94)}}
+@media(max-width:1000px){.world-entry-copy{max-width:54%}.gate-composition{right:-3%;width:53vw;height:53vw}.world-dial{grid-template-columns:46% 54%}.slab-area{padding:12px}.dial-left{padding:23px 0 23px 25px}.stone-slab{height:88%}.stone-dial{width:81%}.rune-socket{width:48px;height:48px;font-size:27px}}
+@media(max-width:760px){.world-stage{min-height:590px}.world-gate{background-position:center}.world-entry-copy{top:22px;left:22px;right:22px;transform:none;max-width:none}.world-entry-copy h2{font-size:clamp(36px,7vw,56px);margin:8px 0}.world-entry-copy p{max-width:360px;font-size:13px;margin:0 0 12px}.world-entry-copy .world-button{min-height:46px;width:min(100%,330px)}.world-entry-copy small{margin-top:10px}.gate-composition{top:auto;bottom:0;right:4%;width:min(79vw,390px);height:min(79vw,390px);transform:none}.world-corner-mark{display:none}.world-path .path-title{top:33px}.path-title h2{font-size:38px}.path-title p{font-size:12px}.void-walkway{inset:17% -20% 5%}.walk-console{bottom:18px}.world-dial{display:flex;flex-direction:column;overflow:auto}.dial-left{width:100%;padding:23px 22px 0}.dial-left h2{font-size:32px;margin:8px 0}.dial-left>p{font-size:12px;margin:0}.location-readout{margin:12px 0 8px;padding-top:10px}.location-readout h3{font-size:25px;margin:6px 0}.location-readout p{min-height:0;font-size:12px}.dial-commands{margin-top:10px}.dial-commands .world-button,.dial-commands .world-secondary{min-height:41px;font-size:10px}.slab-area{min-height:380px;width:100%;padding:5px 12px 14px}.stone-slab{height:360px;max-width:370px}.stone-dial{width:77%;max-width:285px;border-width:9px}.rune-socket{width:43px;height:43px;font-size:27px}.slab-rune-title{font-size:12px}.slab-instruction{font-size:8px}.realm-nav{flex-direction:column;align-items:stretch}.realm-buttons{width:100%}.realm-buttons button{flex:1;font-size:9px}.portal.in-realm .archive-section{min-height:400px}}
+@media(max-height:650px) and (min-width:761px){.world-stage{min-height:350px}.world-entry-copy h2{font-size:clamp(35px,4.1vw,64px)}.world-entry-copy p{font-size:13px;margin-bottom:12px}.world-dial h2{font-size:35px}.dial-left>p{font-size:12px}.location-readout{margin:12px 0 6px;padding-top:10px}.location-readout h3{font-size:27px;margin:5px 0}.location-readout p{min-height:0;font-size:12px}.stone-slab{height:98%}.stone-dial{width:auto;height:66%}.slab-rune-title{margin:3px 0}.slab-instruction{margin-top:6px}}
+@media(prefers-reduced-motion:reduce){.gate-ring-middle,.gate-ring-inner,.gate-backglow,.gate-core,.world-scene{animation:none!important}}
+
+.rune-socket.visited:not(.selected){border-color:#8bc7b5;box-shadow:inset 0 0 13px #09141c,0 0 10px rgba(111,199,167,.22)}
+.portal.in-realm .archive-section{animation:worldArrival .55s ease both}

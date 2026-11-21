@@ -4,7 +4,7 @@
   var CONFIG_KEY = "chronos1473_config_v1";
   var SESSION_KEY = "chronos1473_session_v1";
   var DEFAULT_CONFIG = {
-    version: 1,
+    version: 2,
     title: "TEMPORAL CONNECTION",
     durationMinutes: 20,
     emergencySeconds: 45,
@@ -13,19 +13,25 @@
     glitchMinSeconds: 35,
     glitchMaxSeconds: 75,
     adminPin: "1473",
+    locations: [
+      {id:"emberfall",name:"Emberfall Keep",rune:"ᚠ",description:"A ruined stronghold above a sea of embers, where impossible records lie buried.",colour:"#e5bb83"},
+      {id:"glasswind",name:"Glasswind Bazaar",rune:"ᚹ",description:"An abandoned market of crystal mirrors and memories carried on the wind.",colour:"#93d4d4"},
+      {id:"verdant",name:"Verdant Hollow",rune:"ᛉ",description:"An ancient living valley where the soil remembers futures yet to bloom.",colour:"#a3d49c"},
+      {id:"stormglass",name:"Stormglass Spire",rune:"ᚱ",description:"A tower beneath a permanent storm, lit by lightning and stolen sunlight.",colour:"#b2bdf0"},
+      {id:"bleakwater",name:"Bleakwater Crossing",rune:"ᛚ",description:"A silent crossing over black water, guarded by echoes and silver mist.",colour:"#90d6dd"},
+      {id:"sanctum",name:"The Quiet Sanctum",rune:"ᛟ",description:"A forgotten hall of healers where forbidden remedies are kept.",colour:"#e4b9d7"},
+      {id:"iron",name:"Echoes of Iron",rune:"ᚨ",description:"A cavern of dormant machines whose voices may never sound again.",colour:"#e8c59e"}
+    ],
     objects: [
-      {id:"smartphone", name:"Smartphone", icon:"📱", image:"./assets/objects/smartphone.svg", description:"A pocket-sized glass screen. Its battery holds 37% charge. There is no charger.", benefit:"Displays maps, photographs, notes and stored knowledge while powered.", limitation:"The battery will die. No network, repair parts or compatible charging infrastructure exists in 1473."},
-      {id:"history", name:"History Book: 1300–2027", icon:"📖", image:"./assets/objects/history.svg", description:"A printed record of wars, discoveries, rulers and events that have not yet happened.", benefit:"Could warn of future disasters and reveal centuries of discoveries.", limitation:"Events might change when acted upon; predictions could be incomplete or dangerously misunderstood."},
-      {id:"seeds", name:"Agricultural Seed Collection", icon:"🌱", image:"./assets/objects/seeds.svg", description:"Sealed packets of crop varieties selected and preserved in the future.", benefit:"Potential for improved yields, food diversity and resilience over generations.", limitation:"Climate and soil suitability are uncertain; seeds can fail, spread disease or be used up."},
-      {id:"camera", name:"Digital Camera", icon:"📷", image:"./assets/objects/camera.svg", description:"A compact device that records the world as moving or still images.", benefit:"A powerful tool for documenting people, places and evidence.", limitation:"It has a finite battery and limited storage, with no simple way to reproduce the technology."},
-      {id:"filter", name:"Portable Water Filter", icon:"💧", image:"./assets/objects/filter.svg", description:"A small modern system for filtering contaminated water.", benefit:"Could reduce some waterborne illness immediately.", limitation:"Filters wear out; it will not eliminate every pathogen or chemical contaminant."},
-      {id:"medicine", name:"Antibiotic Medicine Kit", icon:"💊", image:"./assets/objects/medicine.svg", description:"A limited supply of modern antibacterial medicines.", benefit:"May treat certain bacterial infections that were often fatal in 1473.", limitation:"Finite supply, allergies, dosing risks and resistance; effectiveness depends on proper medical use."},
-      {id:"solar", name:"Portable Solar Charger", icon:"☀️", image:"./assets/objects/solar.svg", description:"A folding panel that turns sunlight into usable electrical power.", benefit:"Can power some small modern electronics without fuel.", limitation:"Requires sunlight and compatible devices; electrical components are hard to repair."},
-      {id:"microscope", name:"Field Microscope", icon:"🔬", image:"./assets/objects/microscope.svg", description:"A compact optical instrument for examining things too small to see.", benefit:"Might accelerate learning about plants, water and the causes of disease.", limitation:"Requires careful use and interpretation; lenses and precise parts are fragile."},
-      {id:"glasses", name:"Modern Eyeglasses", icon:"👓", image:"./assets/objects/glasses.svg", description:"Precision-made lenses in a lightweight frame.", benefit:"Can immediately restore clearer vision for a person with a matching prescription.", limitation:"Useful to only some people; fragile and nearly impossible to duplicate precisely."},
-      {id:"radio", name:"Wind-up Emergency Radio", icon:"📻", image:"./assets/objects/radio.svg", description:"A hand-powered device designed to receive distant voices.", benefit:"A striking demonstration of electromagnetic technology and portable power.", limitation:"There are no radio broadcasters in 1473; it has little immediate practical use."},
-      {id:"bicycle", name:"Folding Bicycle", icon:"🚲", image:"./assets/objects/bicycle.svg", description:"A compact, human-powered transport machine.", benefit:"Potentially faster local travel and a model for mechanical innovation.", limitation:"Poor roads, difficult maintenance and no supply of compatible replacement parts."},
-      {id:"drive", name:"Encrypted USB Drive", icon:"💾", image:"./assets/objects/drive.svg", description:"A tiny storage device containing an unknown archive from 2027.", benefit:"Might hold books, scientific knowledge or records from the future.", limitation:"Without a compatible computer, power and credentials, its contents are inaccessible."}
+      {id:"smartphone", locationId:"emberfall", name:"Smartphone", icon:"📱", image:"./assets/objects/smartphone.svg", description:"A pocket-sized glass screen. Its battery holds 37% charge. There is no charger.", benefit:"Displays maps, photographs, notes and stored knowledge while powered.", limitation:"The battery will die. No network, repair parts or compatible charging infrastructure exists in 1473."},
+      {id:"history", locationId:"emberfall", name:"History Book: 1300–2027", icon:"📖", image:"./assets/objects/history.svg", description:"A printed record of wars, discoveries, rulers and events that have not yet happened.", benefit:"Could warn of future disasters and reveal centuries of discoveries.", limitation:"Events might change when acted upon; predictions could be incomplete or dangerously misunderstood."},
+      {id:"seeds", locationId:"verdant", name:"Agricultural Seed Collection", icon:"🌱", image:"./assets/objects/seeds.svg", description:"Sealed packets of crop varieties selected and preserved in the future.", benefit:"Potential for improved yields, food diversity and resilience over generations.", limitation:"Climate and soil suitability are uncertain; seeds can fail, spread disease or be used up."},
+      {id:"camera", locationId:"glasswind", name:"Digital Camera", icon:"📷", image:"./assets/objects/camera.svg", description:"A compact device that records the world as moving or still images.", benefit:"A powerful tool for documenting people, places and evidence.", limitation:"It has a finite battery and limited storage, with no simple way to reproduce the technology."},
+      {id:"filter", locationId:"bleakwater", name:"Portable Water Filter", icon:"💧", image:"./assets/objects/filter.svg", description:"A small modern system for filtering contaminated water.", benefit:"Could reduce some waterborne illness immediately.", limitation:"Filters wear out; it will not eliminate every pathogen or chemical contaminant."},
+      {id:"medicine", locationId:"sanctum", name:"Antibiotic Medicine Kit", icon:"💊", image:"./assets/objects/medicine.svg", description:"A limited supply of modern antibacterial medicines.", benefit:"May treat certain bacterial infections that were often fatal in 1473.", limitation:"Finite supply, allergies, dosing risks and resistance; effectiveness depends on proper medical use."},
+      {id:"solar", locationId:"stormglass", name:"Portable Solar Charger", icon:"☀️", image:"./assets/objects/solar.svg", description:"A folding panel that turns sunlight into usable electrical power.", benefit:"Can power some small modern electronics without fuel.", limitation:"Requires sunlight and compatible devices; electrical components are hard to repair."},
+      {id:"microscope", locationId:"verdant", name:"Field Microscope", icon:"🔬", image:"./assets/objects/microscope.svg", description:"A compact optical instrument for examining things too small to see.", benefit:"Might accelerate learning about plants, water and the causes of disease.", limitation:"Requires careful use and interpretation; lenses and precise parts are fragile."},
+      {id:"radio", locationId:"iron", name:"Wind-up Emergency Radio", icon:"📻", image:"./assets/objects/radio.svg", description:"A hand-powered device designed to receive distant voices.", benefit:"A striking demonstration of electromagnetic technology and portable power.", limitation:"There are no radio broadcasters in 1473; it has little immediate practical use."},
     ],
     glitches: [
       {id:"signal01",type:"message",text:"ERROR 0x1473 // FUTURE SIGNAL LEAK DETECTED",source:"",durationSeconds:3},
@@ -60,14 +66,29 @@
       .map(Number).filter(function(n){return Number.isFinite(n)&&n>0&&n<c.durationMinutes;})
       .map(function(n){return Math.round(n*100)/100;})
       .filter(function(n,i,a){return a.indexOf(n)===i;}).sort(function(a,b){return b-a;});
+    c.version=2;
+    if(!Array.isArray(raw.locations)||raw.locations.length!==7) c.locations=clone(DEFAULT_CONFIG.locations);
+    else {
+      var uniqueLocations=new Set();
+      c.locations=raw.locations.map(function(l,i){
+        l=(l&&typeof l==="object")?l:{};
+        var stableId=DEFAULT_CONFIG.locations[i].id;
+        uniqueLocations.add(stableId);
+        var colour=/^#[0-9a-fA-F]{6}$/.test(asText(l.colour))?l.colour:DEFAULT_CONFIG.locations[i].colour;
+        return {id:stableId,name:asText(l.name).slice(0,55)||DEFAULT_CONFIG.locations[i].name,rune:asText(l.rune).slice(0,5)||DEFAULT_CONFIG.locations[i].rune,description:asText(l.description).slice(0,260),colour:colour};
+      });
+    }
     if (!Array.isArray(c.objects)) throw new Error("objects must be an array.");
+    var sourceObjects=c.objects;
+    if(raw.version!==2 && sourceObjects.length>9) sourceObjects=sourceObjects.filter(function(o){return o&&["glasses","bicycle","drive"].indexOf(o.id)<0;});
+    if(sourceObjects.length>9) throw new Error("This game supports exactly nine item slots. Remove extra objects before importing.");
     var used={};
-    c.objects=c.objects.slice(0,36).map(function(o,i){
+    c.objects=sourceObjects.map(function(o,i){
       o=(o&&typeof o==="object")?o:{};
       var id=asText(o.id)||("object-"+i);
       if(used[id]) id=id+"-"+i;
       used[id]=true;
-      return {id:id,name:asText(o.name).slice(0,70)||"Unknown Object",icon:asText(o.icon).slice(0,12)||"✦",image:mediaUrl(o.image),description:asText(o.description).slice(0,220),benefit:asText(o.benefit).slice(0,260),limitation:asText(o.limitation).slice(0,260)};
+      return {id:id,locationId:c.locations.some(function(l){return l.id===o.locationId;})?o.locationId:(DEFAULT_CONFIG.objects.find(function(x){return x.id===id;})||DEFAULT_CONFIG.objects[i%DEFAULT_CONFIG.objects.length]).locationId,name:asText(o.name).slice(0,70)||"Unknown Object",icon:asText(o.icon).slice(0,12)||"✦",image:mediaUrl(o.image),description:asText(o.description).slice(0,220),benefit:asText(o.benefit).slice(0,260),limitation:asText(o.limitation).slice(0,260)};
     });
     if(c.objects.length===0) throw new Error("At least one object is required.");
     if (!Array.isArray(c.glitches)) c.glitches=[];
@@ -80,7 +101,7 @@
   function readStored(key) { try {var s=localStorage.getItem(key);return s?JSON.parse(s):null;}catch(e){return null;} }
   var config;
   try {config=normalizeConfig(readStored(CONFIG_KEY)||DEFAULT_CONFIG);} catch(e){config=normalizeConfig(DEFAULT_CONFIG);}
-  function freshSession() {return {phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[]};}
+  function freshSession() {return {phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
   function loadSession() {
     var s=readStored(SESSION_KEY);
     if(!s||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
@@ -88,10 +109,16 @@
     merged.lost=Array.isArray(merged.lost)?merged.lost.filter(function(l){return l&&typeof l.id==="string";}):[];
     merged.fired=Array.isArray(merged.fired)?merged.fired:[];
     merged.log=Array.isArray(merged.log)?merged.log.slice(0,40):[];
+    merged.scene=["gate","path","dial","archive"].includes(merged.scene)?merged.scene:"gate";
+    merged.walkProgress=intRange(merged.walkProgress,0,100,0);
+    merged.selectedLocation=config.locations.some(function(l){return l.id===merged.selectedLocation;})?merged.selectedLocation:config.locations[0].id;
+    merged.visited=Array.isArray(merged.visited)?merged.visited.filter(function(id){return config.locations.some(function(l){return l.id===id;});}):[];
+    merged.viewAll=!!merged.viewAll;
+    if(merged.emergency){merged.scene="archive";merged.viewAll=true;}
     return merged;
   }
   var state=loadSession();
-  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null;
+  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null;
   function persist() {try{localStorage.setItem(CONFIG_KEY,JSON.stringify(config));localStorage.setItem(SESSION_KEY,JSON.stringify(state));return true;}catch(e){notice("Local storage is full or unavailable. Export your configuration.");return false;}}
   function saveSession() {try{localStorage.setItem(SESSION_KEY,JSON.stringify(state));}catch(e){notice("Session cannot be saved on this device.");}}
   function notice(message) {$("adminNotice").textContent=message; toast(message);}
@@ -115,7 +142,7 @@
     $("objectGrid").classList.toggle("low-count",count<=3);
   }
   function renderGrid() {
-    var active=activeObjects(),grid=$("objectGrid");
+    var all=activeObjects(),active=(state.scene==="archive"&&!state.viewAll&&!state.emergency)?all.filter(function(o){return o.locationId===state.selectedLocation;}):all,grid=$("objectGrid");
     layoutGrid(Math.max(1,active.length));
     grid.innerHTML=active.map(function(o,index){
       return '<button class="object-card" type="button" data-object="'+html(o.id)+'" aria-label="View '+html(o.name)+'">'+
@@ -123,7 +150,8 @@
         '<div class="card-foot"><div class="card-text"><div class="card-title">'+html(o.name)+'</div><div class="card-description">'+html(o.description)+'</div></div><span class="card-arrow">↗</span></div></button>';
     }).join("");
     $("archiveEmpty").hidden=active.length>0;
-    $("remainingCount").textContent=String(active.length);
+    $("archiveEmpty").textContent=all.length?"No surviving relics here. Return to the runestone and choose another destination.":"No relics remain in the archive.";
+    $("remainingCount").textContent=String(all.length);
     $("destroyedCount").textContent=String(state.lost.length);
   }
   function renderTelemetry() {
@@ -160,7 +188,98 @@
       $("endingText").textContent="The transmission has ended before a final object was secured.";
     }
   }
-  function render() {renderGrid();renderTelemetry();renderEnding();renderSessionAdmin();}
+
+  function getLocation() {
+    return config.locations.find(function(l){return l.id===state.selectedLocation;})||config.locations[0];
+  }
+  function renderWorld() {
+    var scene=state.scene||"gate",inArchive=scene==="archive",emergency=!!state.emergency;
+    $("worldStage").hidden=inArchive;
+    $("archiveSection").hidden=!inArchive;
+    $("realmNav").hidden=!inArchive||emergency;
+    ["gate","path","dial"].forEach(function(name){
+      $("scene"+name.charAt(0).toUpperCase()+name.slice(1)).hidden=scene!==name;
+    });
+    $("worldStage").dataset.scene=scene;
+    $("portal").classList.toggle("in-realm",inArchive);
+    var loc=getLocation(),index=config.locations.indexOf(loc),available=activeObjects(),inLoc=available.filter(function(o){return o.locationId===loc.id;});
+    $("portal").style.setProperty("--realm-accent",loc.colour);
+    $("portal").style.setProperty("--realm-backdrop",'url("./assets/realms/'+loc.id+'.svg")');
+    $("worldWalkPct").textContent=state.walkProgress+"%";
+    $("worldWalkFill").style.width=state.walkProgress+"%";
+    $("voidWalkway").style.setProperty("--altar-scale",String(.38+state.walkProgress/100*.83));
+    $("worldLocationNo").textContent=String(index+1).padStart(2,"0")+" / 07";
+    $("worldLocationName").textContent=loc.name;
+    $("worldLocationDesc").textContent=loc.description;
+    $("worldLocationStock").textContent=inLoc.length+" OF "+available.length+" SURVIVING RELICS HERE";
+    $("worldSelectedRune").textContent=loc.rune;
+    $("worldLocationDial").querySelectorAll(".rune-socket").forEach(function(button){
+      var selected=button.dataset.location===loc.id;
+      button.classList.toggle("selected",selected);
+      button.setAttribute("aria-pressed",String(selected));
+    });
+    if(inArchive){
+      $("realmEyebrow").textContent=state.viewAll?"NEXUS ARCHIVE · ALL LOCATIONS":"DESTINATION "+String(index+1).padStart(2,"0")+" / 07";
+      $("realmName").textContent=state.viewAll?"THE NINE FUTURE RELICS":loc.name;
+      $("realmDescription").textContent=state.viewAll?"Showing every surviving object across all seven destinations.":loc.description;
+      $("worldAll").textContent=state.viewAll?"SHOW THIS LOCATION":"VIEW ALL REMAINING RELICS";
+    }
+  }
+  function renderDial() {
+    $("worldLocationDial").querySelectorAll(".rune-socket").forEach(function(node){node.remove();});
+    var circle=config.locations.map(function(loc,index){
+      var angle=(-90+360*index/7)*Math.PI/180;
+      var x=(50+39*Math.cos(angle)).toFixed(2),y=(50+39*Math.sin(angle)).toFixed(2);
+      return '<button type="button" class="rune-socket'+(loc.id===state.selectedLocation?" selected":"")+(state.visited.indexOf(loc.id)>=0?" visited":"")+'" data-location="'+html(loc.id)+'" style="--x:'+x+'%;--y:'+y+'%" aria-label="Select '+html(loc.name)+'" aria-pressed="'+String(loc.id===state.selectedLocation)+'" title="'+html(loc.name)+'">'+html(loc.rune)+'</button>';
+    }).join("");
+    $("worldLocationDial").insertAdjacentHTML("beforeend",circle);
+    renderWorld();
+  }
+  function chooseLocation(id) {
+    if(!config.locations.some(function(loc){return loc.id===id;}))return;
+    state.selectedLocation=id;
+    saveSession();renderWorld();
+  }
+  function enterGateway() {
+    if(state.scene!=="gate")return;
+    state.scene="path";state.walkProgress=0;
+    log("The ancient gateway opens to the space between worlds.");
+    saveSession();render();
+  }
+  function walkStep() {
+    if(state.scene!=="path"||state.emergency||state.paused)return;
+    state.walkProgress=Math.min(100,state.walkProgress+12);
+    if(state.walkProgress>=100){state.scene="dial";log("An ancient runestone emerges from the void.");}
+    saveSession();renderWorld();
+  }
+  function stopWalking() {if(walkHandle){clearInterval(walkHandle);walkHandle=null;}}
+  function openDestination() {
+    if(state.scene!=="dial"||state.emergency)return;
+    var loc=getLocation();
+    state.scene="archive";state.viewAll=false;
+    if(state.visited.indexOf(loc.id)<0)state.visited.push(loc.id);
+    log("The stone reveals "+loc.name+".");
+    saveSession();render();toast("Destination opened: "+loc.name);
+  }
+  function returnToDial() {
+    if(state.emergency)return;
+    state.scene="dial";state.viewAll=false;
+    saveSession();render();
+  }
+  function toggleArchiveView() {
+    if(state.scene!=="archive"||state.emergency)return;
+    state.viewAll=!state.viewAll;
+    saveSession();render();
+  }
+  function restoreJourneyAfterEmergency() {
+    if(!state.preEmergencyScene)return;
+    state.scene=state.preEmergencyScene;
+    state.viewAll=!!state.preEmergencyViewAll;
+    state.preEmergencyScene=null;
+    state.preEmergencyViewAll=false;
+  }
+
+  function render() {renderGrid();renderDial();renderTelemetry();renderEnding();renderSessionAdmin();}
   function closeGameplayDialogs() {if($("confirmDialog").open)$("confirmDialog").close();if($("objectDialog").open)$("objectDialog").close();pendingConfirm=null;}
   function openObject(id) {
     if(state.phase==="closed"||state.phase==="completed")return;
@@ -200,7 +319,7 @@
     if(!obj)return toast("That object is no longer available.");
     state.lost.push({id:id,reason:reason||"PLAYER CHOICE",at:Date.now()});
     log(obj.name+" destroyed // "+(reason||"PLAYER CHOICE"));
-    if(state.emergency){state.emergency=null;log("Emergency sacrifice accepted. Portal stabilised.");}
+    if(state.emergency){state.emergency=null;restoreJourneyAfterEmergency();log("Emergency sacrifice accepted. Portal stabilised.");}
     if(activeObjects().length===1)log("One candidate remains. Final retention is now possible.");
     saveSession();render();
     toast(obj.name+" removed from archive.");
@@ -221,13 +340,16 @@
     if(!state.emergency)return;
     var active=activeObjects(),count=Math.min(config.failureDestroyCount,Math.max(0,active.length-1));
     randomised(active).slice(0,count).forEach(function(o){state.lost.push({id:o.id,reason:"AUTOMATED SYSTEM FAILURE",at:Date.now()});log(o.name+" erased by temporal backlash.");});
-    state.emergency=null;
+    state.emergency=null;restoreJourneyAfterEmergency();
     log(count?("FAILURE: "+count+" random object"+(count===1?"":"s")+" erased. Portal temporarily stable."):"FAILURE: no additional object erased.");
     saveSession();closeGameplayDialogs();render();toast("Emergency timer expired: "+count+" object(s) lost.");
   }
   function startEmergency(manual) {
     if(state.phase!=="running"||state.paused||state.emergency||activeObjects().length<=1)return;
     stopGlitch();
+    state.preEmergencyScene=state.scene;
+    state.preEmergencyViewAll=state.viewAll;
+    state.scene="archive";state.viewAll=true;
     state.emergency={endsAt:Date.now()+config.emergencySeconds*1000,remainingMs:null};
     log(manual?"Organiser triggered a critical instability.":"CRITICAL INSTABILITY — sacrifice required.");
     saveSession();closeGameplayDialogs();render();
@@ -235,7 +357,7 @@
   }
   function resolveEmergency() {
     if(!state.emergency)return;
-    state.emergency=null;log("Organiser override: portal stabilised.");saveSession();closeGameplayDialogs();render();
+    state.emergency=null;restoreJourneyAfterEmergency();log("Organiser override: portal stabilised.");saveSession();closeGameplayDialogs();render();
   }
   function checkTriggers(rem) {
     if(state.emergency||state.phase!=="running"||state.paused)return;
@@ -311,7 +433,7 @@
   function renderSessionAdmin() {
     if(!$("adminContent")||!adminUnlocked)return;
     var items=activeObjects().length;
-    $("sessionSummary").textContent="PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+timeText(remainingMs())+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
+    $("sessionSummary").textContent="SCENE: "+state.scene.toUpperCase()+"  •  PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+timeText(remainingMs())+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
     $("adminHistory").innerHTML=state.log.length?state.log.map(function(entry){return "<p>"+html(entry.time)+" — "+html(entry.text)+"</p>";}).join(""):"<p>No events recorded yet.</p>";
     $("sessionPause").disabled=state.phase!=="running";
     $("sessionInstability").disabled=state.phase!=="running"||state.paused||!!state.emergency||items<=1;
@@ -333,7 +455,27 @@
     document.querySelectorAll(".admin-tab").forEach(function(b){b.classList.toggle("active",b.dataset.tab===tab);});
     document.querySelectorAll(".admin-panel").forEach(function(p){p.hidden=p.dataset.panel!==tab;});
   }
-  function renderEditors() {renderObjectEditor();renderGlitchEditor();renderSettingsEditor();}
+  function renderEditors() {renderLocationEditor();renderObjectEditor();renderGlitchEditor();renderSettingsEditor();}
+
+  function renderLocationEditor() {
+    var selector=$("locationSelect");
+    if(!config.locations.some(function(l){return l.id===selectedLocEditor;}))selectedLocEditor=config.locations[0].id;
+    selector.innerHTML=config.locations.map(function(l,i){return '<option value="'+html(l.id)+'">'+String(i+1).padStart(2,"0")+' — '+html(l.name)+'</option>';}).join("");
+    selector.value=selectedLocEditor;
+    var l=config.locations.find(function(x){return x.id===selectedLocEditor;});
+    $("locName").value=l.name;$("locRune").value=l.rune;$("locDescription").value=l.description;$("locColour").value=l.colour;
+  }
+  function saveLocation() {
+    var l=config.locations.find(function(x){return x.id===selectedLocEditor;});
+    if(!l)return;
+    l.name=$("locName").value.trim().slice(0,55)||l.name;
+    l.rune=$("locRune").value.trim().slice(0,5)||l.rune;
+    l.description=$("locDescription").value.trim().slice(0,260);
+    l.colour=/^#[0-9a-fA-F]{6}$/.test($("locColour").value)?$("locColour").value:l.colour;
+    persist();render();renderLocationEditor();renderObjectEditor();
+    notice("Destination saved. All seven runes remain available.");
+  }
+
   function renderObjectEditor() {
     var select=$("objectSelect");
     if(!config.objects.some(function(o){return o.id===selectedObjEditor;}))selectedObjEditor=config.objects[0].id;
@@ -342,6 +484,8 @@
     var obj=config.objects.find(function(o){return o.id===selectedObjEditor;});
     if(!obj)return;
     $("objName").value=obj.name;$("objIcon").value=obj.icon;$("objDescription").value=obj.description;$("objBenefit").value=obj.benefit;$("objLimitation").value=obj.limitation;$("objImage").value=obj.image;
+    $("objLocation").innerHTML=config.locations.map(function(loc){return '<option value="'+html(loc.id)+'">'+html(loc.name)+'</option>';}).join("");
+    $("objLocation").value=obj.locationId;
   }
   function saveObject() {
     var obj=config.objects.find(function(o){return o.id===selectedObjEditor;});if(!obj)return;
@@ -349,12 +493,14 @@
     obj.description=$("objDescription").value.trim().slice(0,220);obj.benefit=$("objBenefit").value.trim().slice(0,260);obj.limitation=$("objLimitation").value.trim().slice(0,260);
     var img=$("objImage").value.trim();
     if(img&&!mediaUrl(img))return notice("Invalid image URL. Use HTTPS or a relative asset path.");
-    obj.image=img;persist();render();renderObjectEditor();notice("Object saved locally. Export your configuration for backup.");
+    obj.image=img;
+    obj.locationId=config.locations.some(function(l){return l.id===$("objLocation").value;})?$("objLocation").value:config.locations[0].id;
+    persist();render();renderObjectEditor();notice("Object saved locally. Export your configuration for backup.");
   }
   function addObject() {
-    if(config.objects.length>=36)return notice("Maximum 36 objects supported.");
+    if(config.objects.length>=9)return notice("All nine object slots are filled. Remove an object before adding a replacement.");
     var id="item-"+Date.now();
-    config.objects.push({id:id,name:"New Future Object",icon:"✦",description:"Describe the artefact from 2027.",benefit:"",limitation:"",image:""});
+    config.objects.push({id:id,locationId:config.locations[0].id,name:"New Future Object",icon:"✦",description:"Describe the artefact from 2027.",benefit:"",limitation:"",image:""});
     selectedObjEditor=id;persist();render();renderObjectEditor();notice("New object added.");
   }
   function deleteObject() {
@@ -425,6 +571,30 @@
     reader.readAsText(file);$("configImport").value="";
   }
   function wireEvents() {
+    $("worldEnter").addEventListener("click",enterGateway);
+    $("worldWalk").addEventListener("pointerdown",function(e){
+      if(e.pointerType==="mouse"&&e.button!==0)return;
+      e.preventDefault();
+      walkStep();stopWalking();
+      walkHandle=setInterval(walkStep,220);
+    });
+    ["pointerup","pointercancel","pointerleave","lostpointercapture"].forEach(function(evt){
+      $("worldWalk").addEventListener(evt,stopWalking);
+    });
+    $("worldWalk").addEventListener("click",walkStep);
+    document.addEventListener("keydown",function(e){
+      if(state.scene!=="path"||$("adminDialog").open||$("objectDialog").open||$("confirmDialog").open)return;
+      if(e.target&&["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName))return;
+      if(e.key==="ArrowUp"||e.key.toLowerCase()==="w"){e.preventDefault();walkStep();}
+    });
+    $("worldLocationDial").addEventListener("click",function(e){
+      var rune=e.target.closest("[data-location]");
+      if(rune)chooseLocation(rune.dataset.location);
+    });
+    $("worldTravel").addEventListener("click",openDestination);
+    $("worldBackPath").addEventListener("click",function(){if(!state.emergency){state.scene="path";state.walkProgress=70;saveSession();render();}});
+    $("worldReturn").addEventListener("click",returnToDial);
+    $("worldAll").addEventListener("click",toggleArchiveView);
     $("objectGrid").addEventListener("click",function(e){var card=e.target.closest("[data-object]");if(card)openObject(card.dataset.object);});
     $("detailClose").addEventListener("click",function(){$("objectDialog").close();});
     $("detailBack").addEventListener("click",function(){$("objectDialog").close();});
@@ -459,6 +629,8 @@
     });
     $("sessionReset").addEventListener("click",resetSession);
     $("objectSelect").addEventListener("change",function(e){selectedObjEditor=e.target.value;renderObjectEditor();});
+    $("locationSelect").addEventListener("change",function(e){selectedLocEditor=e.target.value;renderLocationEditor();});
+    $("locationSave").addEventListener("click",saveLocation);
     $("objectAdd").addEventListener("click",addObject);
     $("objectSave").addEventListener("click",saveObject);
     $("objectDelete").addEventListener("click",deleteObject);
@@ -482,6 +654,7 @@
   }
   wireEvents();
   nextGlitch();
+  persist();
   render();
   tick();
   setInterval(tick,250);

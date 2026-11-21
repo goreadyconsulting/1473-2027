@@ -10,6 +10,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./world.css">
   <script defer src="./app.js"></script>
 </head>
 <body>
@@ -41,10 +42,75 @@
       <div class="emergency-copy"><strong>CRITICAL INSTABILITY</strong><span>SELECT AN OBJECT TO DESTROY BEFORE CONNECTION FAILURE</span></div>
       <div class="emergency-clock" id="emergencyClock">00:45</div>
     </section>
-    <section class="archive-section">
+    <section class="world-stage" id="worldStage" aria-label="Journey between worlds" data-scene="gate">
+      <div class="world-scene world-gate" id="sceneGate">
+        <div class="world-atmosphere" aria-hidden="true"></div>
+        <div class="world-entry-copy">
+          <div class="world-eyebrow">AN ANCIENT POWER HAS AWAKENED</div>
+          <h2>THE VEIL<br><em>BETWEEN</em> AGES</h2>
+          <p>A forgotten crossing. Seven destinations beyond the known world. Nine relics from a future not yet written.</p>
+          <button type="button" class="world-button" id="worldEnter"><span>STEP THROUGH THE PORTAL</span><span aria-hidden="true">ᛟ</span></button>
+          <small>YEAR 1473 <span aria-hidden="true">✦</span> CONNECTION TO 2027</small>
+        </div>
+        <div class="gate-composition" aria-hidden="true">
+          <div class="gate-backglow"></div>
+          <div class="gate-ring gate-ring-outer"><span>ᚨ ᛗ ᛟ ᛚ ᚱ ᛞ ᚹ ᚨ ᛗ ᛟ ᛚ ᚱ</span></div>
+          <div class="gate-ring gate-ring-middle"></div>
+          <div class="gate-ring gate-ring-inner"></div>
+          <div class="gate-core"></div>
+          <div class="gate-foundation"></div>
+        </div>
+        <div class="world-corner-mark">CROSSING 01 / 07 <span>THE FIRST BREACH</span></div>
+      </div>
+      <div class="world-scene world-path" id="scenePath" hidden>
+        <div class="void-horizon" aria-hidden="true"></div>
+        <div class="void-starfield" aria-hidden="true"></div>
+        <div class="void-walkway" id="voidWalkway" aria-hidden="true"><div class="void-track"></div><div class="void-altar"><div class="void-altar-symbol">ᛟ</div></div></div>
+        <div class="path-title"><span class="world-eyebrow">YOU ARE BEYOND THE EDGE OF TIME</span><h2>THE SPACE <em>BETWEEN</em> WORLDS</h2><p>The path is forming beneath your feet. Something ancient waits ahead.</p></div>
+        <div class="walk-console">
+          <div class="walk-progress-line"><span class="world-eyebrow">DISTANCE TO THE STONE</span><span id="worldWalkPct">0%</span></div>
+          <div class="walk-track"><div id="worldWalkFill"></div></div>
+          <button type="button" id="worldWalk" class="world-button"><span>HOLD TO WALK FORWARD</span><span aria-hidden="true">↑</span></button>
+          <p>Tap repeatedly, hold the button, or press ↑ / W</p>
+        </div>
+      </div>
+      <div class="world-scene world-dial" id="sceneDial" hidden>
+        <div class="dial-left">
+          <div class="world-eyebrow">THE STONE REMEMBERS ALL PATHS</div>
+          <h2>THE SEVEN<br><em>DESTINATIONS</em></h2>
+          <p>The dial was here before kings, before maps, perhaps before time itself. Turn its symbols and choose where the portal shall open.</p>
+          <div class="location-readout">
+            <span class="world-eyebrow">SELECTED DESTINATION <span id="worldLocationNo">01 / 07</span></span>
+            <h3 id="worldLocationName"></h3>
+            <p id="worldLocationDesc"></p>
+            <span class="location-stock" id="worldLocationStock"></span>
+          </div>
+          <div class="dial-commands">
+            <button type="button" class="world-button" id="worldTravel"><span>OPEN THIS DESTINATION</span><span aria-hidden="true">ᚹ</span></button>
+            <button type="button" class="world-secondary" id="worldBackPath">RETURN TO THE VOID</button>
+          </div>
+        </div>
+        <div class="slab-area">
+          <div class="slab-halo" aria-hidden="true"></div>
+          <div class="stone-slab">
+            <div class="slab-rune-title">ᛟ · ᚹ · ᚱ · ᚨ · ᛉ · ᛟ · ᚹ</div>
+            <div class="stone-dial" id="worldLocationDial" role="group" aria-label="Select one of seven destinations">
+              <div class="dial-outer-etching" aria-hidden="true"></div>
+              <div class="dial-interior" aria-hidden="true"><div id="worldSelectedRune">ᛟ</div><small>THE NEXUS</small></div>
+            </div>
+            <div class="slab-instruction">TOUCH A RUNE TO TURN THE DIAL</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <nav class="realm-nav" id="realmNav" aria-label="Destination controls" hidden>
+      <div class="realm-identity"><span class="world-eyebrow" id="realmEyebrow">DESTINATION 01 / 07</span><strong id="realmName"></strong><span id="realmDescription"></span></div>
+      <div class="realm-buttons"><button type="button" class="world-secondary" id="worldAll">VIEW ALL REMAINING RELICS</button><button type="button" class="world-secondary" id="worldReturn">RETURN TO RUNESTONE</button></div>
+    </nav>
+    <section class="archive-section" id="archiveSection" hidden>
       <div class="section-heading">
         <div><span class="section-rule" aria-hidden="true"></span><span class="section-kicker">RECOVERABLE OBJECTS FROM THE YEAR 2027</span></div>
-        <div class="archive-meta"><span id="remainingCount">12</span> <span>REMAINING</span><span class="meta-divider">/</span><span id="destroyedCount">0</span> <span>LOST</span></div>
+        <div class="archive-meta"><span id="remainingCount">9</span> <span>REMAINING</span><span class="meta-divider">/</span><span id="destroyedCount">0</span> <span>LOST</span></div>
       </div>
       <div class="object-grid" id="objectGrid" aria-label="Future objects"></div>
       <div class="archive-empty" id="archiveEmpty" hidden>No objects available. Open organiser controls to add objects.</div>
@@ -96,6 +162,7 @@
       <div class="admin-tabs" role="tablist" aria-label="Organiser settings">
         <button type="button" class="admin-tab active" data-tab="session">SESSION</button>
         <button type="button" class="admin-tab" data-tab="objects">OBJECTS</button>
+        <button type="button" class="admin-tab" data-tab="locations">LOCATIONS</button>
         <button type="button" class="admin-tab" data-tab="glitches">GLITCH CONTENT</button>
         <button type="button" class="admin-tab" data-tab="settings">SETTINGS</button>
       </div>
@@ -122,9 +189,21 @@
           <label class="full">ADVANTAGE<textarea id="objBenefit" rows="2" maxlength="260"></textarea></label>
           <label class="full">LIMITATION<textarea id="objLimitation" rows="2" maxlength="260"></textarea></label>
           <label class="full">IMAGE URL OR RELATIVE ASSET PATH<input id="objImage" placeholder="./assets/my-object.jpg"></label>
+          <label class="full">DESTINATION / REALM<select id="objLocation"></select></label>
         </div>
         <div class="editor-actions"><button type="button" class="button primary" id="objectSave">SAVE OBJECT</button><button type="button" class="button destroy" id="objectDelete">REMOVE FROM LIBRARY</button></div>
         <p class="admin-help">For offline reliability, put photos in this site's assets folder and use relative paths. If there is no image, a decorative icon placeholder appears. Edits stay on this device until exported.</p>
+      </section>
+      <section class="admin-panel" data-panel="locations" hidden>
+        <div class="editor-toolbar"><label>EDIT ONE OF THE SEVEN DESTINATIONS<select id="locationSelect"></select></label></div>
+        <div class="editor-grid">
+          <label>DESTINATION NAME<input id="locName" maxlength="55"></label>
+          <label>RUNE SYMBOL<input id="locRune" maxlength="5"></label>
+          <label class="full">DESCRIPTION<textarea id="locDescription" rows="3" maxlength="260"></textarea></label>
+          <label>REALM HIGHLIGHT COLOUR<input type="color" id="locColour" value="#9df8df"></label>
+        </div>
+        <div class="editor-actions"><button type="button" class="button primary" id="locationSave">SAVE LOCATION</button></div>
+        <p class="admin-help">Exactly seven locations appear on the ancient stone dial. Give them their final names and choose the items assigned to each location in the Objects tab. These changes are stored locally; export the JSON configuration as a backup.</p>
       </section>
       <section class="admin-panel" data-panel="glitches" hidden>
         <div class="editor-toolbar"><label>EDIT GLITCH<select id="glitchSelect"></select></label><button type="button" class="button ghost" id="glitchAdd">+ ADD GLITCH</button></div>
