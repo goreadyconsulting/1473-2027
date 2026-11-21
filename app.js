@@ -120,7 +120,7 @@
     return merged;
   }
   var state=loadSession();
-  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null;
+  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null,lastPointerWalkAt=0;
   function persist() {try{localStorage.setItem(CONFIG_KEY,JSON.stringify(config));localStorage.setItem(SESSION_KEY,JSON.stringify(state));return true;}catch(e){notice("Local storage is full or unavailable. Export your configuration.");return false;}}
   function saveSession() {try{localStorage.setItem(SESSION_KEY,JSON.stringify(state));}catch(e){notice("Session cannot be saved on this device.");}}
   function notice(message) {$("adminNotice").textContent=message; toast(message);}
@@ -191,6 +191,27 @@
     }
   }
 
+
+  function soundCue(kind) {
+    if(window.PortalAudio&&typeof window.PortalAudio.cue==="function")window.PortalAudio.cue(kind);
+  }
+  function ritualFlash(kind) {
+    var flash=$("ritualFlash");
+    flash.className="ritual-flash";
+    // Reading layout replays the effect on consecutive player interactions.
+    void flash.offsetWidth;
+    flash.classList.add(kind);
+  }
+  function toggleSound() {
+    if(!window.PortalAudio||!window.PortalAudio.supported())return toast("Sound is unavailable in this browser.");
+    window.PortalAudio.toggle().then(function(enabled){
+      $("soundToggle").setAttribute("aria-pressed",String(enabled));
+      $("soundToggle").setAttribute("aria-label",enabled?"Mute ambience":"Enable ambience");
+      $("soundToggle").textContent=enabled?"♫":"♪";
+      if(!enabled)toast("Sound muted.");
+    });
+  }
+
   function getLocation() {
     return config.locations.find(function(l){return l.id===state.selectedLocation;})||config.locations[0];
   }
@@ -240,25 +261,31 @@
   function chooseLocation(id) {
     if(!config.locations.some(function(loc){return loc.id===id;}))return;
     state.selectedLocation=id;
-    saveSession();renderWorld();
+    soundCue("rune");saveSession();renderWorld();
   }
   function enterGateway() {
-    if(state.scene!=="gate")return;
+    if(state.scene!=="gate"||["closed","completed"].includes(state.phase)||state.paused)return;
+    if(state.phase==="standby"){
+      state.phase="running";state.endsAt=Date.now()+config.durationMinutes*60000;
+      log("The temporal pact has begun. The countdown is sealed.");
+      nextGlitch();
+    }
     state.scene="path";state.walkProgress=0;
+    soundCue("enter");ritualFlash("travel");
     log("The ancient gateway opens to the space between worlds.");
     saveSession();render();
   }
   function walkStep() {
     if(state.scene!=="path"||state.emergency||state.paused)return;
     state.walkProgress=Math.min(100,state.walkProgress+12);
-    if(state.walkProgress>=100){state.scene="dial";log("An ancient runestone emerges from the void.");}
+    if(state.walkProgress>=100){state.scene="dial";soundCue("rune");stopWalking();log("An ancient runestone emerges from the void.");}else soundCue("step");
     saveSession();renderWorld();
   }
   function stopWalking() {if(walkHandle){clearInterval(walkHandle);walkHandle=null;}}
   function openDestination() {
     if(state.scene!=="dial"||state.emergency)return;
     var loc=getLocation();
-    state.scene="archive";state.viewAll=false;
+    state.scene="archive";state.viewAll=false;ritualFlash("travel");soundCue("travel");
     if(state.visited.indexOf(loc.id)<0)state.visited.push(loc.id);
     log("The stone reveals "+loc.name+".");
     saveSession();render();toast("Destination opened: "+loc.name);
@@ -266,7 +293,7 @@
   function returnToDial() {
     if(state.emergency)return;
     state.scene="dial";state.viewAll=false;
-    saveSession();render();
+    soundCue("rune");saveSession();render();
   }
   function toggleArchiveView() {
     if(state.scene!=="archive"||state.emergency)return;
@@ -277,6 +304,7 @@
     if(!state.preEmergencyScene)return;
     state.scene=state.preEmergencyScene;
     state.viewAll=!!state.preEmergencyViewAll;
+    if(activeObjects().length===1){state.scene="archive";state.viewAll=true;}
     state.preEmergencyScene=null;
     state.preEmergencyViewAll=false;
   }
@@ -301,7 +329,7 @@
     $("destroyRequest").disabled=!canPlay;
     $("finalRequest").hidden=!last;
     $("finalRequest").disabled=!canPlay||!!state.emergency;
-    $("detailNote").textContent=!canPlay?"The organiser must start or resume the session before selections can be made.":last?"FINAL CANDIDATE: destruction is disabled. Confirm retention separately.":state.emergency?"STABILITY CRITICAL: destroy an object before the emergency clock expires.":"Destruction is irreversible during the session.";
+    $("detailNote").textContent=!canPlay?"The crossing must be awakened before this relic can be sacrificed.":last?"THE LAST RELIC: its fate must be sealed, not destroyed.":state.emergency?"THE VEIL IS BREAKING — a sacrifice is required before time runs out.":"A destroyed relic cannot return to this timeline.";
     $("objectDialog").showModal();
   }
   function askConfirm(title,body,action,kind) {
@@ -321,9 +349,10 @@
     var obj=current.find(function(o){return o.id===id;});
     if(!obj)return toast("That object is no longer available.");
     state.lost.push({id:id,reason:reason||"PLAYER CHOICE",at:Date.now()});
+    soundCue("destroy");ritualFlash("destroy");
     log(obj.name+" destroyed // "+(reason||"PLAYER CHOICE"));
     if(state.emergency){state.emergency=null;restoreJourneyAfterEmergency();log("Emergency sacrifice accepted. Portal stabilised.");}
-    if(activeObjects().length===1)log("One candidate remains. Final retention is now possible.");
+    if(activeObjects().length===1){state.scene="archive";state.viewAll=true;log("The last relic endures. Fate awaits a final choice.");}
     saveSession();render();
     toast(obj.name+" removed from archive.");
   }
@@ -331,7 +360,7 @@
     if(state.phase!=="running"||state.paused||state.emergency)return toast("Cannot finalise during an inactive or unstable connection.");
     var all=activeObjects();
     if(all.length!==1||all[0].id!==id)return toast("Only the last surviving object may be retained.");
-    state.phase="completed";state.finalId=id;log(all[0].name+" retained. Transmission complete.");
+    state.phase="completed";state.finalId=id;log(all[0].name+" retained. Transmission complete.");soundCue("final");ritualFlash("success");
     saveSession();closeGameplayDialogs();render();
   }
   function randomised(items) {
@@ -344,6 +373,7 @@
     var active=activeObjects(),count=Math.min(config.failureDestroyCount,Math.max(0,active.length-1));
     randomised(active).slice(0,count).forEach(function(o){state.lost.push({id:o.id,reason:"AUTOMATED SYSTEM FAILURE",at:Date.now()});log(o.name+" erased by temporal backlash.");});
     state.emergency=null;restoreJourneyAfterEmergency();
+    soundCue("destroy");ritualFlash("warning");
     log(count?("FAILURE: "+count+" random object"+(count===1?"":"s")+" erased. Portal temporarily stable."):"FAILURE: no additional object erased.");
     saveSession();closeGameplayDialogs();render();toast("Emergency timer expired: "+count+" object(s) lost.");
   }
@@ -354,13 +384,14 @@
     state.preEmergencyViewAll=state.viewAll;
     state.scene="archive";state.viewAll=true;
     state.emergency={endsAt:Date.now()+config.emergencySeconds*1000,remainingMs:null};
+    soundCue("warning");ritualFlash("warning");
     log(manual?"Organiser triggered a critical instability.":"CRITICAL INSTABILITY — sacrifice required.");
     saveSession();closeGameplayDialogs();render();
     $("portal").classList.add("vibrating");setTimeout(function(){$("portal").classList.remove("vibrating");},1000);
   }
   function resolveEmergency() {
     if(!state.emergency)return;
-    state.emergency=null;restoreJourneyAfterEmergency();log("Organiser override: portal stabilised.");saveSession();closeGameplayDialogs();render();
+    state.emergency=null;restoreJourneyAfterEmergency();soundCue("stabilise");ritualFlash("travel");log("Organiser override: portal stabilised.");saveSession();closeGameplayDialogs();render();
   }
   function checkTriggers(rem) {
     if(state.emergency||state.phase!=="running"||state.paused)return;
@@ -373,6 +404,7 @@
   function closePortal() {
     if(state.phase!=="running")return;
     state.phase="closed";state.emergency=null;state.endsAt=Date.now();state.paused=false;
+    soundCue("close");ritualFlash("warning");
     log("Connection terminated. Temporal window sealed.");
     saveSession();closeGameplayDialogs();render();
   }
@@ -397,7 +429,7 @@
     if(entry.type==="video"&&src)content='<video src="'+html(src)+'" autoplay muted playsinline loop></video>';
     content+='<div class="glitch-text">'+html(entry.text||"UNKNOWN TEMPORAL SIGNAL")+'</div><div class="glitch-caption">SIGNAL INTERFERENCE // 2027</div>';
     $("glitchContent").innerHTML=content;
-    $("glitchOverlay").classList.add("show");
+    $("glitchOverlay").classList.add("show");soundCue("glitch");
     if(entry.type==="video"){var v=$("glitchContent").querySelector("video");if(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}}
     glitchHandle=setTimeout(stopGlitch,(entry.durationSeconds||3)*1000);
   }
@@ -575,21 +607,39 @@
   }
   function wireEvents() {
     $("worldEnter").addEventListener("click",enterGateway);
+    $("soundToggle").addEventListener("click",toggleSound);
     $("worldWalk").addEventListener("pointerdown",function(e){
       if(e.pointerType==="mouse"&&e.button!==0)return;
       e.preventDefault();
+      lastPointerWalkAt=Date.now();
       walkStep();stopWalking();
-      walkHandle=setInterval(walkStep,220);
+      if(state.scene==="path")walkHandle=setInterval(walkStep,260);
     });
     ["pointerup","pointercancel","pointerleave","lostpointercapture"].forEach(function(evt){
       $("worldWalk").addEventListener(evt,stopWalking);
     });
-    $("worldWalk").addEventListener("click",walkStep);
+    $("worldWalk").addEventListener("click",function(){if(Date.now()-lastPointerWalkAt>430)walkStep();});
     document.addEventListener("keydown",function(e){
       if(state.scene!=="path"||$("adminDialog").open||$("objectDialog").open||$("confirmDialog").open)return;
       if(e.target&&["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName))return;
       if(e.key==="ArrowUp"||e.key.toLowerCase()==="w"){e.preventDefault();walkStep();}
     });
+
+    var touchOrigin=null;
+    $("worldStage").addEventListener("touchstart",function(e){
+      if(!e.changedTouches||!e.changedTouches[0])return;
+      touchOrigin={x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
+    },{passive:true});
+    $("worldStage").addEventListener("touchend",function(e){
+      if(!touchOrigin||!e.changedTouches||!e.changedTouches[0])return;
+      var dx=e.changedTouches[0].clientX-touchOrigin.x,dy=e.changedTouches[0].clientY-touchOrigin.y;
+      touchOrigin=null;
+      if(state.scene==="path"&&dy< -55&&Math.abs(dy)>Math.abs(dx)*1.25){walkStep();walkStep();}
+      if(state.scene==="dial"&&Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5){
+        var index=config.locations.findIndex(function(l){return l.id===state.selectedLocation;});
+        chooseLocation(config.locations[(index+(dx<0?1:6))%7].id);
+      }
+    },{passive:true});
     $("worldLocationDial").addEventListener("click",function(e){
       var rune=e.target.closest("[data-location]");
       if(rune)chooseLocation(rune.dataset.location);
