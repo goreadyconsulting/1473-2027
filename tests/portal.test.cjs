@@ -109,7 +109,8 @@ test("archive displays all objects and prevents destruction before activation", 
   assert.equal(app.get("worldStage").hidden, false);
   assert.equal(app.get("archiveSection").hidden, true);
   assert.equal(app.get("statusText").textContent, "STANDBY");
-  assert.equal(app.get("mainTimer").textContent, "20:00");
+  assert.equal(app.get("mainTimer").textContent, "07:00:00");
+  assert.equal(app.get("nextElimination").textContent, "01:00:00");
   app.openObject("smartphone");
   assert.equal(app.get("destroyRequest").disabled, true);
 });
@@ -150,13 +151,21 @@ test("failed emergency removes configured random objects", () => {
   assert.ok(app.state().log.some(x => x.text.includes("FAILURE")));
 });
 
-test("scheduled instability triggers at the threshold", () => {
+test("one automatic relic falls at the first hour, never before it", () => {
   const app = harness();
   app.start();
-  app.moveClock(5 * 60_000 + 500);
+  app.moveClock(60 * 60_000 - 1);
   app.tick();
-  assert.ok(app.state().emergency);
-  assert.ok(app.state().fired.includes(15));
+  assert.equal(app.state().lost.length, 0);
+  assert.equal(app.state().hourlyProcessed, 0);
+  app.moveClock(2);
+  app.tick();
+  assert.equal(app.state().lost.length, 1);
+  assert.equal(app.state().hourlyProcessed, 1);
+  assert.equal(app.state().lost[0].reason, "THE HOURLY TOLL");
+  assert.equal(app.state().emergency, null);
+  assert.equal(app.get("hourlyOverlay").hidden, false);
+  assert.equal(app.get("hourlyProgress").textContent, "1 / 7 ELIMINATIONS");
 });
 
 test("pause freezes main clock and emergency; resume restores both", () => {
@@ -167,12 +176,12 @@ test("pause freezes main clock and emergency; resume restores both", () => {
   assert.equal(app.state().paused, true);
   app.moveClock(10 * 60_000);
   app.tick();
-  assert.equal(app.get("mainTimer").textContent, "20:00");
+  assert.equal(app.get("mainTimer").textContent, "07:00:00");
   assert.equal(app.get("emergencyClock").textContent, "00:45");
   app.click("sessionPause");
   app.moveClock(2000);
   app.tick();
-  assert.equal(app.get("mainTimer").textContent, "19:58");
+  assert.equal(app.get("mainTimer").textContent, "06:59:58");
   assert.equal(app.get("emergencyClock").textContent, "00:43");
 });
 
@@ -195,7 +204,7 @@ test("last candidate is protected; final retention concludes the game", () => {
 test("portal closes at zero if no final choice is retained", () => {
   const app = harness();
   app.start();
-  app.moveClock(20 * 60_000 + 100);
+  app.moveClock(7 * 60 * 60_000 + 100);
   app.tick();
   assert.equal(app.state().phase, "closed");
   assert.equal(app.state().finalId, null);
@@ -320,7 +329,7 @@ test("player enters the gate and starts the clock without organiser access", () 
   assert.equal(app.state().scene,"path");
   app.moveClock(3000);
   app.tick();
-  assert.equal(app.get("mainTimer").textContent,"19:57");
+  assert.equal(app.get("mainTimer").textContent,"06:59:57");
 });
 
 test("all ten relics have complete stories and locally packaged illustrations", () => {
@@ -344,7 +353,9 @@ test("previous sessions upgrade to the ten-relic edition without carrying old de
   storage.set(CONFIG_KEY,JSON.stringify({version:2,objects:[{id:"smartphone",name:"Old sample"}]}));
   storage.set(SESSION_KEY,JSON.stringify({phase:"running",scene:"archive",lost:[{id:"camera"}],endsAt:99999999}));
   const app=harness(storage);
-  assert.equal(app.config().version,3);
+  assert.equal(app.config().version,4);
+  assert.equal(app.config().durationMinutes,420);
+  assert.equal(app.config().autoEliminateEveryMinutes,60);
   assert.equal(app.config().objects.length,10);
   assert.equal(app.config().objects[0].name,"Smartphone");
   assert.equal(app.state().phase,"standby");
@@ -357,4 +368,119 @@ test("offline shell includes new interface, audio engine and ten illustrated obj
   for(const file of ["./experience.css","./sound.js",
     ...["smartphone","toilet","history","medical","worldmap","firearm","led","condoms","filter","seeds"].map(id=>"./assets/objects/"+id+".svg")])
     assert.ok(sw.includes(file),"Not in offline cache: "+file);
+});
+
+test("seven-hour session has seven hourly marks including the final hour", () => {
+  const app=harness();
+  app.start();
+  assert.equal(app.config().durationMinutes,420);
+  assert.equal(app.config().autoEliminateEveryMinutes,60);
+  assert.equal(app.state().hourlyProcessed,0);
+  for(let hour=1;hour<=6;hour++) {
+    app.moveClock(60*60_000);
+    app.tick();
+    assert.equal(app.state().hourlyProcessed,hour);
+    assert.equal(app.state().lost.length,hour);
+    assert.equal(new Set(app.state().lost.map(x=>x.id)).size,hour);
+    assert.equal(app.state().phase,"running");
+  }
+  assert.equal(app.get("mainTimer").textContent,"01:00:00");
+  app.moveClock(60*60_000);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,7);
+  assert.equal(app.state().lost.length,7);
+  assert.equal(app.state().lastHourlyLost.hour,7);
+  assert.equal(app.state().phase,"closed");
+  assert.equal(app.get("endingOverlay").hidden,false);
+});
+
+test("hourly toll catches up exactly once per crossed hour after iPad sleep", () => {
+  const app=harness();
+  app.start();
+  app.moveClock(3*60*60_000+750);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,3);
+  assert.equal(app.state().lost.length,3);
+  assert.equal(new Set(app.state().lost.map(x=>x.id)).size,3);
+  app.tick();
+  app.tick();
+  assert.equal(app.state().lost.length,3);
+  app.moveClock(2*60*60_000);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,5);
+  assert.equal(app.state().lost.length,5);
+});
+
+test("pausing freezes the hourly elimination schedule", () => {
+  const app=harness();
+  app.start();
+  app.moveClock(59*60_000);
+  app.tick();
+  app.click("sessionPause");
+  app.moveClock(4*60*60_000);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,0);
+  assert.equal(app.state().lost.length,0);
+  assert.equal(app.get("nextElimination").textContent,"00:01:00");
+  app.click("sessionPause");
+  app.moveClock(60_000);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,1);
+  assert.equal(app.state().lost.length,1);
+});
+
+test("the last remaining relic can never be lost to an hourly event", () => {
+  const app=harness();
+  app.start();
+  const all=app.config().objects.map(x=>x.id);
+  for(const id of all.slice(0,-1))app.destroy(id);
+  assert.equal(app.state().lost.length,9);
+  app.moveClock(5*60*60_000);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,5);
+  assert.equal(app.state().lost.length,9);
+  assert.equal(app.get("nextElimination").textContent,"—");
+  assert.equal(app.state().phase,"running");
+  app.openObject(all[all.length-1]);
+  assert.equal(app.get("destroyRequest").hidden,true);
+});
+
+test("hourly toll removes a relic from every realm, not just its current destination", () => {
+  const app=harness();
+  app.start();
+  app.click("worldEnter");
+  for(let i=0;i<9;i++)app.click("worldWalk");
+  app.click("worldTravel");
+  app.moveClock(60*60_000);
+  app.tick();
+  const victim=app.state().lost[0].id;
+  assert.ok(!app.get("objectGrid").innerHTML.includes('data-object="'+victim+'"'));
+  app.click("worldAll");
+  assert.ok(!app.get("objectGrid").innerHTML.includes('data-object="'+victim+'"'));
+});
+
+test("organiser rehearsal control advances to the next hourly event", () => {
+  const app=harness();
+  app.start();
+  app.click("sessionAdvanceHour");
+  assert.equal(app.state().hourlyProcessed,1);
+  assert.equal(app.state().lost.length,1);
+  assert.equal(app.get("mainTimer").textContent,"06:00:00");
+});
+
+test("previous seven-hour settings remain editable and are applied to the next session", () => {
+  const app=harness();
+  app.enterCode();
+  assert.equal(app.get("setDuration").value,420);
+  assert.equal(app.get("setAutoInterval").value,60);
+  app.get("setDuration").value=480;
+  app.get("setAutoInterval").value=120;
+  app.click("settingsSave");
+  assert.equal(app.config().durationMinutes,480);
+  assert.equal(app.config().autoEliminateEveryMinutes,120);
+  app.click("sessionStart");
+  app.moveClock(2*60*60_000);
+  app.tick();
+  assert.equal(app.state().hourlyProcessed,1);
+  assert.equal(app.get("hourlyProgress").textContent,"1 / 4 ELIMINATIONS");
 });

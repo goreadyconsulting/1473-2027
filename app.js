@@ -4,11 +4,12 @@
   var CONFIG_KEY = "chronos1473_config_v1";
   var SESSION_KEY = "chronos1473_session_v1";
   var DEFAULT_CONFIG = {
-    version: 3,
+    version: 4,
     title: "TEMPORAL CONNECTION",
-    durationMinutes: 20,
+    durationMinutes: 420,
+    autoEliminateEveryMinutes: 60,
     emergencySeconds: 45,
-    instabilityAtMinutesRemaining: [15, 10, 5],
+    instabilityAtMinutesRemaining: [],
     failureDestroyCount: 2,
     glitchMinSeconds: 35,
     glitchMaxSeconds: 75,
@@ -57,7 +58,8 @@
     if (!raw || typeof raw!=="object") throw new Error("Configuration must be a JSON object.");
     var c=Object.assign({},clone(DEFAULT_CONFIG),raw);
     c.title=asText(c.title).slice(0,90)||DEFAULT_CONFIG.title;
-    c.durationMinutes=intRange(c.durationMinutes,2,240,20);
+    c.durationMinutes=intRange(c.durationMinutes,2,1440,420);
+    c.autoEliminateEveryMinutes=intRange(c.autoEliminateEveryMinutes,1,1440,60);
     c.emergencySeconds=intRange(c.emergencySeconds,10,300,45);
     c.failureDestroyCount=intRange(c.failureDestroyCount,0,10,2);
     c.glitchMinSeconds=intRange(c.glitchMinSeconds,10,3600,35);
@@ -67,7 +69,9 @@
       .map(Number).filter(function(n){return Number.isFinite(n)&&n>0&&n<c.durationMinutes;})
       .map(function(n){return Math.round(n*100)/100;})
       .filter(function(n,i,a){return a.indexOf(n)===i;}).sort(function(a,b){return b-a;});
-    c.version=3;
+    // Preserve edited relics and locations; existing v3 sites receive the new seven-hour rules.
+    if(Number(raw.version)<4){c.durationMinutes=420;c.autoEliminateEveryMinutes=60;c.instabilityAtMinutesRemaining=[];}
+    c.version=4;
     if(!Array.isArray(raw.locations)||raw.locations.length!==7) c.locations=clone(DEFAULT_CONFIG.locations);
     else {
       var uniqueLocations=new Set();
@@ -103,14 +107,17 @@
   function readStored(key) { try {var s=localStorage.getItem(key);return s?JSON.parse(s):null;}catch(e){return null;} }
   var config;
   try {config=normalizeConfig(readStored(CONFIG_KEY)||DEFAULT_CONFIG);} catch(e){config=normalizeConfig(DEFAULT_CONFIG);}
-  function freshSession() {return {version:3,phase:"standby",paused:false,endsAt:0,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
+  function freshSession() {return {version:4,phase:"standby",paused:false,endsAt:0,durationMs:0,autoIntervalMs:0,hourlyProcessed:0,lastHourlyLost:null,remainingMs:null,emergency:null,fired:[],lost:[],finalId:null,log:[],scene:"gate",walkProgress:0,selectedLocation:"emberfall",viewAll:false,preEmergencyScene:null,preEmergencyViewAll:false,visited:[]};}
   function loadSession() {
     var s=readStored(SESSION_KEY);
-    if(!s||s.version!==3||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
+    if(!s||s.version!==4||!["standby","running","closed","completed"].includes(s.phase)) return freshSession();
     var merged=Object.assign(freshSession(),s);
     merged.lost=Array.isArray(merged.lost)?merged.lost.filter(function(l){return l&&typeof l.id==="string";}):[];
     merged.fired=Array.isArray(merged.fired)?merged.fired:[];
     merged.log=Array.isArray(merged.log)?merged.log.slice(0,40):[];
+    merged.durationMs=intRange(merged.durationMs,0,1440*60000,0);
+    merged.autoIntervalMs=intRange(merged.autoIntervalMs,0,1440*60000,0);
+    merged.hourlyProcessed=intRange(merged.hourlyProcessed,0,1440,0);
     merged.scene=["gate","path","dial","archive"].includes(merged.scene)?merged.scene:"gate";
     merged.walkProgress=intRange(merged.walkProgress,0,100,0);
     merged.selectedLocation=config.locations.some(function(l){return l.id===merged.selectedLocation;})?merged.selectedLocation:config.locations[0].id;
@@ -120,7 +127,7 @@
     return merged;
   }
   var state=loadSession();
-  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null,lastPointerWalkAt=0;
+  var adminUnlocked=false,selectedId=null,selectedObjEditor=null,selectedLocEditor=null,selectedGlitchEditor=null,pendingConfirm=null,glitchHandle=null,glitchNextAt=0,toastHandle=null,walkHandle=null,lastPointerWalkAt=0,hourlyEventHandle=null;
   function persist() {try{localStorage.setItem(CONFIG_KEY,JSON.stringify(config));localStorage.setItem(SESSION_KEY,JSON.stringify(state));return true;}catch(e){notice("Local storage is full or unavailable. Export your configuration.");return false;}}
   function saveSession() {try{localStorage.setItem(SESSION_KEY,JSON.stringify(state));}catch(e){notice("Session cannot be saved on this device.");}}
   function notice(message) {$("adminNotice").textContent=message; toast(message);}
@@ -130,6 +137,22 @@
   function remainingMs() {if(state.phase==="standby")return config.durationMinutes*60000;if(state.paused)return Math.max(0,Number(state.remainingMs)||0);return Math.max(0,state.endsAt-Date.now());}
   function emergencyMs() {if(!state.emergency)return 0;return state.paused?Math.max(0,Number(state.emergency.remainingMs)||0):Math.max(0,state.emergency.endsAt-Date.now());}
   function timeText(ms) {var secs=Math.ceil(Math.max(0,ms)/1000),m=Math.floor(secs/60),s=secs%60;return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");}
+  function longTimeText(ms) {
+    var secs=Math.ceil(Math.max(0,ms)/1000);
+    var h=Math.floor(secs/3600),m=Math.floor(secs%3600/60),s=secs%60;
+    return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  }
+  function hourlyTotal() {
+    var span=state.durationMs||config.durationMinutes*60000;
+    var interval=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+    return Math.floor(span/interval);
+  }
+  function nextHourlyMs() {
+    var span=state.durationMs||config.durationMinutes*60000;
+    var interval=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+    if(state.hourlyProcessed>=Math.floor(span/interval)||activeObjects().length<=1)return null;
+    return Math.max(0,(state.hourlyProcessed+1)*interval-(span-remainingMs()));
+  }
   function mediaMarkup(obj) {
     var src=mediaUrl(obj.image);
     var icon='<span class="card-icon" aria-hidden="true">'+html(obj.icon||"✦")+'</span>';
@@ -162,7 +185,10 @@
     var klass=status==="SECURED"?"completed":status.toLowerCase();
     $("statusPill").className="status-pill "+klass;
     $("statusText").textContent=status;
-    $("mainTimer").textContent=timeText(rem);
+    $("mainTimer").textContent=longTimeText(rem);
+    var next=nextHourlyMs();
+    $("nextElimination").textContent=state.phase==="closed"||state.phase==="completed"?"—":next==null?"—":longTimeText(next);
+    $("hourlyProgress").textContent=state.hourlyProcessed+" / "+hourlyTotal()+" ELIMINATIONS";
     $("mainTimer").classList.toggle("urgent",rem<=180000&&state.phase==="running");
     var emergency=!!state.emergency;
     $("emergencyStrip").hidden=!emergency;
@@ -187,7 +213,7 @@
       $("endingTitle").textContent="THE PORTAL HAS CLOSED";
       $("endingVisual").innerHTML='<span class="card-icon" aria-hidden="true">⌛</span>';
       $("endingName").textContent="CONNECTION LOST";
-      $("endingText").textContent="The transmission has ended before a final object was secured.";
+      $("endingText").textContent="The seventh hour is over. The final crossing has closed before a relic was secured."+(state.lastHourlyLost?" Last consumed: "+state.lastHourlyLost.name+".":"");
     }
   }
 
@@ -279,7 +305,7 @@
   function enterGateway() {
     if(state.scene!=="gate"||["closed","completed"].includes(state.phase)||state.paused)return;
     if(state.phase==="standby"){
-      state.phase="running";state.endsAt=Date.now()+config.durationMinutes*60000;
+      state.phase="running";state.durationMs=config.durationMinutes*60000;state.autoIntervalMs=config.autoEliminateEveryMinutes*60000;state.endsAt=Date.now()+state.durationMs;
       log("The temporal pact has begun. The countdown is sealed.");
       nextGlitch();
     }
@@ -446,9 +472,53 @@
     if(entry.type==="video"){var v=$("glitchContent").querySelector("video");if(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}}
     glitchHandle=setTimeout(stopGlitch,(entry.durationSeconds||3)*1000);
   }
+
+  function showHourlyEvent(obj,hour) {
+    $("hourlyEventName").textContent=obj.name.toUpperCase();
+    $("hourlyEventHour").textContent="THE "+String(hour).padStart(2,"0")+" HOUR MARK";
+    $("hourlyOverlay").hidden=false;
+    if(hourlyEventHandle)clearTimeout(hourlyEventHandle);
+    hourlyEventHandle=setTimeout(function(){$("hourlyOverlay").hidden=true;},4800);
+  }
+  function processHourlyEliminations() {
+    if(state.phase!=="running"||state.paused)return false;
+    var span=state.durationMs||config.durationMinutes*60000;
+    var interval=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+    if(!interval||!span)return false;
+    var elapsed=Math.min(span,Math.max(0,span-remainingMs()));
+    var due=Math.min(Math.floor(span/interval),Math.floor(elapsed/interval));
+    if(state.hourlyProcessed>=due)return false;
+    var lastVictim=null,lastHour=0;
+    // Process each crossed hour exactly once; this also handles Safari suspending timers.
+    while(state.hourlyProcessed<due){
+      state.hourlyProcessed++;
+      var choices=activeObjects();
+      if(choices.length>1) {
+        var victim=choices[Math.floor(Math.random()*choices.length)];
+        state.lost.push({id:victim.id,reason:"THE HOURLY TOLL",hour:state.hourlyProcessed,at:Date.now()});
+        state.lastHourlyLost={id:victim.id,name:victim.name,hour:state.hourlyProcessed};
+        log("HOUR "+state.hourlyProcessed+" // "+victim.name+" consumed by the crossing.");
+        lastVictim=victim;lastHour=state.hourlyProcessed;
+      } else {
+        log("HOUR "+state.hourlyProcessed+" // The last relic is protected.");
+      }
+    }
+    if(lastVictim){
+      stopGlitch();
+      soundCue("destroy");ritualFlash("destroy");
+      closeGameplayDialogs();
+      if(state.emergency&&activeObjects().length<=1){state.emergency=null;restoreJourneyAfterEmergency();}
+      if(activeObjects().length===1){state.scene="archive";state.viewAll=true;}
+      showHourlyEvent(lastVictim,lastHour);
+    }
+    saveSession();render();
+    return !!lastVictim;
+  }
+
   function tick() {
     if(state.phase==="running"&&!state.paused){
       var rem=remainingMs();
+      processHourlyEliminations();
       if(rem<=0){closePortal();return;}
       if(state.emergency&&emergencyMs()<=0){failEmergency();return;}
       if(!state.emergency)checkTriggers(rem);
@@ -464,7 +534,8 @@
   }
   function startSession() {
     if(state.phase==="running"&&!window.confirm("Restart the running session? This restores all objects and resets the timer."))return;
-    state=freshSession();state.phase="running";state.endsAt=Date.now()+config.durationMinutes*60000;
+    $("hourlyOverlay").hidden=true;
+    state=freshSession();state.phase="running";state.durationMs=config.durationMinutes*60000;state.autoIntervalMs=config.autoEliminateEveryMinutes*60000;state.endsAt=Date.now()+state.durationMs;
     requestScreenWake();
     log("Temporal connection established. Archive unlocked.");
     nextGlitch();persist();closeGameplayDialogs();render();notice("Session started.");
@@ -477,12 +548,12 @@
   }
   function resetSession() {
     if(!window.confirm("Reset this game? All destroyed objects will return and the current countdown will be cleared."))return;
-    state=freshSession();releaseScreenWake();stopGlitch();saveSession();closeGameplayDialogs();render();notice("Session reset. Ready for a new performance.");
+    state=freshSession();releaseScreenWake();stopGlitch();$("hourlyOverlay").hidden=true;saveSession();closeGameplayDialogs();render();notice("Session reset. Ready for a new performance.");
   }
   function renderSessionAdmin() {
     if(!$("adminContent")||!adminUnlocked)return;
     var items=activeObjects().length;
-    $("sessionSummary").textContent="SCENE: "+state.scene.toUpperCase()+"  •  PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+timeText(remainingMs())+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
+    $("sessionSummary").textContent="SCENE: "+state.scene.toUpperCase()+"  •  PHASE: "+state.phase.toUpperCase()+(state.paused?" (PAUSED)":"")+"  •  TIME LEFT: "+longTimeText(remainingMs())+"  •  HOURLY: "+state.hourlyProcessed+" / "+hourlyTotal()+"  •  ACTIVE: "+items+"  •  LOST: "+state.lost.length+(state.emergency?"  •  EMERGENCY: "+timeText(emergencyMs()):"");
     $("adminHistory").innerHTML=state.log.length?state.log.map(function(entry){return "<p>"+html(entry.time)+" — "+html(entry.text)+"</p>";}).join(""):"<p>No events recorded yet.</p>";
     $("sessionPause").disabled=state.phase!=="running";
     $("sessionInstability").disabled=state.phase!=="running"||state.paused||!!state.emergency||items<=1;
@@ -588,13 +659,13 @@
     selectedGlitchEditor=null;persist();renderGlitchEditor();notice("Glitch deleted.");
   }
   function renderSettingsEditor() {
-    $("setTitle").value=config.title;$("setDuration").value=config.durationMinutes;$("setEmergency").value=config.emergencySeconds;
+    $("setTitle").value=config.title;$("setDuration").value=config.durationMinutes;$("setAutoInterval").value=config.autoEliminateEveryMinutes;$("setEmergency").value=config.emergencySeconds;
     $("setThresholds").value=config.instabilityAtMinutesRemaining.join(", ");
     $("setFailureCount").value=config.failureDestroyCount;$("setGlitchMin").value=config.glitchMinSeconds;$("setGlitchMax").value=config.glitchMaxSeconds;$("setPin").value=config.adminPin;
   }
   function saveSettings() {
     var proposed=clone(config);
-    proposed.title=$("setTitle").value.trim();proposed.durationMinutes=$("setDuration").value;
+    proposed.title=$("setTitle").value.trim();proposed.durationMinutes=$("setDuration").value;proposed.autoEliminateEveryMinutes=$("setAutoInterval").value;
     proposed.emergencySeconds=$("setEmergency").value;proposed.failureDestroyCount=$("setFailureCount").value;
     proposed.glitchMinSeconds=$("setGlitchMin").value;proposed.glitchMaxSeconds=$("setGlitchMax").value;
     proposed.instabilityAtMinutesRemaining=$("setThresholds").value.split(",").map(function(x){return Number(x.trim());});
@@ -693,6 +764,11 @@
     $("sessionAdvance").addEventListener("click",function() {
       if(state.phase!=="running"||state.paused)return notice("Run the session before advancing time.");
       state.endsAt-=60000;saveSession();tick();render();
+    });
+    $("sessionAdvanceHour").addEventListener("click",function() {
+      if(state.phase!=="running"||state.paused)return notice("Start or resume the session before simulating an hour.");
+      state.endsAt-=state.autoIntervalMs||config.autoEliminateEveryMinutes*60000;
+      saveSession();tick();render();
     });
     $("sessionReset").addEventListener("click",resetSession);
     $("objectSelect").addEventListener("change",function(e){selectedObjEditor=e.target.value;renderObjectEditor();});
