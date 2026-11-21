@@ -48,6 +48,10 @@ function harness(storage = new Map()) {
     showModal() { this.open = true; }
     close() { this.open = false; this.emit("close"); }
     querySelector() { return null; }
+    querySelectorAll() { return []; }
+    insertAdjacentHTML(_position, markup) { this.insertedMarkup = markup; }
+    setAttribute(name, value) { this[name] = value; }
+    remove() {}
   }
   const get = (id) => {
     if (!elements.has(id)) elements.set(id, new Element(id));
@@ -101,7 +105,9 @@ function harness(storage = new Map()) {
 
 test("archive displays all objects and prevents destruction before activation", () => {
   const app = harness();
-  assert.equal(app.get("remainingCount").textContent, "12");
+  assert.equal(app.get("remainingCount").textContent, "9");
+  assert.equal(app.get("worldStage").hidden, false);
+  assert.equal(app.get("archiveSection").hidden, true);
   assert.equal(app.get("statusText").textContent, "STANDBY");
   assert.equal(app.get("mainTimer").textContent, "20:00");
   app.openObject("smartphone");
@@ -117,7 +123,7 @@ test("destruction requires a second confirmation", () => {
   app.destroy("smartphone", true);
   assert.equal(app.state().lost.length, 1);
   assert.equal(app.state().lost[0].id, "smartphone");
-  assert.equal(app.get("remainingCount").textContent, "11");
+  assert.equal(app.get("remainingCount").textContent, "8");
 });
 
 test("successful emergency sacrifice stabilises the portal", () => {
@@ -203,7 +209,7 @@ test("game state survives reopening in the same browser", () => {
   first.destroy("smartphone");
   const restored = harness(storage);
   assert.equal(restored.state().phase, "running");
-  assert.equal(restored.get("remainingCount").textContent, "11");
+  assert.equal(restored.get("remainingCount").textContent, "8");
   assert.equal(restored.get("statusText").textContent, "STABLE");
 });
 
@@ -216,3 +222,92 @@ test("edited object content persists for organiser export", () => {
   assert.equal(app.config().objects[0].name, "Future compass");
   assert.equal(app.config().objects[0].description, "A device that finds its way.");
 });
+
+
+test("seven distinct destination runes and exactly nine objects have a valid assignment", () => {
+  const app = harness();
+  app.enterCode();
+  const expected = app.config();
+  assert.equal(expected.locations.length, 7);
+  assert.equal(expected.objects.length, 9);
+  const names = new Set(expected.locations.map(x => x.name));
+  assert.equal(names.size, 7);
+  const ids = new Set(expected.locations.map(x => x.id));
+  assert.ok(expected.objects.every(x => ids.has(x.locationId)));
+  assert.ok(expected.objects.every(x => x.image.startsWith("./assets/objects/")));
+});
+
+test("touchscreen journey goes through gateway, walks to slab and opens a selected realm", () => {
+  const app = harness();
+  assert.equal(app.state().scene, "gate");
+  app.click("worldEnter");
+  assert.equal(app.state().scene, "path");
+  for(let i = 0; i < 9; i++) app.click("worldWalk");
+  assert.equal(app.state().scene, "dial");
+  app.get("worldLocationDial").emit("click", {
+    target: { closest() { return { dataset: { location: "verdant" } }; } }
+  });
+  assert.equal(app.state().selectedLocation, "verdant");
+  app.click("worldTravel");
+  assert.equal(app.state().scene, "archive");
+  assert.equal(app.state().viewAll, false);
+  assert.ok(app.state().visited.includes("verdant"));
+  assert.equal(app.get("realmName").textContent, "Verdant Hollow");
+  assert.equal((app.get("objectGrid").innerHTML.match(/class="object-card"/g)||[]).length, 2);
+  app.click("worldAll");
+  assert.equal(app.state().viewAll, true);
+  assert.equal((app.get("objectGrid").innerHTML.match(/class="object-card"/g)||[]).length, 9);
+  app.click("worldReturn");
+  assert.equal(app.state().scene, "dial");
+});
+
+test("emergency can interrupt travel then restores the correct previous scene", () => {
+  const app = harness();
+  app.start();
+  app.click("worldEnter");
+  app.click("worldWalk");
+  assert.equal(app.state().scene, "path");
+  app.click("sessionInstability");
+  assert.equal(app.state().scene, "archive");
+  assert.equal(app.state().viewAll, true);
+  assert.equal(app.get("worldStage").hidden, true);
+  assert.ok(app.state().emergency);
+  app.destroy("radio");
+  assert.equal(app.state().scene, "path");
+  assert.equal(app.state().emergency, null);
+  assert.equal(app.get("worldStage").hidden, false);
+  assert.equal(app.state().lost.length, 1);
+});
+
+test("organiser can rename destinations and reassign an object without editing source", () => {
+  const app = harness();
+  app.enterCode();
+  app.get("locName").value = "The Frost Archive";
+  app.get("locRune").value = "ᛝ";
+  app.get("locDescription").value = "A silent tower of frost.";
+  app.get("locColour").value = "#aabbcc";
+  app.click("locationSave");
+  assert.equal(app.config().locations[0].name, "The Frost Archive");
+  assert.equal(app.config().locations[0].rune, "ᛝ");
+  app.get("objLocation").value = "sanctum";
+  app.click("objectSave");
+  assert.equal(app.config().objects[0].locationId, "sanctum");
+});
+
+test("organiser cannot add a tenth object while nine slots are filled", () => {
+  const app = harness();
+  app.enterCode();
+  app.click("objectAdd");
+  assert.equal(app.config().objects.length, 9);
+});
+
+test("reopening in the same browser keeps exploration progress and dial choice", () => {
+  const storage = new Map();
+  const first = harness(storage);
+  first.click("worldEnter");
+  first.click("worldWalk");
+  const restored = harness(storage);
+  assert.equal(restored.state().scene, "path");
+  assert.equal(restored.state().walkProgress, 12);
+});
+
