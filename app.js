@@ -204,6 +204,7 @@
     $("portal").classList.toggle("in-realm",inArchive);
     var loc=getLocation(),index=config.locations.indexOf(loc),available=activeObjects(),inLoc=available.filter(function(o){return o.locationId===loc.id;});
     $("portal").style.setProperty("--realm-accent",loc.colour);
+    $("portal").style.setProperty("--realm-backdrop",'url("./assets/realms/'+loc.id+'.svg")');
     $("worldWalkPct").textContent=state.walkProgress+"%";
     $("worldWalkFill").style.width=state.walkProgress+"%";
     $("voidWalkway").style.setProperty("--altar-scale",String(.38+state.walkProgress/100*.83));
@@ -229,7 +230,7 @@
     var circle=config.locations.map(function(loc,index){
       var angle=(-90+360*index/7)*Math.PI/180;
       var x=(50+39*Math.cos(angle)).toFixed(2),y=(50+39*Math.sin(angle)).toFixed(2);
-      return '<button type="button" class="rune-socket'+(loc.id===state.selectedLocation?" selected":"")+'" data-location="'+html(loc.id)+'" style="--x:'+x+'%;--y:'+y+'%" aria-label="Select '+html(loc.name)+'" aria-pressed="'+String(loc.id===state.selectedLocation)+'" title="'+html(loc.name)+'">'+html(loc.rune)+'</button>';
+      return '<button type="button" class="rune-socket'+(loc.id===state.selectedLocation?" selected":"")+(state.visited.indexOf(loc.id)>=0?" visited":"")+'" data-location="'+html(loc.id)+'" style="--x:'+x+'%;--y:'+y+'%" aria-label="Select '+html(loc.name)+'" aria-pressed="'+String(loc.id===state.selectedLocation)+'" title="'+html(loc.name)+'">'+html(loc.rune)+'</button>';
     }).join("");
     $("worldLocationDial").insertAdjacentHTML("beforeend",circle);
     renderWorld();
