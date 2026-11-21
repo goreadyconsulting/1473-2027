@@ -97,3 +97,46 @@ h1 span{color:#d9c493}
 @media(prefers-reduced-motion:reduce){
   .world-stage:before,.ritual-flash{animation:none!important}
 }
+/* The classic 768px-wide iPad portrait viewport needs its own compact journey. */
+@media (orientation:portrait) and (min-width:761px) and (max-width:900px){
+  .portal{gap:10px;padding:13px}
+  .topbar{min-height:88px}
+  .world-stage{min-height:660px}
+  .world-entry-copy{top:37px;left:40px;right:40px;transform:none;max-width:85%}
+  .world-entry-copy h2{font-size:61px;max-width:550px}
+  .world-entry-copy p{font-size:15px;max-width:425px}
+  .gate-composition{top:auto;bottom:-9%;right:4%;transform:none;width:475px;height:475px}
+  .world-dial{display:flex;flex-direction:column;justify-content:flex-start;overflow:auto}
+  .dial-left{width:100%;padding:25px 30px 0}
+  .dial-left h2{font-size:43px;margin:8px 0}
+  .dial-left>p{font-size:14px;max-width:660px;margin-bottom:6px}
+  .location-readout{margin:10px 0 4px;padding-top:10px;max-width:660px}
+  .location-readout h3{font-size:30px;margin:6px 0}
+  .location-readout p{min-height:0;font-size:14px;margin:0 0 6px}
+  .dial-commands{margin-top:8px}
+  .dial-commands button{min-height:44px}
+  .slab-area{width:100%;min-height:420px;padding:6px 20px 20px}
+  .stone-slab{height:390px;width:390px}
+  .stone-dial{width:290px}
+  .rune-socket{width:48px;height:48px;font-size:27px}
+  .realm-nav{flex-direction:column;align-items:stretch}
+  .realm-buttons button{flex:1}
+  .object-dialog[open]{display:block;max-height:92dvh;width:min(660px,95vw)}
+  .detail-visual{height:235px;border-right:0;border-bottom:1px solid rgba(225,198,146,.35)}
+  .detail-info{max-height:none;padding:24px}
+  .detail-info h2{font-size:37px}
+  .detail-facts{grid-template-columns:1fr 1fr}
+  .detail-actions{background:#0b1b21}
+}
+@media (max-width:900px) and (orientation:landscape){
+  .portal{gap:8px}
+  .world-stage{min-height:320px}
+  .world-entry-copy h2{font-size:40px}
+  .world-entry-copy p{font-size:12px;line-height:1.35}
+  .object-dialog[open]{width:96vw}
+  .detail-info{padding:18px}
+  .detail-info h2{font-size:28px}
+  .detail-facts{gap:6px}
+  .fact{padding:7px}
+  .fact p{font-size:12px;line-height:1.35}
+}
