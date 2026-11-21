@@ -18,5 +18,6 @@ jobs:
       - name: Verify JavaScript and gameplay tests
         run: |
           node --check app.js
+          node --check sound.js
           node --check sw.js
           node --test tests/*.test.cjs
