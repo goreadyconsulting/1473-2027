@@ -311,3 +311,50 @@ test("reopening in the same browser keeps exploration progress and dial choice",
   assert.equal(restored.state().walkProgress, 12);
 });
 
+
+test("player enters the gate and starts the clock without organiser access", () => {
+  const app = harness();
+  assert.equal(app.state().phase,"standby");
+  app.click("worldEnter");
+  assert.equal(app.state().phase,"running");
+  assert.equal(app.state().scene,"path");
+  app.moveClock(3000);
+  app.tick();
+  assert.equal(app.get("mainTimer").textContent,"19:57");
+});
+
+test("all ten relics have complete stories and locally packaged illustrations", () => {
+  const app=harness();
+  app.enterCode();
+  const items=app.config().objects;
+  assert.equal(items.length,10);
+  assert.equal(new Set(items.map(i=>i.id)).size,10);
+  for(const item of items) {
+    assert.ok(item.benefit.length>20,"Missing power for "+item.id);
+    assert.ok(item.limitation.length>20,"Missing catch for "+item.id);
+    assert.ok(item.consequence.length>20,"Missing consequence for "+item.id);
+    assert.ok(fs.existsSync(path.join(__dirname,"..",item.image.replace(/^\.\//,""))),"Missing illustration for "+item.id);
+  }
+  app.openObject("history");
+  assert.match(app.get("detailConsequence").textContent,/catastrophe/i);
+});
+
+test("previous sessions upgrade to the ten-relic edition without carrying old deletions", () => {
+  const storage=new Map();
+  storage.set(CONFIG_KEY,JSON.stringify({version:2,objects:[{id:"smartphone",name:"Old sample"}]}));
+  storage.set(SESSION_KEY,JSON.stringify({phase:"running",scene:"archive",lost:[{id:"camera"}],endsAt:99999999}));
+  const app=harness(storage);
+  assert.equal(app.config().version,3);
+  assert.equal(app.config().objects.length,10);
+  assert.equal(app.config().objects[0].name,"Smartphone");
+  assert.equal(app.state().phase,"standby");
+  assert.equal(app.state().scene,"gate");
+});
+
+test("offline shell includes new interface, audio engine and ten illustrated objects", () => {
+  const root=path.join(__dirname,"..");
+  const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");
+  for(const file of ["./experience.css","./sound.js",
+    ...["smartphone","toilet","history","medical","worldmap","firearm","led","condoms","filter","seeds"].map(id=>"./assets/objects/"+id+".svg")])
+    assert.ok(sw.includes(file),"Not in offline cache: "+file);
+});
