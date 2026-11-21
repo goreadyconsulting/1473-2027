@@ -127,7 +127,8 @@
     $("destroyedCount").textContent=String(state.lost.length);
   }
   function renderTelemetry() {
-    var rem=remainingMs(),status=state.phase==="standby"?"STANDBY":state.phase==="closed"?"CLOSED":state.phase==="completed"?"SECURED":state.emergency?"UNSTABLE":rem<=180000?"CLOSING":state.paused?"PAUSED":"STABLE";
+    $("portalTitle").firstChild.textContent=config.title+" ";
+    var rem=remainingMs(),status=state.phase==="standby"?"STANDBY":state.phase==="closed"?"CLOSED":state.phase==="completed"?"SECURED":state.paused?"PAUSED":state.emergency?"UNSTABLE":rem<=180000?"CLOSING":"STABLE";
     var klass=status==="SECURED"?"completed":status.toLowerCase();
     $("statusPill").className="status-pill "+klass;
     $("statusText").textContent=status;
@@ -437,6 +438,7 @@
     $("confirmCancel").addEventListener("click",function(){$("confirmDialog").close();pendingConfirm=null;});
     $("confirmAccept").addEventListener("click",function(){var fn=pendingConfirm;$("confirmDialog").close();pendingConfirm=null;if(fn)fn();});
     $("adminOpen").addEventListener("click",showAdmin);
+    $("endingAdmin").addEventListener("click",showAdmin);
     $("adminClose").addEventListener("click",function(){$("adminDialog").close();});
     $("adminUnlock").addEventListener("click",unlockAdmin);
     $("adminPin").addEventListener("keydown",function(e){if(e.key==="Enter")unlockAdmin();});
