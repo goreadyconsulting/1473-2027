@@ -148,4 +148,12 @@ test("the seven locations use twenty-one actual photographs, never unrelated AI 
   }
   assert.match(player,/photography/);
   assert.match(worker,/vendor\/three\.module\.js/);
+  for(const file of ["stone-masonry.webp","stone-height.webp"]){
+    const full=path.join(root,"assets/textures",file);
+    assert.ok(fs.existsSync(full),file);
+    assert.ok(fs.statSync(full).size>20000,file+" should be a genuine photographic map");
+    assert.ok(worker.includes("./assets/textures/"+file),file+" must be offline-cached");
+  }
+  assert.ok(read("world3d.js").includes("stone-masonry.webp"));
+  assert.ok(read("world3d.js").includes("stone-height.webp"));
 });
