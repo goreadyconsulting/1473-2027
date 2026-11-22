@@ -1,0 +1,58 @@
+{
+  "emberfall": {
+    "source_name": "Crook Hall medieval hall interior.jpg",
+    "frames": [
+      "assets/photography/emberfall-1.webp",
+      "assets/photography/emberfall-2.webp",
+      "assets/photography/emberfall-3.webp"
+    ]
+  },
+  "glasswind": {
+    "source_name": "Grocery Store Aisle, vermont.jpg",
+    "frames": [
+      "assets/photography/glasswind-1.webp",
+      "assets/photography/glasswind-2.webp",
+      "assets/photography/glasswind-3.webp"
+    ]
+  },
+  "verdant": {
+    "source_name": "Woodland path.jpg",
+    "frames": [
+      "assets/photography/verdant-1.webp",
+      "assets/photography/verdant-2.webp",
+      "assets/photography/verdant-3.webp"
+    ]
+  },
+  "stormglass": {
+    "source_name": "The lighthouse in the storm.jpg",
+    "frames": [
+      "assets/photography/stormglass-1.webp",
+      "assets/photography/stormglass-2.webp",
+      "assets/photography/stormglass-3.webp"
+    ]
+  },
+  "bleakwater": {
+    "source_name": "Ponte de Lima-Ponte Medieval e Romana-Stones at end of bridge.jpg",
+    "frames": [
+      "assets/photography/bleakwater-1.webp",
+      "assets/photography/bleakwater-2.webp",
+      "assets/photography/bleakwater-3.webp"
+    ]
+  },
+  "sanctum": {
+    "source_name": "Interior of an apothecary's shop, c. 1625, WHMM Wellcome M0000661.jpg",
+    "frames": [
+      "assets/photography/sanctum-1.webp",
+      "assets/photography/sanctum-2.webp",
+      "assets/photography/sanctum-3.webp"
+    ]
+  },
+  "iron": {
+    "source_name": "Intreior of abandoned factory.JPG",
+    "frames": [
+      "assets/photography/iron-1.webp",
+      "assets/photography/iron-2.webp",
+      "assets/photography/iron-3.webp"
+    ]
+  }
+}
