@@ -62,7 +62,7 @@
     const list=$("relicList");list.replaceChildren();
     data.relics.forEach(item=>{
       const row=document.createElement("div");row.className="relic-row"+(item.active?"":" eliminated");
-      const img=document.createElement("img");img.src=safeImage(item.image);img.alt="";
+      const img=document.createElement("img");img.src="../assets/objects-photography/"+item.id+".webp";img.alt="";
       const info=document.createElement("div");info.className="relic-info";
       const strong=document.createElement("strong");strong.textContent=item.name;
       const small=document.createElement("small");small.textContent=item.active?"IN THE CROSSING":"ELIMINATED";
