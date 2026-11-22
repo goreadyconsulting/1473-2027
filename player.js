@@ -10,6 +10,13 @@
   const canvas=$("portalCanvas"),ctx=canvas.getContext("2d",{alpha:false});
   const deviceCap=()=>Math.min(window.devicePixelRatio||1,1.25);
   function localImage(src){return typeof src==="string"&&/^\.\/assets\/(?:photography|cinematics|objects|reels|realms|world)\/[a-z0-9_\/.-]+\.(?:svg|webp)$/i.test(src)?src:"";}
+  // Real photographed artifacts replace original icon-like illustration cards.
+  const photoRelics=new Set(["smartphone","toilet","history","medical","worldmap","firearm","led","condoms","filter"]);
+  function relicImage(item){
+    if(!item)return "";
+    if(photoRelics.has(item.id))return "./assets/objects-photography/"+item.id+".webp";
+    return localImage(item.image);
+  }
   function stage(next){
     if(!stages.includes(next))return;
     if(scene==="reel"&&next!=="reel")cancelReel();
@@ -130,7 +137,7 @@
     relics.forEach(item=>{
       const b=document.createElement("button");b.type="button";b.className="relic-card";
       b.setAttribute("aria-label",item.name);
-      const img=document.createElement("img");img.alt="";img.src=localImage(item.image)||"";img.loading="eager";
+      const img=document.createElement("img");img.alt="";img.src=relicImage(item)||"";img.loading="eager";
       b.appendChild(img);b.addEventListener("click",()=>openRelic(item.id));
       gallery.appendChild(b);
     });
@@ -139,7 +146,7 @@
     const item=snapshot&&snapshot.relics.find(r=>r.id===id&&r.active);
     if(!item)return;
     focusId=id;chord([220,330,440],.02,.55);
-    $("relicHero").src=localImage(item.image)||"";stage("relic");
+    $("relicHero").src=relicImage(item)||"";stage("relic");
   }
   function closeRelic(){if(scene==="relic"){focusId=null;stage("place");}}
   function queueLosses(events){
@@ -153,7 +160,7 @@
     if(!item){playLoss();return;}
     lossBusy=true;
     const overlay=$("lossOverlay");
-    $("lossRelic").src=localImage(item.image)||"";
+    $("lossRelic").src=relicImage(item)||"";
     overlay.hidden=false;overlay.classList.remove("active");void overlay.offsetWidth;overlay.classList.add("active");
     chord([74,92.5,110],.067,2.1);
     setTimeout(()=>{
@@ -169,7 +176,7 @@
     const alive=snapshot.relics.filter(x=>x.active);
     if(alive.length!==1)return;
     if(!lossBusy&&!lossQueue.length){
-      $("finalRelic").src=localImage(alive[0].image)||"";
+      $("finalRelic").src=relicImage(alive[0])||"";
       $("finalOverlay").hidden=false;releaseWake();
     } else setTimeout(finalizeIfNeeded,4200);
   }
