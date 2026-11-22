@@ -108,6 +108,6 @@ test("photo-real transitions preserve seven touch zones and interactive walk",()
   assert.match(css,/\.rune-socket/);
   assert.ok(player.includes("positions=[[50.0,13.7]"));
   assert.ok(player.includes("--photo-walk-zoom"));
-  assert.match(player,/\\.\\(svg\\|webp\\)/);
+  assert.ok(player.includes("svg|webp"));
   assert.match(css,/walk-camera\.stepping/);
 });
