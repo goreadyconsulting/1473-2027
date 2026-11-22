@@ -44,14 +44,14 @@ const relics = [
    await page.waitForFunction(()=>document.querySelector("#portalStage.active"),{timeout:8000});
    assert.equal(await page.locator("h1,main p").count(),0);
    await page.screenshot({path:"browser-artifacts/01-approved-entrance.png"});
-   await page.locator("#portalStage").tap({position:{x:500,y:345}});
+   await page.touchscreen.tap(500,345);
    await page.waitForFunction(()=>document.querySelector("#walkStage.active"),{timeout:9000});
    await page.waitForSelector("#continuousWorld3D",{state:"visible",timeout:10000});
    assert.equal(await page.evaluate(()=>document.querySelector("#continuousWorld3D").parentElement.id),"walkStage");
    await page.waitForTimeout(850);
    await page.screenshot({path:"browser-artifacts/02-actual-3d-bridge.png"});
    for(let i=0;i<12;i++){
-     await page.locator("#walkStage").tap({position:{x:500,y:420}});
+     await page.touchscreen.tap(500,420);
      await page.waitForTimeout(120);
    }
    await page.waitForFunction(()=>document.querySelector("#slabStage.active"),{timeout:12000});
@@ -70,7 +70,7 @@ const relics = [
    await page.screenshot({path:"browser-artifacts/04-real-location-photo-reel.png"});
    const pic=await page.locator("#reelImage").getAttribute("src");
    assert.ok(pic.includes("assets/photography/"),"Photo reel must use real licensed imagery");
-   await page.locator("#reelStage").tap({position:{x:500,y:380}});
+   await page.touchscreen.tap(500,380);
    await page.waitForFunction(()=>document.querySelector("#placeStage.active"),{timeout:9000});
    await page.screenshot({path:"browser-artifacts/05-real-location-with-relic.png"});
    assert.equal(errors.length,0,"Browser page errors: "+errors.join(" / "));
