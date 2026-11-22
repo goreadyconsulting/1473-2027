@@ -456,7 +456,19 @@ import * as THREE from "./vendor/three.module.js";
   canvas.addEventListener("pointerdown", onPointer);
   window.addEventListener("resize", resize);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { lastTick = performance.now(); resize(); } });
-  const api = { setPhase, step, setLocations, resize, get active() { return phase !== "off"; } };
+  // Allows physical tap-target QA on real screens and automated visual regression.
+  function getRuneCenters() {
+    const bounds = canvas.getBoundingClientRect();
+    return runeGroup.children.map(node => {
+      const p = node.position.clone().project(camera);
+      return {
+        id: node.userData.placeId,
+        x: bounds.left + (p.x + 1) / 2 * bounds.width,
+        y: bounds.top + (1 - p.y) / 2 * bounds.height
+      };
+    });
+  }
+  const api = { setPhase, step, setLocations, resize, getRuneCenters, get active() { return phase !== "off"; } };
   document.body.classList.add("world3d-ready");
   window.portal3d = api;
   window.dispatchEvent(new Event("portal3dready"));
