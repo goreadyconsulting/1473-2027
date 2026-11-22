@@ -1,0 +1,38 @@
+name: Build real-world relic photo portraits
+on:
+  push:
+    branches:
+      - feat/real-3d-journey-photographic-destinations
+    paths:
+      - 'scripts/source_real_relics.py'
+      - '.github/workflows/source-real-relics.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  relic-photography:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow==11.1.0 requests==2.32.3
+      - name: Download authentic licensed photographs and generate cohesive relic exhibits
+        run: python scripts/source_real_relics.py
+      - name: Verify 9 photographic objects
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=list(Path("assets/objects-photography").glob("*.webp"))
+          assert len(files)==9
+          assert all(p.stat().st_size>=10000 for p in files)
+          print("9 authentic relic photo portraits verified.")
+          PY
+      - name: Commit photos to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/objects-photography
+          git diff --cached --quiet || (git commit -m "assets: add nine documentary photo relic portraits" && git pull --rebase origin feat/real-3d-journey-photographic-destinations && git push origin HEAD:feat/real-3d-journey-photographic-destinations)
