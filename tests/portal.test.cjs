@@ -87,3 +87,27 @@ test("offline cache contains both new screens and room for every existing image"
 test("new javascript modules parse successfully",()=>{
   for(const file of ["player.js","admin/admin.js","sw.js"]){assert.doesNotThrow(()=>new Function(read(file)),file);}
 });
+
+test("seven original realistic cinematic assets are locally bundled and not temporary external URLs",()=>{
+  const names=["portal-gate","void-walk","runestone","grocery-1","grocery-2","grocery-3","portal-grocery"];
+  const css=read("cinematic.css"),sw=read("sw.js");
+  for(const name of names){
+    const asset="assets/cinematics/"+name+".webp";
+    const full=path.join(root,asset);
+    assert.ok(fs.existsSync(full),"Missing "+asset);
+    assert.ok(fs.statSync(full).size>90000,asset+" is a placeholder rather than the original image");
+    assert.ok(sw.includes("./"+asset),asset+" must be cached for iPad");
+  }
+  assert.ok(css.includes("portal-gate.webp"));
+  assert.ok(css.includes("void-walk.webp"));
+  assert.ok(css.includes("runestone.webp"));
+  assert.match(read("index.html"),/cinematic\.css/);
+});
+test("photo-real transitions preserve seven touch zones and interactive walk",()=>{
+  const css=read("cinematic.css");
+  assert.match(css,/\.rune-socket/);
+  assert.ok(player.includes("positions=[[50.0,13.7]"));
+  assert.ok(player.includes("--photo-walk-zoom"));
+  assert.match(player,/\\.\\(svg\\|webp\\)/);
+  assert.match(css,/walk-camera\.stepping/);
+});
