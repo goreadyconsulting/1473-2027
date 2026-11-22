@@ -18,7 +18,7 @@ The approved entry portal image and continuous vortex animation are unchanged.
 
 **All seven location reels use real photographs** rather than generated fantasy illustration backgrounds. The three cinematic shots for each destination are consistent crops of a **single real photograph**. All 21 local WebP shots are cached for iPad use and the original photographers, licenses and edits are documented in [PHOTOGRAPHY_CREDITS.md](PHOTOGRAPHY_CREDITS.md).
 
-On devices without a usable WebGL context the earlier 2D view remains as a fallback. The nine relic portraits are still the existing stylized pictures rather than photo assets. No new text or organiser controls are displayed on the player iPad. The seven-hour Supabase gameplay and separate admin phone remain unchanged.
+On devices without a usable WebGL context the earlier 2D view remains as a fallback. All nine relic portraits now use individually sourced photographs of the corresponding real-world objects, preserving the same wordless visual language. Their source attributions are also included in PHOTOGRAPHY_CREDITS.md. No new text or organiser controls are displayed on the player iPad. The seven-hour Supabase gameplay and separate admin phone remain unchanged.
 
 ## Player journey
 
