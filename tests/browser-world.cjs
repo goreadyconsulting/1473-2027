@@ -72,6 +72,9 @@ const relics = [
    assert.ok(pic.includes("assets/photography/"),"Photo reel must use real licensed imagery");
    await page.touchscreen.tap(500,380);
    await page.waitForFunction(()=>document.querySelector("#placeStage.active"),{timeout:9000});
+   await page.waitForTimeout(1100); // CSS crossfade needs time before visual inspection
+   assert.ok((await page.locator("#relicGallery .relic-card").count())>=1,
+     "Each location should reveal its surviving physical object(s)");
    await page.screenshot({path:"browser-artifacts/05-real-location-with-relic.png"});
    assert.equal(errors.length,0,"Browser page errors: "+errors.join(" / "));
    console.log("Browser QA passed: portal → real 3D walk → same 3D rune altar → real photo location → relic.");
