@@ -3,263 +3,87 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#071219">
+  <meta name="theme-color" content="#020714">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Temporal Connection | 1473 ⇄ 2027</title>
+  <meta name="apple-mobile-web-app-title" content="The Crossing">
+  <meta name="description" content="An immersive time crossing">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./world.css">
-  <link rel="stylesheet" href="./experience.css">
-  <script defer src="./sound.js"></script>
-  <script defer src="./app.js"></script>
+  <link rel="stylesheet" href="./player.css">
+  <script src="./player.js" defer></script>
+  <title>The Crossing</title>
 </head>
 <body>
-  <div class="scanlines" aria-hidden="true"></div>
-  <main class="portal" id="portal">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">⌬</div>
-        <div class="brand-copy">
-          <div class="eyebrow">CHRONOS ARCHIVE <span class="separator">/</span> REMOTE TERMINAL 07</div>
-          <h1 id="portalTitle">TEMPORAL CONNECTION <span>1473 / 2027</span></h1>
-          <div class="subtitle">THE CROSSING IS OPEN. FATE IS YOURS TO CHOOSE.</div>
-        </div>
+<main id="world" aria-label="The Crossing">
+  <section id="portalStage" class="stage active vortex-stage" aria-label="Enter the time portal" tabindex="0">
+    <canvas id="portalCanvas" aria-hidden="true"></canvas>
+    <div class="vortex-vignette" aria-hidden="true"></div>
+    <div class="vortex-glow" aria-hidden="true"></div>
+  </section>
+
+  <section id="walkStage" class="stage walk-stage" aria-label="The walkway between worlds" tabindex="0">
+    <div id="walkCamera" class="walk-camera">
+      <div class="void-sky"></div>
+      <div class="void-particles"></div>
+      <div id="walkMonolith" class="walk-monolith" aria-hidden="true">
+        <div class="monolith-glyph">ᛟ</div>
       </div>
-      <div class="telemetry">
-        <div class="status-area">
-          <div class="field-label">CONNECTION STATUS</div>
-          <div class="status-pill standby" id="statusPill"><span class="pulse-dot"></span><span id="statusText">STANDBY</span></div>
-        </div>
-        <div class="countdown-area">
-          <div class="field-label">TIME UNTIL COLLAPSE</div>
-          <div class="countdown" id="mainTimer" role="timer" aria-label="Time until portal closure">07:00:00</div>
-        </div>
-        <button id="soundToggle" class="admin-trigger sound-trigger" type="button" aria-label="Enable ambient sound" aria-pressed="false" title="Sound on / off">♪</button>
-        <button id="adminOpen" class="admin-trigger" type="button" aria-label="Open organiser controls" title="Organiser controls">⚙</button>
+      <div id="walkPath" class="walk-path" aria-hidden="true">
+        <div class="walk-centerline"></div>
+        <div class="walk-cracks"></div>
       </div>
-    </header>
-    <section class="hourly-status" aria-label="Hourly sacrifice schedule">
-      <span class="hourly-label"><span class="hourly-emblem" aria-hidden="true">ᚺ</span> NEXT RELIC LOST IN</span>
-      <strong id="nextElimination" aria-live="off">01:00:00</strong>
-      <span id="hourlyProgress" class="hourly-progress">0 / 7 ELIMINATIONS</span>
-    </section>
-    <section class="emergency-strip" id="emergencyStrip" hidden aria-live="assertive">
-      <div class="warning-glyph">⚠</div>
-      <div class="emergency-copy"><strong>CRITICAL INSTABILITY</strong><span>SELECT AN OBJECT TO DESTROY BEFORE CONNECTION FAILURE</span></div>
-      <div class="emergency-clock" id="emergencyClock">00:45</div>
-    </section>
-    <section class="world-stage" id="worldStage" aria-label="Journey between worlds" data-scene="gate">
-      <div class="world-scene world-gate" id="sceneGate">
-        <div class="world-atmosphere" aria-hidden="true"></div>
-        <div class="world-entry-copy">
-          <div class="world-eyebrow">AN ANCIENT POWER HAS AWAKENED</div>
-          <h2>THE VEIL<br><em>BETWEEN</em> AGES</h2>
-          <p>A forgotten crossing. Seven destinations beyond the known world. Ten relics from a future not yet written.</p>
-          <button type="button" class="world-button" id="worldEnter"><span>STEP THROUGH THE PORTAL</span><span aria-hidden="true">ᛟ</span></button>
-          <small>1473 <span aria-hidden="true">✦</span> 2027</small>
-        </div>
-        <div class="gate-composition" aria-hidden="true">
-          <div class="gate-backglow"></div>
-          <div class="gate-ring gate-ring-outer"><span>ᚨ ᛗ ᛟ ᛚ ᚱ ᛞ ᚹ ᚨ ᛗ ᛟ ᛚ ᚱ</span></div>
-          <div class="gate-ring gate-ring-middle"></div>
-          <div class="gate-ring gate-ring-inner"></div>
-          <div class="gate-core"></div>
-          <div class="gate-foundation"></div>
-        </div>
-        <div class="world-corner-mark">CROSSING 01 / 07 <span>THE FIRST BREACH</span></div>
-      </div>
-      <div class="world-scene world-path" id="scenePath" hidden>
-        <div class="void-horizon" aria-hidden="true"></div>
-        <div class="void-starfield" aria-hidden="true"></div>
-        <div class="void-walkway" id="voidWalkway" aria-hidden="true"><div class="void-track"></div><div class="void-altar"><div class="void-altar-symbol">ᛟ</div></div></div>
-        <div class="path-title"><span class="world-eyebrow">YOU ARE BEYOND THE EDGE OF TIME</span><h2>THE SPACE <em>BETWEEN</em> WORLDS</h2><p>The path is forming beneath your feet. Something ancient waits ahead.</p></div>
-        <div class="walk-console">
-          <div class="walk-progress-line"><span class="world-eyebrow">DISTANCE TO THE STONE</span><span id="worldWalkPct">0%</span></div>
-          <div class="walk-track"><div id="worldWalkFill"></div></div>
-          <button type="button" id="worldWalk" class="world-button"><span>HOLD TO WALK FORWARD</span><span aria-hidden="true">↑</span></button>
-          <p>Tap repeatedly, hold the button, or press ↑ / W</p>
-        </div>
-      </div>
-      <div class="world-scene world-dial" id="sceneDial" hidden>
-        <div class="dial-left">
-          <div class="world-eyebrow">THE STONE REMEMBERS ALL PATHS</div>
-          <h2>THE SEVEN<br><em>DESTINATIONS</em></h2>
-          <p>The dial was here before kings, before maps, perhaps before time itself. Turn its symbols and choose where the portal shall open.</p>
-          <div class="location-readout">
-            <span class="world-eyebrow">SELECTED DESTINATION <span id="worldLocationNo">01 / 07</span></span>
-            <h3 id="worldLocationName"></h3>
-            <p id="worldLocationDesc"></p>
-            <span class="location-stock" id="worldLocationStock"></span>
-          </div>
-          <div class="dial-commands">
-            <button type="button" class="world-button" id="worldTravel"><span>OPEN THIS DESTINATION</span><span aria-hidden="true">ᚹ</span></button>
-            <button type="button" class="world-secondary" id="worldBackPath">RETURN TO THE VOID</button>
-          </div>
-        </div>
-        <div class="slab-area">
-          <div class="slab-halo" aria-hidden="true"></div>
-          <div class="stone-slab">
-            <div class="slab-rune-title">ᛟ · ᚹ · ᚱ · ᚨ · ᛉ · ᛟ · ᚹ</div>
-            <div class="stone-dial" id="worldLocationDial" role="group" aria-label="Select one of seven destinations">
-              <div class="dial-outer-etching" aria-hidden="true"></div>
-              <div class="dial-interior" aria-hidden="true"><div id="worldSelectedRune">ᛟ</div><small>THE NEXUS</small></div>
-            </div>
-            <div class="slab-instruction">TOUCH A RUNE TO TURN THE DIAL</div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <nav class="realm-nav" id="realmNav" aria-label="Destination controls" hidden>
-      <div class="realm-identity"><span class="world-eyebrow" id="realmEyebrow">DESTINATION 01 / 07</span><strong id="realmName"></strong><span id="realmDescription"></span></div>
-      <div class="realm-buttons"><button type="button" class="world-secondary" id="worldAll">VIEW ALL REMAINING RELICS</button><button type="button" class="world-secondary" id="worldReturn">RETURN TO RUNESTONE</button></div>
-    </nav>
-    <section class="archive-section" id="archiveSection" hidden>
-      <div class="section-heading">
-        <div><span class="section-rule" aria-hidden="true"></span><span class="section-kicker">RECOVERABLE OBJECTS FROM THE YEAR 2027</span></div>
-        <div class="archive-meta"><span id="remainingCount">10</span> <span>REMAINING</span><span class="meta-divider">/</span><span id="destroyedCount">0</span> <span>LOST</span></div>
-      </div>
-      <div class="object-grid" id="objectGrid" aria-label="Future objects"></div>
-      <div class="archive-empty" id="archiveEmpty" hidden>No relics remain here. The runestone may yet reveal another path.</div>
-    </section>
-    <footer class="portal-footer">
-      <div class="footer-left"><span class="signal-bars" aria-hidden="true">▂▄▆</span><span>QUANTUM UPLINK</span><span class="footer-muted" id="footerState">AWAITING THE FIRST TRAVELLER</span></div>
-      <div class="ticker-wrap"><span class="ticker-prefix">TRANSMISSION LOG</span><span id="logText">The crossing lies dormant. Touch the ancient gate.</span></div>
-      <div class="footer-right">1473 <span>⟷</span> 2027 <span class="revision">V4.0</span></div>
-    </footer>
-  </main>
-  <div class="ritual-flash" id="ritualFlash" aria-hidden="true"></div>
-  <div class="hourly-overlay" id="hourlyOverlay" hidden aria-live="assertive" aria-atomic="true">
-    <div class="hourly-overlay-inner">
-      <span class="hourly-overlay-rune" aria-hidden="true">ᛟ</span>
-      <div id="hourlyEventHour" class="hourly-overlay-eyebrow">THE 01 HOUR MARK</div>
-      <div class="hourly-overlay-heading">THE TOLL IS CLAIMED</div>
-      <div id="hourlyEventName" class="hourly-overlay-name"></div>
-      <div class="hourly-overlay-foot">THE CROSSING TAKES ONE. THE JOURNEY CONTINUES.</div>
+      <div class="walk-side left"></div><div class="walk-side right"></div>
+      <div class="walk-haze"></div>
     </div>
+  </section>
+
+  <section id="slabStage" class="stage slab-stage" aria-label="Seven-way stone portal">
+    <div class="slab-ambience"></div>
+    <div class="slab-floor"></div>
+    <div class="slab-pillar left"></div><div class="slab-pillar right"></div>
+    <div class="carved-slab">
+      <div class="slab-grooves"></div>
+      <div class="slab-inscription" aria-hidden="true">ᚺ ᛟ ᛚ ᚹ ᚱ ᛉ ᚠ</div>
+      <div class="dial-rings"></div>
+      <div class="rune-core" aria-hidden="true">ᛟ</div>
+      <div id="runeWheel" class="rune-wheel" aria-label="Seven destinations"></div>
+    </div>
+  </section>
+
+  <section id="reelStage" class="stage reel-stage" aria-label="Entering a destination">
+    <div class="reel-screen">
+      <img id="reelImage" alt="" draggable="false">
+      <div class="reel-grain"></div>
+      <div class="reel-flare"></div>
+      <div class="reel-edge"></div>
+      <div class="reel-vignette"></div>
+    </div>
+  </section>
+
+  <section id="placeStage" class="stage place-stage" aria-label="Relic chamber">
+    <div id="placeBackground" class="place-background"></div>
+    <div class="place-wisps"></div>
+    <div id="relicGallery" class="relic-gallery"></div>
+    <button type="button" id="backToStone" class="back-stone" aria-label="Return to the ancient stone">ᛟ</button>
+  </section>
+
+  <section id="relicStage" class="stage relic-stage" aria-label="Relic examination">
+    <div class="focus-halo"></div>
+    <img id="relicHero" src="" alt="" draggable="false">
+    <div class="focus-runes" aria-hidden="true">ᚺ ᚢ ᚱ ᛟ ᚹ ᛉ</div>
+  </section>
+
+  <div id="lossOverlay" class="loss-overlay" hidden aria-hidden="true">
+    <div class="loss-ring"></div>
+    <img id="lossRelic" alt="" draggable="false">
+    <div class="loss-burst"></div>
   </div>
-
-  <dialog id="objectDialog" class="themed-dialog object-dialog" aria-labelledby="detailTitle">
-    <button type="button" class="dialog-close" id="detailClose" aria-label="Close details">×</button>
-    <div class="detail-visual" id="detailVisual"></div>
-    <div class="detail-info">
-      <div class="eyebrow">TEMPORAL ARCHIVE <span id="detailCode"></span></div>
-      <h2 id="detailTitle"></h2>
-      <p id="detailDescription" class="detail-description"></p>
-      <div class="detail-facts">
-        <div class="fact"><span class="fact-heading advantage">POTENTIAL ADVANTAGE</span><p id="detailBenefit"></p></div>
-        <div class="fact"><span class="fact-heading limitation">CRITICAL LIMITATION</span><p id="detailLimitation"></p></div>
-        <div class="fact consequence-fact"><span class="fact-heading consequence">ECHO THROUGH TIME</span><p id="detailConsequence"></p></div>
-      </div>
-      <div class="detail-actions">
-        <button type="button" class="button ghost" id="detailBack">RETURN TO ARCHIVE</button>
-        <button type="button" class="button destroy" id="destroyRequest">DESTROY OBJECT</button>
-        <button type="button" class="button primary" id="finalRequest" hidden>RETAIN AS FINAL OBJECT</button>
-      </div>
-      <div class="detail-note" id="detailNote"></div>
-    </div>
-  </dialog>
-
-  <dialog id="confirmDialog" class="themed-dialog confirm-dialog" aria-labelledby="confirmTitle">
-    <div class="confirm-icon" id="confirmIcon">⚠</div>
-    <div class="eyebrow">AUTHORIZATION REQUIRED</div>
-    <h2 id="confirmTitle">CONFIRM DESTRUCTION</h2>
-    <p id="confirmBody"></p>
-    <div class="confirm-actions"><button type="button" class="button ghost" id="confirmCancel">CANCEL</button><button type="button" class="button destroy" id="confirmAccept">CONFIRM</button></div>
-  </dialog>
-
-  <dialog id="adminDialog" class="themed-dialog admin-dialog" aria-labelledby="adminTitle">
-    <div class="admin-header"><div><div class="eyebrow">PRIVATE CONTROL CHANNEL</div><h2 id="adminTitle">ORGANISER CONSOLE</h2></div><button id="adminClose" class="dialog-close" type="button" aria-label="Close organiser controls">×</button></div>
-    <div id="adminLock" class="admin-lock">
-      <p>Enter the organiser access code to manage the transmission. This is an accidental-tap safeguard, not secure authentication.</p>
-      <label>ACCESS CODE<input id="adminPin" type="password" inputmode="numeric" autocomplete="off" placeholder="4-digit code"></label>
-      <button type="button" class="button primary" id="adminUnlock">AUTHORISE CONSOLE</button>
-      <p class="error-text" id="pinError" aria-live="polite"></p>
-    </div>
-    <div id="adminContent" hidden>
-      <div class="admin-tabs" role="tablist" aria-label="Organiser settings">
-        <button type="button" class="admin-tab active" data-tab="session">SESSION</button>
-        <button type="button" class="admin-tab" data-tab="objects">OBJECTS</button>
-        <button type="button" class="admin-tab" data-tab="locations">LOCATIONS</button>
-        <button type="button" class="admin-tab" data-tab="glitches">GLITCH CONTENT</button>
-        <button type="button" class="admin-tab" data-tab="settings">SETTINGS</button>
-      </div>
-      <section class="admin-panel" data-panel="session">
-        <div class="control-grid">
-          <button class="button primary" type="button" id="sessionStart">START NEW SESSION</button>
-          <button class="button ghost" type="button" id="sessionPause">PAUSE / RESUME</button>
-          <button class="button destroy" type="button" id="sessionInstability">TRIGGER INSTABILITY</button>
-          <button class="button ghost" type="button" id="sessionStabilise">STABILISE NOW</button>
-          <button class="button ghost" type="button" id="sessionGlitch">PLAY RANDOM GLITCH</button>
-          <button class="button ghost" type="button" id="sessionAdvance">ADVANCE TIMER −60s</button>
-          <button class="button ghost" type="button" id="sessionAdvanceHour">SIMULATE NEXT HOUR</button>
-          <button class="button ghost" type="button" id="sessionReset">RESET SESSION</button>
-        </div>
-        <p class="admin-help">The timer persists across page refreshes on this device. Keep this screen open during the performance. Closing the browser does not pause a running countdown.</p>
-        <div class="session-summary" id="sessionSummary"></div>
-        <h3>OBJECT HISTORY</h3><div id="adminHistory" class="history-list"></div>
-      </section>
-      <section class="admin-panel" data-panel="objects" hidden>
-        <div class="editor-toolbar"><label>EDIT OBJECT<select id="objectSelect"></select></label><button type="button" class="button ghost" id="objectAdd">+ ADD OBJECT</button></div>
-        <div class="editor-grid">
-          <label>NAME<input id="objName" maxlength="70"></label>
-          <label>ICON / EMOJI<input id="objIcon" maxlength="12"></label>
-          <label class="full">RELIC DESCRIPTION<textarea id="objDescription" rows="2" maxlength="480"></textarea></label>
-          <label class="full">POWER<textarea id="objBenefit" rows="3" maxlength="780"></textarea></label>
-          <label class="full">THE CATCH<textarea id="objLimitation" rows="3" maxlength="780"></textarea></label>
-          <label class="full">CONSEQUENCE<textarea id="objConsequence" rows="3" maxlength="780"></textarea></label>
-          <label class="full">IMAGE URL OR RELATIVE ASSET PATH<input id="objImage" placeholder="./assets/my-object.jpg"></label>
-          <label class="full">DESTINATION / REALM<select id="objLocation"></select></label>
-        </div>
-        <div class="editor-actions"><button type="button" class="button primary" id="objectSave">SAVE OBJECT</button><button type="button" class="button destroy" id="objectDelete">REMOVE FROM LIBRARY</button></div>
-        <p class="admin-help">For offline reliability, put photos in this site's assets folder and use relative paths. If there is no image, a decorative icon placeholder appears. Edits stay on this device until exported.</p>
-      </section>
-      <section class="admin-panel" data-panel="locations" hidden>
-        <div class="editor-toolbar"><label>EDIT ONE OF THE SEVEN DESTINATIONS<select id="locationSelect"></select></label></div>
-        <div class="editor-grid">
-          <label>DESTINATION NAME<input id="locName" maxlength="55"></label>
-          <label>RUNE SYMBOL<input id="locRune" maxlength="5"></label>
-          <label class="full">DESCRIPTION<textarea id="locDescription" rows="3" maxlength="260"></textarea></label>
-          <label>REALM HIGHLIGHT COLOUR<input type="color" id="locColour" value="#9df8df"></label>
-        </div>
-        <div class="editor-actions"><button type="button" class="button primary" id="locationSave">SAVE LOCATION</button></div>
-        <p class="admin-help">Exactly seven locations appear on the ancient stone dial. Give them their final names and choose the items assigned to each location in the Objects tab. These changes are stored locally; export the JSON configuration as a backup.</p>
-      </section>
-      <section class="admin-panel" data-panel="glitches" hidden>
-        <div class="editor-toolbar"><label>EDIT GLITCH<select id="glitchSelect"></select></label><button type="button" class="button ghost" id="glitchAdd">+ ADD GLITCH</button></div>
-        <div class="editor-grid">
-          <label>TYPE<select id="glitchType"><option value="message">TEXT MESSAGE</option><option value="image">IMAGE</option><option value="video">VIDEO</option></select></label>
-          <label>DURATION (SECONDS)<input id="glitchDuration" type="number" min="1" max="15" step="1"></label>
-          <label class="full">MESSAGE / CAPTION<textarea id="glitchText" rows="2" maxlength="260"></textarea></label>
-          <label class="full">IMAGE OR VIDEO URL / RELATIVE PATH<input id="glitchSource" placeholder="./assets/glitch-01.mp4"></label>
-        </div>
-        <div class="editor-actions"><button type="button" class="button primary" id="glitchSave">SAVE GLITCH</button><button type="button" class="button ghost" id="glitchPreview">PREVIEW</button><button type="button" class="button destroy" id="glitchDelete">DELETE GLITCH</button></div>
-        <p class="admin-help">Add modern-world images, videos or strange messages here without editing application code. Host files in this site's assets folder for reliable offline playback. Videos should be muted MP4s for iPad Safari.</p>
-      </section>
-      <section class="admin-panel" data-panel="settings" hidden>
-        <div class="editor-grid">
-          <label class="full">PORTAL TITLE<input id="setTitle" maxlength="90"></label>
-          <label>SESSION DURATION (MIN)<input id="setDuration" type="number" min="2" max="1440"></label>
-          <label>AUTOMATIC ELIMINATION EVERY (MIN)<input id="setAutoInterval" type="number" min="1" max="1440"></label>
-          <label>EMERGENCY WINDOW (SEC)<input id="setEmergency" type="number" min="10" max="300"></label>
-          <label class="full">INSTABILITY TRIGGERS: MINUTES REMAINING, COMMA-SEPARATED<input id="setThresholds" placeholder="15, 10, 5"></label>
-          <label>OBJECTS LOST ON FAILURE<input id="setFailureCount" type="number" min="0" max="10"></label>
-          <label>MIN TIME BETWEEN GLITCHES (SEC)<input id="setGlitchMin" type="number" min="10" max="3600"></label>
-          <label>MAX TIME BETWEEN GLITCHES (SEC)<input id="setGlitchMax" type="number" min="10" max="3600"></label>
-          <label>ORGANISER PIN<input id="setPin" type="text" maxlength="20"></label>
-        </div>
-        <div class="editor-actions"><button class="button primary" type="button" id="settingsSave">SAVE SETTINGS</button><button class="button ghost" type="button" id="configExport">EXPORT CONFIG.JSON</button><label class="button ghost file-button">IMPORT CONFIG.JSON<input id="configImport" type="file" accept=".json,application/json" hidden></label></div>
-        <p class="admin-help">Changes are stored only in this browser. Export your configuration to make a backup or transfer content. Importing a configuration resets the current game session. PIN protection is only to prevent accidental changes, not real security.</p>
-      </section>
-      <p id="adminNotice" class="admin-notice" aria-live="polite"></p>
-    </div>
-  </dialog>
-
-  <div id="glitchOverlay" class="glitch-overlay" aria-hidden="true"><div class="glitch-content" id="glitchContent"></div></div>
-  <div id="endingOverlay" class="ending-overlay" hidden>
-    <div class="ending-inner"><div class="eyebrow" id="endingKicker">TRANSMISSION COMPLETE</div><h2 id="endingTitle">ONE OBJECT SURVIVES</h2><div class="ending-visual" id="endingVisual"></div><div class="ending-name" id="endingName"></div><p id="endingText"></p><p class="ending-signoff">THE CHOICE ECHOES THROUGH THE CENTURIES.</p><button type="button" class="button ghost ending-admin" id="endingAdmin">ORGANISER CONSOLE</button></div>
+  <div id="finalOverlay" class="final-overlay" hidden aria-hidden="true">
+    <div class="final-aura"></div>
+    <img id="finalRelic" alt="" draggable="false">
+    <div class="final-symbol" aria-hidden="true">ᛟ</div>
   </div>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</main>
 </body>
 </html>

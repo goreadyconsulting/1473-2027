@@ -1,130 +1,113 @@
-# The Veil Between Ages — 1473 ⇄ 2027
+# The Crossing — 1473 ⇄ 2027
 
-An immersive, player-controlled, **iPad-first** temporal portal for Saulė's live-action role-playing experience. Players pass through a carved gateway, traverse the void, discover a seven-rune stone slab, choose destinations, and decide which single object from 2027 can survive the journey back to 1473.
+An immersive, wordless, two-screen portal for Saulė's LARP. **The iPad is a magical object held by the player. A phone is the keeper's private admin terminal.**
 
-**Live site:** https://goreadyconsulting.github.io/1473-2027/
+## Open the experiences
 
-The experience uses original Norse-inspired scenery and generated sound rather than third-party game assets. It is a responsive **2.5D cinematic web experience**, not an open-world 3D game.
+**Player iPad:** https://goreadyconsulting.github.io/1473-2027/
 
-## The player journey
+**Organiser mobile:** https://goreadyconsulting.github.io/1473-2027/admin/
 
-1. **Awaken the gate** — tap **STEP THROUGH THE PORTAL**. This *automatically starts* the seven-hour countdown; no organiser PIN is required for play.
-2. **Cross the void** — tap/hold **HOLD TO WALK FORWARD**, swipe upward, or press ↑ / W to reach the runestone. Nine taps are enough.
-3. **Choose a destination** — touch one of seven rune sockets on the carved stone dial, or swipe horizontally between destinations. Each rune reveals its location, lore, and surviving relic count.
-4. **Explore the selected realm** — the destination reveals its distinct illustrated landscape and available objects. Tap a relic for its illustration, background, **Power**, **Catch** and **Echo Through Time (Consequence)**.
-5. **Choose what is lost** — tap **DESTROY OBJECT**, then explicitly confirm. The object is removed across *all* destinations and cannot be selected again.
-6. **Return to the runestone**, choose other destinations, or tap **VIEW ALL REMAINING RELICS** to compare the surviving objects together.
-7. **Seal the final fate** — the final relic cannot be destroyed. Tap **RETAIN AS FINAL OBJECT** and confirm to end the story.
+The two devices connect to one server-owned session; unlike the earlier single-browser prototype, they do not need to mirror the same screen. **The iPad display contains no instructions, titles, timers, buttons with words, controls, or organiser access.**
 
-A live **seven-hour** clock and **one automatic random relic elimination every completed hour** create the central pressure. The next-hour timer remains visible during play. The toll occurs at hours 1, 2, 3, 4, 5, 6 and 7, with the seventh taking place as the portal closes. Every eliminated object disappears from all realms and cannot be lost a second time. Intermittent visual glitches and manually invoked instability events can add drama. During critical instability, the entire surviving archive is revealed, so players can sacrifice one relic in time. If they do not, the portal randomly destroys a configured number of relics but never the final survivor. Normal navigation resumes after the instability is resolved.
+## Player journey
 
-The countdown and hourly schedule continue across journey scenes, page refreshes, and app backgrounding unless the organiser explicitly pauses the session. When iPad Safari suspends the page, missed hourly eliminations are reconciled on the next active tick. At seven hours the last hourly loss is processed, then the portal closes if the final relic has not been secured.
+1. **Continuous vortex.** The screen is entirely occupied by an original blue-violet spiral portal, inspired by the reference clip. The player taps anywhere to cross.
+2. **The space between worlds.** First-person stone walkway floating outside space. Tap **anywhere** to take each step. The camera shakes/bobs and faint footsteps play through iPad audio after the player's gesture. Twelve steps bring a monumental rock dial near enough to enter.
+3. **Huge rune slab.** Seven rune sockets carved into stone, each opening a destination.
+4. **Destination reel.** A series of **three original illustrated images** for the selected location. The film-reel sequence includes gentle panning/zooming, cut flashes, film grain and vignette. The player can tap to skip.
+5. **Location and relics.** The world appears behind any active relic images assigned to it. Tapping a relic brings it forward for closer viewing. Tapping the small rune orb returns to the stone slab. Text is deliberately absent.
+6. **Relic dissolution.** When a server-side elimination happens, the object appears as a ghostly image and disintegrates. At the secret double hour, two separate dissolutions play.
+7. **Final scene.** After the seventh hour, the last surviving relic fills the screen, with an illuminated magic rune and no words.
 
-## Seven-hour elimination schedule
+All illustrations, animations and layout files are shipped with the website. The initial entry is an animated Canvas reconstruction of the supplied colour palette and motion, **not an enlarged copy** of the 220×220 reference video.
 
-| Elapsed time | Time remaining | Portal behaviour |
-| --- | --- | --- |
-| Start | 07:00:00 | The player activates the gateway |
-| Hour 1 | 06:00:00 | One random surviving relic vanishes |
-| Hour 2 | 05:00:00 | One more relic vanishes |
-| Hour 3 | 04:00:00 | One more relic vanishes |
-| Hour 4 | 03:00:00 | One more relic vanishes |
-| Hour 5 | 02:00:00 | One more relic vanishes |
-| Hour 6 | 01:00:00 | One more relic vanishes |
-| Hour 7 | 00:00:00 | Seventh loss; the time window closes |
+## Keeper phone
 
-**Ten starting relics → three surviving after seven automatic eliminations**, assuming nobody voluntarily sacrifices additional objects. Players must still decide which **single** object to preserve before the seven-hour closure. The final survivor cannot be automatically or manually destroyed.
+Use the separate `/admin/` URL and the confidential, high-entropy keeper code delivered during setup.
 
-The hour marks use real elapsed game time, not fixed clock-of-day hours. An organiser pause freezes both the main timer and the next-elimination timer. The interval can be configured for a different performance in the organiser's Settings tab. The default former 15/10/5-minute emergency triggers are disabled to avoid competing with hourly eliminations; manual emergency controls remain available.
+- Start the **seven-hour server clock** (the timer is not started by tapping the iPad).
+- Pause or resume the timer; hours and next loss remain synchronized across devices.
+- See the exact time remaining, next elimination, count of surviving relics and which randomly selected hour is the **double elimination**.
+- See nine relics, their status and the event history.
+- **RESTORE** a removed object directly. It immediately returns to the player and may be eliminated at a later hour.
+- Optionally eliminate a specific relic manually.
+- **RETURN iPAD TO PORTAL** resets only the player's visual journey, not the game clock.
+- **RESET ENTIRE SESSION** restores all nine objects and resets the seven-hour clock for a fresh performance.
 
-## Ten relics from Saulė's item list
+The keeper code is verified only on the Supabase server against its salted hash. It is **never** placed in public HTML, JavaScript, API URL or source-control settings. The phone remembers it only for the current browser tab via `sessionStorage`.
 
-| Relic | Destination | Dossier includes |
-|---|---|---|
-| Smartphone — 37% battery | Echoes of Iron | Power, finite battery, potential historical consequences |
-| Giant pack of toilet paper | Glasswind Bazaar | Comfort, non-replenishable supply, humorous consequences |
-| History book (1300–2027) | Emberfall Keep | Foreknowledge, branching historical uncertainty |
-| Modern doctor's kit | The Quiet Sanctum | Medical potential, training and supply constraints |
-| Modern world map | Glasswind Bazaar | Geography, different medieval borders, altered exploration |
-| Modern firearm | Emberfall Keep | Advanced weapon, limited ammunition, potential power shifts |
-| Portable LED lights | Stormglass Spire | Fireless lighting, battery limits, sparkles |
-| Condoms / contraceptive supplies | The Quiet Sanctum | Family planning, single-use limits, social implications |
-| Portable water purifier | Bleakwater Crossing | Water safety, eventual filter failure, community impact |
-| Agricultural seed collection | Verdant Hollow | Food resilience, local growing constraints, long-term impact |
+## Game rules
 
-All ten objects include **illustrated local assets and three complete story fields**. The seven destination names are currently thematic placeholders that the organiser can change before the LARP.
+- **Seven hours (25,200 seconds).**
+- **Nine starting relics** — the first nine entries in Saulė's detailed item list, excluding the later-added agricultural seed collection.
+- At the completion of each of the **seven** elapsed hours, the server chooses one currently surviving item randomly and removes it.
+- At **one secretly randomized hour from 1 to 7**, a **second distinct surviving item** is also removed.
+- Seven regular losses + one extra loss = eight, leaving **one surviving relic** after seven hours if no keeper overrides occur.
+- Eliminated items are selected without replacement. The last surviving object is protected against automatic and manual loss.
+- Pause freezes elapsed time and the hourly boundary.
+- If iPad Safari sleeps or the network drops, the next successful server request reconciles any missed hour boundaries **once**, transactionally.
+- Restoring a lost item makes it available for future elimination, but does not undo past hour numbers or restart the clock.
+- The server—not a JavaScript timer on the iPad—owns the game outcome.
 
-## Using the iPad during the event
+## Locations
 
-- Open the live site on the **same iPad throughout the game**. Landscape is recommended; portrait is supported.
-- In Safari, **Share → Add to Home Screen** provides the most immersive display. Test the installed web app on the actual device.
-- Mirror the iPad display to the TV through a tested AirPlay or wired connection. The iPad is the controller and the mirrored TV is the display. **Two separate browsers do not synchronise.**
-- Tap **♪** to enable or mute the original generated ambience and interactive tones. Sound is off by default until a real user gesture because iPadOS blocks autoplay.
-- The app requests a screen wake lock while playing if the browser supports it. Also disable Auto-Lock on the event iPad when permitted; wake-lock support is not universal on iPadOS.
-- Avoid Private Browsing and clearing Safari website data mid-game: the session is saved on that device in browser local storage.
+Seven adjustable backend records, currently paired with original location reels and assigned relics:
 
-### Organiser console
+| Location | Active starter relic(s) |
+| --- | --- |
+| Emberfall Keep | History book, modern firearm |
+| The Forgotten Grocery | Giant toilet paper pack |
+| Verdant Hollow | Modern world map |
+| Stormglass Spire | Portable LED lights |
+| Bleakwater Crossing | Water purifier |
+| The Quiet Sanctum | Medical kit, contraceptive supplies |
+| Echoes of Iron | Smartphone |
 
-Tap **⚙** and enter the default PIN **1473** (change it under Settings). The PIN prevents accidental settings changes; it is **not strong authentication**.
+The grocery-store example contains **three distinct indoor/store-front images**. Other destinations also have three original illustrated scenes. These names and illustrations are present story placeholders; replace them with Saulė's actual seven venues when available.
 
-**Session:** start a fresh performance, pause/resume, manually trigger or resolve instability, preview a random glitch, simulate another hour of play for rehearsal, reset the game, and read the event log.
+## Backend isolation & security
 
-**Objects:** edit all ten relics (name, illustration path, description, Power, Catch, Consequence, and destination assignment). The maximum is ten; deleting an item frees a slot for a new one.
+Existing Supabase project `mmheljndcdhzzuobjaxz` hosts the backend in a **dedicated private database schema** `larp_portal` and one Edge Function named `larp-portal`. It does not use or overwrite any existing personal-project tables.
 
-**Locations:** edit the names, lore, rune symbols and accent colours of exactly seven destinations.
+`supabase/larp_portal/migration.sql` creates the session, place, relic, event and hashed admin credential tables plus two privileged SQL functions. All five tables have RLS enabled and **no anonymous grants/policies**. The SQL functions are executable only by the internal service role, reached through the Edge Function; browsers never receive service-role keys.
 
-**Glitches:** add/change short warning messages, images or muted MP4 videos without editing application code.
+The public GET operation provides only game data. Admin POST commands are checked against the strong keeper code on the server. The Edge Function accepts browser origins from this GitHub Pages domain and local development origins only.
 
-**Settings:** change the session length (**420 minutes** by default), automatic elimination interval (**60 minutes** by default), emergency window, failure count, optional instability trigger points, random glitch timing and organiser PIN.
+### Reset, credentials and migration
 
-**Export/Import JSON:** backup/transfer organiser content. Changes in the console are stored locally and are *not* automatically written to GitHub.
+The legacy local-only game data does not transfer into the new backend and is not silently overwritten at the database level. This is a distinct multiplayer-capable session. The older `app.js` and CSS remain in the repository for rollback reference; the new `index.html` loads `player.js` and `player.css`.
 
-### Offline play
+The organiser code is created once with the backend. To rotate it, update `larp_portal.admin_auth` with a new salted hash using the Supabase console. Do **not** store the cleartext code in GitHub.
 
-A service worker precaches the site, styles, original ambience engine, all ten illustrated objects, the seven destination panoramas and journey scenery after the first **successful HTTPS visit**.
+## iPad/phone deployment checklist
 
-For a reliably offline LARP, load the site online once on the actual event iPad, wait for caching to finish, then test it in Airplane Mode. Custom HTTPS media and new video files are **not guaranteed offline** unless included in the deployed offline package. The supplied illustrations require no remote image host.
+- [ ] Open the player URL on the target iPad in Safari and optionally Add to Home Screen.
+- [ ] Open the admin URL on a separate phone; enter the keeper code.
+- [ ] Verify iPad portal animation is fully edge-to-edge with **no visible text or timer**.
+- [ ] Tap portal and walk by tapping any part of the screen; check camera shake and audible, quiet footfalls.
+- [ ] Touch all seven runes, watch all 3-image location reels, and inspect their surviving objects.
+- [ ] Start the clock on the phone; check the seven-hour timer and next-loss countdown.
+- [ ] Pause, resume, restore and manually eliminate a relic; confirm the iPad reflects changes within a few seconds.
+- [ ] Use a controlled test session or short interval test in a **development copy** to rehearse double-hour losses, then restore/reset for the show.
+- [ ] Test if the iPad sleeps and reconnects: server catches up automatically.
+- [ ] Test with Airplane Mode after first online installation. Visual assets are cached, and the player retains the last online snapshot; **game changes require connectivity**.
+- [ ] Reset the session before players arrive, verify the phone remains online, and use a powered iPad for the entire seven-hour show.
 
-## Game reliability and limitations
+## Implementation
 
-- One active browser/device is the source of truth. The app is not multiplayer networking software.
-- The **automatic hourly toll** is independent of player choices: exactly one randomly selected surviving relic is eliminated at each completed hour, provided at least two remain. A unique relic is chosen each time, and the final survivor is always protected.
-- A player-initiated destructive choice requires a second explicit tap, while the final object has its own separate retention confirmation.
-- The organiser can pause and override an instability. A failed instability erases random relics but cannot erase the final one.
-- Glitch overlays are visual and never directly remove game items.
-- Session, inventory state, countdown end time, rune dial selection, walk progress and visited locations survive a reload on the same browser.
-- **Content migration:** upgrading an existing version 3 ten-relic portal preserves the item and realm edits, updates the default session to seven hours, removes old scheduled 15/10/5-minute instabilities, and resets the running session so the new hourly schedule starts cleanly. Export any important previous configuration before installing the upgrade.
-- The in-browser default PIN is a convenience rather than account-level security; use the same trusted event iPad.
-- Original artwork is an illustrated interpretation, not licensed *God of War* material.
+- `index.html`, `player.css`, `player.js`: wordless iPad player
+- `admin/index.html`, `admin/admin.css`, `admin/admin.js`: phone keeper interface
+- `assets/reels/`: 21 original story stills (three per destination)
+- `assets/objects/`: illustrated relics
+- `supabase/larp_portal/migration.sql`: isolated data, timing and restore rules
+- `supabase/functions/larp-portal/index.ts`: authenticated API gateway
+- `sw.js`: offline shell
+- `IMPLEMENTATION_PLAN.md`: initial design and implementation contract
+- `tests/`: static, JavaScript and live read-only backend smoke checks
 
-## Event-day checks
+Run local preview with `python -m http.server 8080`; use `npm test` for source checks. CI also checks the deployed Supabase endpoint without modifying session data.
 
-- [ ] Open the installed website on the target iPad; verify portrait, landscape, touch controls and TV mirroring.
-- [ ] Test the portal entry, hold-to-walk and vertical swipe; verify all seven rune sockets and horizontal dial swipe.
-- [ ] Visit every location; verify all ten relics and their Power, Catch and Consequence descriptions.
-- [ ] Cancel a destruction, confirm a different destruction, and ensure the item disappears everywhere.
-- [ ] Trigger an emergency in the middle of the void; confirm that the game offers a sacrifice and restores the scene.
-- [ ] Let a test emergency expire to confirm the automatic consequence.
-- [ ] Reduce to a single relic, verify destruction is impossible, and confirm final retention.
-- [ ] Use the rehearsal button to simulate each of the seven hour marks; confirm a new relic disappears at each mark and the portal closes at hour seven.
-- [ ] Pause halfway to an hour mark, resume, and confirm the next hourly loss is still correctly timed.
-- [ ] Reload halfway through play or resume after iPad sleep; ensure the countdown, hour count, and journey progress persist.
-- [ ] Test audio on/off, local asset loads, screen sleep behaviour, and Airplane Mode.
-- [ ] Export the final configuration, change the organiser PIN, and reset to the starting screen for players.
+### Event-day limitation
 
-## Technical
-
-Static HTML, CSS and JavaScript. No external runtime libraries, build process, tracking, account or backend required.
-
-- \`index.html\` — player scene, rune dial, object dossier, organiser console
-- \`world.css\`, \`styles.css\`, \`experience.css\` — adaptive world and iPad styling
-- \`app.js\` — gameplay rules, timer, events, state persistence, editing
-- \`sound.js\` — locally generated, user-initiated ambient/signal sounds
-- \`assets/world/\`, \`assets/realms/\`, \`assets/objects/\` — original offline illustrations
-- \`sw.js\` and \`manifest.webmanifest\` — offline app shell and installable web app
-- \`tests/portal.test.cjs\` — automated gameplay checks
-- \`.github/workflows/\` — CI verification and GitHub Pages deployment
-
-Run checks with \`npm test\` (Node 20+). To test locally, run \`python -m http.server 8080\` in the project folder and open \`http://localhost:8080\`.
-
-GitHub Pages deployment is handled by the repository's existing workflow when changes reach \`main\`.
+This is a stylized, cinematic **2.5D browser experience**, not a navigable 3D world. The realm images are original illustrations rather than photographic footage. The final show still requires hands-on iPad touch, audio and Wi-Fi rehearsal; automated tests do not guarantee physical-device performance.

@@ -1,12 +1,12 @@
 {
-  "name": "Temporal Connection 1473 / 2027",
-  "short_name": "Chronos Portal",
-  "description": "Interactive LARP future-object elimination portal",
+  "name": "The Crossing — 1473 ⇄ 2027",
+  "short_name": "The Crossing",
+  "description": "A wordless immersive time portal for a live-action roleplaying event",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#061016",
-  "theme_color": "#071219",
+  "background_color": "#020714",
+  "theme_color": "#020714",
   "orientation": "landscape",
   "icons": [
     {

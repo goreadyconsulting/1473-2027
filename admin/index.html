@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a171d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Portal Control · Organiser</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="stylesheet" href="./admin.css">
+<script defer src="./admin.js"></script>
+</head>
+<body>
+<div class="admin-shell">
+  <header class="top">
+    <div class="logomark">ᛟ</div>
+    <div><div class="eyebrow">1473 — 2027</div><h1>PORTAL CONTROL</h1><p class="sub">PRIVATE ORGANISER CONSOLE</p></div>
+    <span id="connection" class="connection offline" title="Backend connection"><span></span></span>
+  </header>
+
+  <section id="loginView" class="auth-view">
+    <div class="auth-art"><span>ᚠ</span><span>ᛟ</span><span>ᚹ</span></div>
+    <h2>THE KEEPER'S KEY</h2>
+    <p>Only the keeper may change what survives the crossing.</p>
+    <form id="loginForm" autocomplete="off">
+      <label for="accessCode">ACCESS CODE</label>
+      <input id="accessCode" type="password" autocomplete="off" spellcheck="false" placeholder="Enter the keeper's key" required>
+      <button class="btn primary full" type="submit">UNLOCK CONTROL</button>
+    </form>
+    <div class="feedback" id="authFeedback" role="status"></div>
+  </section>
+
+  <div id="dashboard" hidden>
+    <div class="dashboard-header">
+      <div><div class="eyebrow">THE SEVEN-HOUR CROSSING</div><h2>LIVE SESSION</h2></div>
+      <button id="logout" class="tiny-button" type="button">LOCK CONSOLE</button>
+    </div>
+
+    <section class="clock-card">
+      <div class="clock-top"><span>TIME LEFT</span><span id="phaseBadge" class="phase ready">READY</span></div>
+      <div id="sessionTimer" class="huge-timer" role="timer">07:00:00</div>
+      <div class="clock-bottom"><div><small>NEXT ELIMINATION</small><strong id="nextLoss">01:00:00</strong></div><div><small>RANDOM DOUBLE HOUR</small><strong id="doubleHour">SEALED</strong></div></div>
+      <div id="hourMarks" class="hour-marks" aria-label="Seven hour markers"></div>
+    </section>
+
+    <section class="actions-card">
+      <div class="section-bar"><h3>SESSION CONTROLS</h3></div>
+      <div class="actions">
+        <button id="startBtn" class="btn primary" type="button">START 7-HOUR SESSION</button>
+        <button id="pauseBtn" class="btn secondary" type="button">PAUSE</button>
+        <button id="resumeBtn" class="btn secondary" type="button">RESUME</button>
+        <button id="resetViewBtn" class="btn outline" type="button">RETURN iPAD TO PORTAL</button>
+        <button id="resetBtn" class="btn danger-outline" type="button">RESET ENTIRE SESSION</button>
+      </div>
+    </section>
+
+    <section class="relics-card">
+      <div class="section-bar"><h3>NINE RELICS</h3><div id="relicCounter" class="counter">9 ACTIVE</div></div>
+      <p class="hint">Every hour the portal claims one surviving relic. In one randomly chosen hour, it claims two. Restore any eliminated relic here.</p>
+      <div id="relicList" class="relic-list"></div>
+    </section>
+
+    <section class="events-card">
+      <div class="section-bar"><h3>EVENT HISTORY</h3></div>
+      <div id="eventList" class="event-list"></div>
+    </section>
+
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+    <footer>REMOTE KEEPER TERMINAL · LIVE SUPABASE CONNECTION</footer>
+  </div>
+</div>
+</body>
+</html>
