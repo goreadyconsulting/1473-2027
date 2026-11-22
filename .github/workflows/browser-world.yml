@@ -1,0 +1,35 @@
+name: Browser QA — continuous 3D world
+on:
+  push:
+    branches:
+      - feat/real-3d-journey-photographic-destinations
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  visual-journey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser automation dependency
+        run: npm install --no-save --ignore-scripts playwright@1.57.0
+      - name: Start local static site
+        run: |
+          python3 -m http.server 8080 > /tmp/larp-http.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8080/index.html -o /dev/null
+      - name: Verify true 3D walk, rune selection, real-photo reel and no page errors
+        run: |
+          mkdir -p browser-artifacts
+          node tests/browser-world.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portal-3d-browser-screenshots
+          path: browser-artifacts/
+          if-no-files-found: ignore
