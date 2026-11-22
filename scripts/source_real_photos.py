@@ -97,6 +97,21 @@ def main():
             outputs.append(str(target))
             print(place, shot+1, original.size, target.stat().st_size, flush=True)
         manifest[place] = {"source_name": name, "frames": outputs}
+    # Real masonry cropped from the credited Crook Hall photograph becomes the
+    # stone's albedo and bump material in the continuous 3D walkway/altar.
+    # This is a photographic texture: no generative image or procedural fake art.
+    masonry=Image.open(OUTPUT / "emberfall-1.webp").convert("RGB")
+    tw,th=masonry.size
+    crop=masonry.crop((int(tw*.30),int(th*.11),int(tw*.64),int(th*.73)))
+    crop=ImageOps.fit(crop,(1024,1024),method=Image.Resampling.LANCZOS)
+    crop=ImageEnhance.Contrast(crop).enhance(1.18)
+    crop=ImageEnhance.Sharpness(crop).enhance(1.4)
+    textures=pathlib.Path("assets/textures")
+    textures.mkdir(parents=True,exist_ok=True)
+    crop.save(textures/"stone-masonry.webp","WEBP",quality=83,method=6)
+    height=ImageEnhance.Contrast(crop.convert("L")).enhance(1.25)
+    height.save(textures/"stone-height.webp","WEBP",quality=77,method=6)
+    print("Photographic masonry textures", (textures/"stone-masonry.webp").stat().st_size, flush=True)
     (OUTPUT / "sources.json").write_text(json.dumps(manifest, indent=2)+"\n", encoding="utf-8")
     assert len(manifest) == 7 and sum(len(x["frames"]) for x in manifest.values()) == 21
 
