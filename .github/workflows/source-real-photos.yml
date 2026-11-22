@@ -29,11 +29,12 @@ jobs:
           items=list(Path("assets/photography").glob("*.webp"))
           assert len(items)==21, f"Expected 21 individual photographic frames: {len(items)}"
           assert all(f.stat().st_size>=20000 for f in items)
+          assert all((Path('assets/textures')/name).stat().st_size>=20000 for name in ['stone-masonry.webp','stone-height.webp'])
           print("21 verified authentic photographic location frames")
           PY
       - name: Commit locally bundled photos to this feature branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/photography
+          git add assets/photography assets/textures
           git diff --cached --quiet || (git commit -m "assets: replace synthetic reel stills with real licensed location photos" && git push)
