@@ -17,7 +17,11 @@ jobs:
           node-version: '22'
       - name: Verify JavaScript and gameplay tests
         run: |
+          node --check player.js
+          node --check admin/admin.js
           node --check app.js
           node --check sound.js
           node --check sw.js
           node --test tests/*.test.cjs
+      - name: Check live isolated Supabase backend
+        run: node tests/backend-smoke.cjs
