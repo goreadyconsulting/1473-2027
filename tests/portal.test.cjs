@@ -157,3 +157,17 @@ test("the seven locations use twenty-one actual photographs, never unrelated AI 
   assert.ok(read("world3d.js").includes("stone-masonry.webp"));
   assert.ok(read("world3d.js").includes("stone-height.webp"));
 });
+
+test("all nine surviving relics use real photo portraits instead of stylized SVG cards",()=>{
+  const ids=["smartphone","toilet","history","medical","worldmap","firearm","led","condoms","filter"];
+  for(const id of ids){
+    const file="assets/objects-photography/"+id+".webp";
+    assert.ok(fs.existsSync(path.join(root,file)),file);
+    assert.ok(fs.statSync(path.join(root,file)).size>=10000,"Not a full object photograph: "+id);
+    assert.ok(worker.includes("./"+file),"Not precached: "+id);
+  }
+  assert.ok(player.includes("function relicImage(item)"));
+  assert.ok(player.includes("objects-photography"));
+  assert.ok(admin.includes("objects-photography"));
+  assert.ok(read("PHOTOGRAPHY_CREDITS.md").includes("Authentic relic photography"));
+});
