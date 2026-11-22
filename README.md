@@ -14,7 +14,7 @@ The two devices connect to one server-owned session; unlike the earlier single-b
 
 The approved entry portal image and continuous vortex animation are unchanged.
 
-**After the player touches the portal**, the site now loads one persistent original **WebGL 3D environment** powered by locally vendored Three.js r160 (MIT). A segmented stone bridge, broken parapets, floating rock formations, spatial lighting, fog and a starfield move in real camera perspective. The huge slab and seven glowing rune sockets are actual 3D meshes in that **same scene**. The camera walks right up to the slab: there is no unrelated AI illustration swapped in between the bridge and rune selector.
+**After the player touches the portal**, the site now loads one persistent original **WebGL 3D environment** powered by locally vendored Three.js r160 (MIT). A genuine medieval stone photograph is used for both surface albedo and relief maps, with two subtle braziers illuminating the approach. A segmented stone bridge, broken parapets, floating rock formations, spatial lighting, fog and a starfield move in real camera perspective. The huge slab and seven glowing rune sockets are actual 3D meshes in that **same scene**. The camera walks right up to the slab: there is no unrelated AI illustration swapped in between the bridge and rune selector.
 
 **All seven location reels use real photographs** rather than generated fantasy illustration backgrounds. The three cinematic shots for each destination are consistent crops of a **single real photograph**. All 21 local WebP shots are cached for iPad use and the original photographers, licenses and edits are documented in [PHOTOGRAPHY_CREDITS.md](PHOTOGRAPHY_CREDITS.md).
 
