@@ -81,7 +81,7 @@ test("both browsers rely on a single Edge Function URL",()=>{
 });
 test("offline cache contains both new screens and room for every existing image",()=>{
   for(const f of ["./player.js","./player.css","./admin/index.html","./admin/admin.js","./admin/admin.css"])assert.ok(worker.includes(f),f);
-  assert.match(worker,/larp-crossing-v8-realistic/);
+  assert.match(worker,/larp-crossing-v9-grounded-3d/);
   assert.match(player,/larp_last_online_snapshot/);
 });
 test("new javascript modules parse successfully",()=>{
@@ -110,4 +110,42 @@ test("photo-real transitions preserve seven touch zones and interactive walk",()
   assert.ok(player.includes("--photo-walk-zoom"));
   assert.ok(player.includes("svg|webp"));
   assert.match(css,/walk-camera\.stepping/);
+});
+
+test("the world after the approved portal entrance is one continuous 3D scene",()=>{
+  const source=read("world3d.js"),style=read("grounded-world.css");
+  assert.match(html,/type="module" src="\.\/world3d\.js"/);
+  assert.match(html,/grounded-world\.css/);
+  assert.match(source,/from "\.\/vendor\/three\.module\.js"/);
+  assert.match(source,/new THREE\.PerspectiveCamera/);
+  assert.match(source,/new THREE\.WebGLRenderer/);
+  assert.match(source,/new THREE\.ExtrudeGeometry/);
+  assert.match(source,/THREE\.Raycaster/);
+  assert.match(source,/setPhase\(next\)/);
+  assert.match(source,/selectRune\(hits\[0\]\.object\.userData\.placeId\)/);
+  assert.match(player,/portal3dready/);
+  assert.match(player,/window\.portal3d\.step\(progress\)/);
+  assert.match(style,/\.world3d-ready \.walk-stage \.walk-camera\{visibility:hidden/);
+  assert.ok(fs.statSync(path.join(root,"vendor/three.module.js")).size>700000);
+  assert.doesNotMatch(source,/assets\/cinematics\/runestone\.webp|assets\/cinematics\/void-walk\.webp/);
+});
+
+test("the seven locations use twenty-one actual photographs, never unrelated AI scene illustrations",()=>{
+  const places=["emberfall","glasswind","verdant","stormglass","bleakwater","sanctum","iron"];
+  const credits=read("PHOTOGRAPHY_CREDITS.md");
+  const manifest=JSON.parse(read("assets/photography/sources.json"));
+  assert.equal(Object.keys(manifest).length,7);
+  for(const place of places){
+    assert.ok(manifest[place],place);
+    assert.equal(manifest[place].frames.length,3);
+    assert.ok(credits.toLowerCase().includes(place==="glasswind"?"grocery":place==="sanctum"?"sanctum":place==="iron"?"iron":place==="bleakwater"?"bleakwater":place));
+    for(let shot=1;shot<=3;shot++){
+      const asset="assets/photography/"+place+"-"+shot+".webp";
+      assert.ok(fs.existsSync(path.join(root,asset)),asset);
+      assert.ok(fs.statSync(path.join(root,asset)).size>20000,asset);
+      assert.ok(worker.includes("./"+asset),"iPad cache: "+asset);
+    }
+  }
+  assert.match(player,/photography/);
+  assert.match(worker,/vendor\/three\.module\.js/);
 });
