@@ -196,7 +196,11 @@
     try{
       const res=await fetch(API,{method:"GET",cache:"no-store",signal:AbortSignal.timeout(8000)});
       if(!res.ok)throw Error("offline");
-      const json=await res.json();if(json.ok)onSnapshot(json);
+      const json=await res.json();
+      if(json.ok){
+        try{localStorage.setItem("larp_last_online_snapshot",JSON.stringify(json));}catch{}
+        onSnapshot(json);
+      }
     }catch{ /* the visual scene stays usable without visible network notices */ }
     finally{updating=false;}
   }
@@ -268,5 +272,10 @@
   if("serviceWorker" in navigator&&location.protocol==="https:"){
     window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js").catch(()=>{});});
   }
-  resizeCanvas();animateVortex(0);sync();setInterval(sync,2600);
+  resizeCanvas();animateVortex(0);
+  try{
+    const offline=JSON.parse(localStorage.getItem("larp_last_online_snapshot")||"null");
+    if(offline&&offline.ok)onSnapshot(offline);
+  }catch{}
+  sync();setInterval(sync,2600);
 })();
