@@ -9,7 +9,7 @@
   let audio=null,wakeLock=null,frameRequest=0,lastFrame=0,portalDrawWidth=0,portalDrawHeight=0;
   const canvas=$("portalCanvas"),ctx=canvas.getContext("2d",{alpha:false});
   const deviceCap=()=>Math.min(window.devicePixelRatio||1,1.25);
-  function localImage(src){return typeof src==="string"&&/^\.\/assets\/(?:cinematics|objects|reels|realms|world)\/[a-z0-9_\/.-]+\.(?:svg|webp)$/i.test(src)?src:"";}
+  function localImage(src){return typeof src==="string"&&/^\.\/assets\/(?:photography|cinematics|objects|reels|realms|world)\/[a-z0-9_\/.-]+\.(?:svg|webp)$/i.test(src)?src:"";}
   function stage(next){
     if(!stages.includes(next))return;
     if(scene==="reel"&&next!=="reel")cancelReel();
@@ -20,6 +20,7 @@
     if(next==="portal"){$("finalOverlay").hidden=true;}
     try{sessionStorage.setItem("larp_scene",next);}catch{}
     if(next==="portal")resizeCanvas();
+    if(window.portal3d)window.portal3d.setPhase(next==="walk"||next==="slab"?next:"off");
   }
   function initAudio(){
     if(audio)return;
@@ -72,6 +73,7 @@
     // Perspective pushes into the original photoreal walkway plate as each step lands.
     $("walkCamera").querySelector(".void-sky").style.setProperty("--photo-walk-zoom",String(1.08+.9*progress));
     $("walkCamera").querySelector(".void-sky").style.setProperty("--photo-walk-shift",String(4*progress)+"px");
+    if(window.portal3d)window.portal3d.step(progress);
   }
   function walk(){
     if(scene!=="walk")return;
@@ -83,6 +85,7 @@
   function renderSlab(){
     const wheel=$("runeWheel");
     if(!snapshot||!Array.isArray(snapshot.places))return;
+    if(window.portal3d)window.portal3d.setLocations(snapshot.places,choose);
     wheel.replaceChildren();
     snapshot.places.forEach((loc,i)=>{
       // Hit zones align with the seven glowing sockets carved in the photographic slab.
@@ -272,6 +275,12 @@
   $("backToStone").addEventListener("click",e=>{e.stopPropagation();chord([196,294],.025,.7);stage("slab");});
   $("relicStage").addEventListener("pointerdown",closeRelic);
   window.addEventListener("resize",resizeCanvas);
+  window.addEventListener("portal3dready",()=>{
+    if(!window.portal3d)return;
+    window.portal3d.setPhase(scene==="walk"||scene==="slab"?scene:"off");
+    window.portal3d.step(stepCount/12);
+    if(scene==="slab"&&snapshot)window.portal3d.setLocations(snapshot.places,choose);
+  });
   document.addEventListener("visibilitychange",()=>{if(!document.hidden){sync();if(scene!=="portal")keepAwake();}});
   window.addEventListener("pagehide",releaseWake);
   if("serviceWorker" in navigator&&location.protocol==="https:"){
