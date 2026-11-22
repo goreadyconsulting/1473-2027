@@ -69,7 +69,7 @@ test("security: isolated tables, RLS, restricted server RPCs and no browser serv
   assert.match(sql,/grant execute on function public\.larp_portal_control.*service_role/);
   assert.match(edge,/TRUSTED_ORIGINS/);
   assert.match(edge,/SUPABASE_SECRET_KEYS/);
-  assert.match(edge,/Deno\\.serve/);
+  assert.ok(edge.includes("Deno.serve("));
   assert.doesNotMatch(player,/SERVICE_ROLE_KEY|sb_secret_/);
   assert.doesNotMatch(admin,/SERVICE_ROLE_KEY|sb_secret_/);
 });
