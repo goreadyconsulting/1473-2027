@@ -1,0 +1,137 @@
+/* Cinematic photo-real environment upgrade, generated original artwork.
+   Original gameplay remains intact. All scenes remain completely wordless. */
+:root{color-scheme:dark}
+.vortex-stage{
+  background:#050713 url("./assets/cinematics/portal-gate.webp") 50% 50%/cover no-repeat;
+  isolation:isolate
+}
+.vortex-stage canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  opacity:.23;mix-blend-mode:screen;
+  -webkit-mask-image:radial-gradient(ellipse 34% 48% at 50% 51%,#000 0 69%,rgba(0,0,0,.8) 75%,transparent 93%);
+  mask-image:radial-gradient(ellipse 34% 48% at 50% 51%,#000 0 69%,rgba(0,0,0,.8) 75%,transparent 93%);
+  will-change:opacity;
+}
+.vortex-stage:after{
+  content:"";pointer-events:none;position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 22% 30% at 50% 50%,rgba(240,167,255,.15),transparent 75%),
+    linear-gradient(90deg,rgba(0,0,0,.14),transparent 28% 72%,rgba(0,0,0,.14));
+  mix-blend-mode:screen;animation:cinematicAura 6s ease-in-out infinite alternate;
+}
+.vortex-vignette{opacity:.5}
+.vortex-glow{opacity:.3;animation:cinematicAura 4.5s ease-in-out infinite alternate}
+@keyframes cinematicAura{0%{opacity:.16;filter:brightness(.88)}100%{opacity:.38;filter:brightness(1.15)}}
+
+/* The photograph is the geometry. Animated perspective transforms move the
+   scene toward its standing stone; the parent still receives subtle steps. */
+.walk-stage{background:#030718}
+.walk-camera{
+  background:#030718;
+  perspective:1300px;
+}
+.void-sky{
+  inset:-4%;
+  opacity:1;
+  background:#07101f url("./assets/cinematics/void-walk.webp") center 52%/cover no-repeat;
+  filter:brightness(.95) saturate(1.06) contrast(1.06);
+  transform-origin:50% 50%;
+  transform:scale(var(--photo-walk-zoom,1.08)) translate3d(0,var(--photo-walk-shift,0px),0);
+  transition:transform .23s cubic-bezier(.2,.78,.16,1);
+  will-change:transform;
+}
+.walk-camera .walk-path,
+.walk-camera .walk-monolith,
+.walk-camera .walk-side{display:none!important}
+.void-particles{opacity:.35}
+.walk-haze{opacity:.2}
+.walk-camera.stepping{animation:cinematicFootstep .36s cubic-bezier(.25,.6,.23,1) both}
+@keyframes cinematicFootstep{
+  0%{transform:translate3d(0,0,0) rotate(0)}
+  23%{transform:translate3d(-7px,6px,0) rotate(-.28deg)}
+  52%{transform:translate3d(6px,-4px,0) rotate(.28deg)}
+  79%{transform:translate3d(-2px,2px,0) rotate(-.08deg)}
+  100%{transform:translate3d(0,0,0) rotate(0)}
+}
+
+/* The illustrated CSS stone is replaced by a realistic photo plate. Rune
+   buttons are transparent over the corresponding carved sockets. */
+.slab-stage{
+  background:#050911 url("./assets/cinematics/runestone.webp") center/cover no-repeat;
+}
+.slab-ambience,.slab-floor,.slab-pillar,
+.slab-grooves,.slab-inscription,.dial-rings,.rune-core{display:none!important}
+.carved-slab{
+  position:relative;
+  display:block;
+  width:min(100vw,177.68dvh);
+  height:auto;
+  aspect-ratio:1672/941;
+  min-width:0;min-height:0;
+  margin:auto;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  clip-path:none;
+  filter:none;
+  background:#050912 url("./assets/cinematics/runestone.webp") center center/100% 100% no-repeat;
+}
+.carved-slab:before{display:none!important}
+.rune-wheel{position:absolute;inset:0;z-index:4}
+.rune-socket{
+  width:clamp(43px,8vw,94px);
+  height:clamp(43px,8vw,94px);
+  border-radius:50%;
+  color:transparent;
+  text-shadow:none;
+  border:2px solid transparent;
+  background:transparent;
+  box-shadow:none;
+  outline-offset:4px;
+  transition:box-shadow .16s ease,background .16s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.rune-socket:focus-visible{
+  outline:3px solid rgba(223,230,255,.75);
+  box-shadow:0 0 28px rgba(132,218,255,.8);
+}
+.rune-socket:active{
+  background:rgba(199,174,255,.21);
+  transform:translate(-50%,-50%) scale(.94);
+  border:2px solid rgba(185,178,255,.8);
+  box-shadow:0 0 26px rgba(172,139,255,.85);
+}
+.rune-socket.visited{border-color:transparent}
+@media(orientation:portrait){
+  .carved-slab{
+    width:100vw;height:auto;aspect-ratio:1672/941;
+    min-width:0;min-height:0;
+  }
+  .rune-socket{
+    width:clamp(42px,8vw,78px);
+    height:clamp(42px,8vw,78px);
+  }
+}
+@media(max-width:740px) and (orientation:landscape){
+ .rune-socket{width:clamp(40px,7vw,65px);height:clamp(40px,7vw,65px)}
+}
+/* Photo reel shots retain cinematic push, vignette and occasional film grain,
+   but the imagery is no longer stylized geometry. */
+.reel-screen img{
+  image-rendering:auto;
+  filter:brightness(.96) saturate(.92) contrast(1.07);
+  animation:reelPhotoPush 1.6s cubic-bezier(.2,.7,.12,1) both;
+}
+.reel-screen img.changing{animation:reelPhotoPush 1.6s cubic-bezier(.2,.7,.12,1) both}
+@keyframes reelPhotoPush{
+  0%{opacity:.75;transform:scale(1.105) translateX(-.9%);filter:brightness(1.6) blur(5px)}
+  20%{opacity:1;filter:brightness(.95) blur(0)}
+  100%{opacity:1;transform:scale(1.01) translateX(.4%);filter:brightness(.96)}
+}
+.reel-grain{opacity:.13}
+.reel-vignette{box-shadow:inset 0 0 75px 25px rgba(0,0,0,.48),inset 0 0 0 12px rgba(0,0,0,.12)}
+.place-background{filter:brightness(.73) saturate(.86) contrast(1.08)}
+@media(prefers-reduced-motion:reduce){
+  .vortex-stage:after,.void-sky,.reel-screen img{animation:none!important}
+  .walk-camera.stepping{animation:none!important}
+}

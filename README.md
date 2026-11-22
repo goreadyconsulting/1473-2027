@@ -22,6 +22,20 @@ The two devices connect to one server-owned session; unlike the earlier single-b
 
 All illustrations, animations and layout files are shipped with the website. The initial entry is an animated Canvas reconstruction of the supplied colour palette and motion, **not an enlarged copy** of the 220×220 reference video.
 
+## Realistic cinematic artwork (November 2026 upgrade)
+
+The primary player scenes now use **seven original, generated, photo-real WebP assets** (1439 × 810 pixels), bundled locally rather than loaded from temporary remote URLs:
+
+- `assets/cinematics/portal-gate.webp`: weathered stone arch and a luminous blue-violet portal. The original animated Canvas adds restrained motion within the ring, so the iPad's otherwise text-free idle screen still moves continuously.
+- `assets/cinematics/void-walk.webp`: a first-person cosmic stone walkway. Touching the screen advances a photo-based perspective push with camera shake and quiet footsteps.
+- `assets/cinematics/runestone.webp`: a physically textured seven-rune slab. Seven invisible, accessible touch targets align with the carved glowing sockets.
+- `assets/cinematics/grocery-1.webp`, `grocery-2.webp`, `grocery-3.webp`: three realistically rendered supermarket shots for the Forgotten Grocery's cinematic reel and location background.
+- `assets/cinematics/portal-grocery.webp`: additional transition art for possible future realm transitions.
+
+The images are a cohesive, *original* Norse-myth-inspired visual set; no licensed *God of War* imagery or third-party copyrighted screenshots are used. Other six realm panoramas and the nine relic portraits are still the original stylized illustrations until individually replaced; the site must not be described as fully photo-real end-to-end.
+
+All seven WebP images are included in the offline service-worker precache. For an iPad that previously loaded the site, refresh online once to install cache `larp-crossing-v8-realistic`.
+
 ## Keeper phone
 
 Use the separate `/admin/` URL and the confidential, high-entropy keeper code delivered during setup.
