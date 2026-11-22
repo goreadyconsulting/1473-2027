@@ -16,6 +16,8 @@ Changes made: cropping, resizing, mild desaturation, brightness and contrast adj
 
 *Note on share-alike photography:* The modified images based on CC BY-SA photographs remain under the source CC BY-SA license. This license does not automatically apply to unrelated site code, other photographs, or the Three.js rendering engine.
 
+**3D surface photography:** The 3D bridge and slab also use two 1024×1024 stone-surface textures (`assets/textures/stone-masonry.webp` and `stone-height.webp`) derived from the credited Crook Hall photograph. They retain its attribution and CC BY-SA 4.0 license. The procedural noise material is a fallback only when texture load fails.
+
 ## Other asset licensing
 
 The 3D walkway and stone selector are runtime-generated, geometrically designed environments using shader materials, noise textures, lighting, and locally-rendered stonework — not generative image files. Vendored [Three.js r160](https://github.com/mrdoob/three.js/tree/r160) is licensed under the [MIT License](https://github.com/mrdoob/three.js/blob/r160/LICENSE). The existing entrance image is an original image generated specifically for this LARP.
