@@ -1,0 +1,58 @@
+/* This scene is an actual continuous WebGL environment, not generated photo plates.
+   The iPad portal entrance itself is intentionally left unchanged. */
+.continuous-world-3d{
+  position:absolute;inset:0;display:block;z-index:10;
+  width:100%!important;height:100%!important;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.continuous-world-3d[hidden]{display:none!important}
+.world3d-ready .walk-stage .walk-camera{visibility:hidden!important}
+.world3d-ready .slab-stage .slab-ambience,
+.world3d-ready .slab-stage .slab-floor,
+.world3d-ready .slab-stage .slab-pillar,
+.world3d-ready .slab-stage .carved-slab{display:none!important}
+.world3d-ready .walk-stage,
+.world3d-ready .slab-stage{background:#050a12!important}
+.world3d-ready .walk-stage .continuous-world-3d{pointer-events:none}
+.world3d-ready .slab-stage .continuous-world-3d{pointer-events:auto}
+
+/* The destination frames are now cropped from the SAME real photograph per
+   destination, with color treatment that resembles grounded cinematic footage. */
+.reel-screen{background:#04070b}
+.reel-screen img{filter:saturate(.76) contrast(1.08) brightness(.92)}
+.reel-screen img.changing{
+  animation:photographicLens 1.58s ease-out both;
+}
+@keyframes photographicLens{
+  0%{opacity:.62;transform:scale(1.045);filter:brightness(1.24) blur(3px)}
+  23%{opacity:1;filter:brightness(.97) blur(0)}
+  100%{opacity:1;transform:scale(1);filter:brightness(.92) blur(0)}
+}
+.reel-grain{opacity:.055}
+.reel-flare{opacity:.11}
+.reel-vignette{box-shadow:inset 0 0 85px 25px rgba(0,0,0,.47)}
+
+/* Relics appear as artifacts on dark surfaces instead of a slideshow of
+   bright framed illustrations. No visible copy or in-world menus are added. */
+.place-background{filter:saturate(.73) brightness(.78) contrast(1.1)}
+.relic-card{
+  border:1px solid rgba(195,187,152,.30);
+  border-radius:4px;
+  background:linear-gradient(160deg,rgba(25,36,38,.66),rgba(5,10,16,.87));
+  outline:0;
+  box-shadow:0 0 0 4px rgba(12,16,18,.3),0 24px 55px rgba(0,0,0,.7);
+}
+.relic-card img{filter:saturate(.78) brightness(.86)}
+.relic-card:active{border-color:rgba(239,211,156,.72)}
+.relic-stage{background:radial-gradient(ellipse at center,#2b3534,#0d1721 63%,#040709)}
+.relic-stage img{border:1px solid rgba(184,175,140,.32);border-radius:4px}
+
+/* On a small iPad, preserve the entire real world 3D canvas, not the former
+   portrait photo plate's forced width, crop, and artificial panels. */
+@media(orientation:portrait){
+  .world3d-ready .walk-stage,.world3d-ready .slab-stage{min-height:100%}
+  .continuous-world-3d{height:100%!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .reel-screen img.changing{animation:none!important}
+}

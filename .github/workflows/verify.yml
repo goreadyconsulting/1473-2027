@@ -18,6 +18,8 @@ jobs:
       - name: Verify JavaScript and gameplay tests
         run: |
           node --check player.js
+          node --input-type=module --check < world3d.js
+          node --input-type=module --check < vendor/three.module.js
           node --check admin/admin.js
           node --check app.js
           node --check sound.js

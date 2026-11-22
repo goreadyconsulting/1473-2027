@@ -10,12 +10,22 @@ An immersive, wordless, two-screen portal for Saulė's LARP. **The iPad is a mag
 
 The two devices connect to one server-owned session; unlike the earlier single-browser prototype, they do not need to mirror the same screen. **The iPad display contains no instructions, titles, timers, buttons with words, controls, or organiser access.**
 
+## Continuous physically constructed world and real location photography
+
+The approved entry portal image and continuous vortex animation are unchanged.
+
+**After the player touches the portal**, the site now loads one persistent original **WebGL 3D environment** powered by locally vendored Three.js r160 (MIT). A genuine medieval stone photograph is used for both surface albedo and relief maps, with two subtle braziers illuminating the approach. A segmented stone bridge, broken parapets, floating rock formations, spatial lighting, fog and a starfield move in real camera perspective. The huge slab and seven glowing rune sockets are actual 3D meshes in that **same scene**. The camera walks right up to the slab: there is no unrelated AI illustration swapped in between the bridge and rune selector.
+
+**All seven location reels use real photographs** rather than generated fantasy illustration backgrounds. The three cinematic shots for each destination are consistent crops of a **single real photograph**. All 21 local WebP shots are cached for iPad use and the original photographers, licenses and edits are documented in [PHOTOGRAPHY_CREDITS.md](PHOTOGRAPHY_CREDITS.md).
+
+On devices without a usable WebGL context the earlier 2D view remains as a fallback. All nine relic portraits now use individually sourced photographs of the corresponding real-world objects, preserving the same wordless visual language. Their source attributions are also included in PHOTOGRAPHY_CREDITS.md. No new text or organiser controls are displayed on the player iPad. The seven-hour Supabase gameplay and separate admin phone remain unchanged.
+
 ## Player journey
 
 1. **Continuous vortex.** The screen is entirely occupied by an original blue-violet spiral portal, inspired by the reference clip. The player taps anywhere to cross.
-2. **The space between worlds.** First-person stone walkway floating outside space. Tap **anywhere** to take each step. The camera shakes/bobs and faint footsteps play through iPad audio after the player's gesture. Twelve steps bring a monumental rock dial near enough to enter.
+2. **The space between worlds.** First-person spatial 3D stone walkway floating outside space. Tap anywhere to take each step. The camera moves in actual perspective, shakes/bobs and plays faint footsteps. Twelve steps approach the same 3D stone dial for selection.
 3. **Huge rune slab.** Seven rune sockets carved into stone, each opening a destination.
-4. **Destination reel.** A series of **three original illustrated images** for the selected location. The film-reel sequence includes gentle panning/zooming, cut flashes, film grain and vignette. The player can tap to skip.
+4. **Destination reel.** A sequence of **three real photographic crops of the same physical location**. A restrained film-reel motion preserves spatial continuity, with a consistent scene rather than unrelated generated fantasy images. The player can tap to skip.
 5. **Location and relics.** The world appears behind any active relic images assigned to it. Tapping a relic brings it forward for closer viewing. Tapping the small rune orb returns to the stone slab. Text is deliberately absent.
 6. **Relic dissolution.** When a server-side elimination happens, the object appears as a ghostly image and disintegrates. At the secret double hour, two separate dissolutions play.
 7. **Final scene.** After the seventh hour, the last surviving relic fills the screen, with an illuminated magic rune and no words.
@@ -66,7 +76,7 @@ The keeper code is verified only on the Supabase server against its salted hash.
 
 ## Locations
 
-Seven adjustable backend records, currently paired with original location reels and assigned relics:
+Seven adjustable backend records, now paired with real photographic location reels and assigned relics:
 
 | Location | Active starter relic(s) |
 | --- | --- |
