@@ -81,7 +81,7 @@ test("both browsers rely on a single Edge Function URL",()=>{
 });
 test("offline cache contains both new screens and room for every existing image",()=>{
   for(const f of ["./player.js","./player.css","./admin/index.html","./admin/admin.js","./admin/admin.css"])assert.ok(worker.includes(f),f);
-  assert.match(worker,/larp-crossing-v7/);
+  assert.match(worker,/larp-crossing-v8-realistic/);
   assert.match(player,/larp_last_online_snapshot/);
 });
 test("new javascript modules parse successfully",()=>{
