@@ -8,8 +8,8 @@
   let stepCount=0,reelTimeouts=[],lossQueue=[],lossBusy=false,reelInFlight=false,updating=false;
   let audio=null,wakeLock=null,frameRequest=0,lastFrame=0,portalDrawWidth=0,portalDrawHeight=0;
   const canvas=$("portalCanvas"),ctx=canvas.getContext("2d",{alpha:false});
-  const deviceCap=()=>Math.min(window.devicePixelRatio||1,1.5);
-  function localImage(src){return typeof src==="string"&&/^\.\/assets\/[a-z0-9_\/.-]+\.svg$/i.test(src)?src:"";}
+  const deviceCap=()=>Math.min(window.devicePixelRatio||1,1.25);
+  function localImage(src){return typeof src==="string"&&/^\.\/assets\/(?:cinematics|objects|reels|realms|world)\/[a-z0-9_\/.-]+\.(?:svg|webp)$/i.test(src)?src:"";}
   function stage(next){
     if(!stages.includes(next))return;
     if(scene==="reel"&&next!=="reel")cancelReel();
@@ -69,6 +69,9 @@
     $("walkPath").style.setProperty("--walk-scale",String(1+.62*progress));
     $("walkPath").style.setProperty("--step-shift",String(-8*progress)+"px");
     $("walkMonolith").style.setProperty("--monolith-scale",String(.31+2.3*progress));
+    // Perspective pushes into the original photoreal walkway plate as each step lands.
+    $("walkCamera").querySelector(".void-sky").style.setProperty("--photo-walk-zoom",String(1.08+.9*progress));
+    $("walkCamera").querySelector(".void-sky").style.setProperty("--photo-walk-shift",String(4*progress)+"px");
   }
   function walk(){
     if(scene!=="walk")return;
@@ -82,10 +85,12 @@
     if(!snapshot||!Array.isArray(snapshot.places))return;
     wheel.replaceChildren();
     snapshot.places.forEach((loc,i)=>{
-      const rad=(-90+i*360/7)*Math.PI/180;
+      // Hit zones align with the seven glowing sockets carved in the photographic slab.
+      // Coordinates are percentages of the 1672×941 original rune plate, preserving iPad hit targets.
+      const positions=[[50.0,13.7],[62.3,28.5],[66.2,49.0],[58.7,69.5],[41.2,69.5],[33.8,49.0],[37.7,28.5]];
       const b=document.createElement("button");b.type="button";b.className="rune-socket";
-      b.style.setProperty("--x",(50+32*Math.cos(rad)).toFixed(2)+"%");
-      b.style.setProperty("--y",(50+32*Math.sin(rad)).toFixed(2)+"%");
+      b.style.setProperty("--x",positions[i][0]+"%");
+      b.style.setProperty("--y",positions[i][1]+"%");
       b.setAttribute("aria-label",loc.name);b.textContent=loc.rune||"ᛟ";
       b.addEventListener("click",e=>{e.stopPropagation();choose(loc.id);});
       wheel.appendChild(b);
@@ -213,7 +218,7 @@
   const stars=Array.from({length:220},(_,i)=>({a:(i*2.399963)%6.283,r:Math.sqrt(((i*87)%223)/223),b:((i*197)%97)/97}));
   function animateVortex(time){
     frameRequest=requestAnimationFrame(animateVortex);
-    if(scene!=="portal"||!ctx||time-lastFrame<31)return;
+    if(scene!=="portal"||!ctx||time-lastFrame<42)return;
     lastFrame=time;
     resizeCanvas();
     const w=portalDrawWidth||canvas.width,h=portalDrawHeight||canvas.height;
