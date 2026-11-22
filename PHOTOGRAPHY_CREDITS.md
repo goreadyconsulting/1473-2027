@@ -18,6 +18,24 @@ Changes made: cropping, resizing, mild desaturation, brightness and contrast adj
 
 **3D surface photography:** The 3D bridge and slab also use two 1024×1024 stone-surface textures (`assets/textures/stone-masonry.webp` and `stone-height.webp`) derived from the credited Crook Hall photograph. They retain its attribution and CC BY-SA 4.0 license. The procedural noise material is a fallback only when texture load fails.
 
+## Authentic relic photography
+
+The nine pictured objects in the iPad player and phone keeper console are real photographs, not vector illustrations or generative mockups. They have been cropped and gently tone-graded for display. Follow each Wikimedia Commons source page for original photographer, license version, and source attribution (these remain applicable to the edited frame).
+
+| Relic | Original Wikimedia Commons photograph |
+| --- | --- |
+| Smartphone | [Galaxy Note 4 on White Table 1.jpg](https://commons.wikimedia.org/wiki/File:Galaxy_Note_4_on_White_Table_1.jpg) |
+| Giant toilet-paper supply | [Toilet Rolls (50845290776).jpg](https://commons.wikimedia.org/wiki/File:Toilet_Rolls_(50845290776).jpg) |
+| History book | [OpenBook.jpg](https://commons.wikimedia.org/wiki/File:OpenBook.jpg) |
+| Doctor's kit | [Standard First Aid Kit and Essential Emergency Medical Supplies 01.jpg](https://commons.wikimedia.org/wiki/File:Standard_First_Aid_Kit_and_Essential_Emergency_Medical_Supplies_01.jpg) |
+| Modern world map | [Map of the world.jpg](https://commons.wikimedia.org/wiki/File:Map_of_the_world.jpg) |
+| Modern firearm | [S&W M&P 2.0 Handgun - 9mm Pistol.jpg](https://commons.wikimedia.org/wiki/File:S%26W_M%26P_2.0_Handgun_-_9mm_Pistol.jpg) |
+| LED lighting | [Led-flashlight.jpg](https://commons.wikimedia.org/wiki/File:Led-flashlight.jpg) |
+| Contraceptive supplies | [Overview condoms of different brands.jpg](https://commons.wikimedia.org/wiki/File:Overview_condoms_of_different_brands.jpg) |
+| Portable water purifier | [Water purification unit.JPG](https://commons.wikimedia.org/wiki/File:Water_purification_unit.JPG) |
+
+The images are used to illustrate the *kind* of real object carried into the fiction, not to claim a particular model or manufacturer is a perfect recreation of Saulė's chosen item. File-specific credit details and terms remain on the linked Wikimedia source pages.
+
 ## Other asset licensing
 
 The 3D walkway and stone selector are runtime-generated, geometrically designed environments using shader materials, noise textures, lighting, and locally-rendered stonework — not generative image files. Vendored [Three.js r160](https://github.com/mrdoob/three.js/tree/r160) is licensed under the [MIT License](https://github.com/mrdoob/three.js/blob/r160/LICENSE). The existing entrance image is an original image generated specifically for this LARP.
