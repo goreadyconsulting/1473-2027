@@ -75,6 +75,13 @@ const relics = [
    await page.waitForTimeout(1100); // CSS crossfade needs time before visual inspection
    assert.ok((await page.locator("#relicGallery .relic-card").count())>=1,
      "Each location should reveal its surviving physical object(s)");
+   const relicShot=await page.locator("#relicGallery .relic-card img").first();
+   assert.ok((await relicShot.getAttribute("src")).includes("/assets/objects-photography/"),
+     "Players should see genuine photographed objects instead of SVG sketches");
+   await relicShot.evaluate(async img=>{
+     if(!img.complete)await new Promise(resolve=>img.addEventListener("load",resolve,{once:true}));
+     if(img.naturalWidth<=0)throw Error("Real object photo failed to load");
+   });
    await page.screenshot({path:"browser-artifacts/05-real-location-with-relic.png"});
    assert.equal(errors.length,0,"Browser page errors: "+errors.join(" / "));
    console.log("Browser QA passed: portal → real 3D walk → same 3D rune altar → real photo location → relic.");
