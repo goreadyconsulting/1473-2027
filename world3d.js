@@ -303,6 +303,7 @@ import * as THREE from "./vendor/three.module.js";
   const runeGroup = new THREE.Group();
   scene.add(runeGroup);
   let selectedLocations = [];
+  let selectedSignature = "";
   let selectRune = () => {};
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -431,9 +432,13 @@ import * as THREE from "./vendor/three.module.js";
   }
   function setLocations(places, handler) {
     if (Array.isArray(places) && places.length > 0) {
-      selectedLocations = places;
       selectRune = typeof handler === "function" ? handler : () => {};
-      makeRunes(selectedLocations);
+      const sig = places.slice(0, 7).map(p => p.id + ":" + p.rune).join("|");
+      if (sig !== selectedSignature) {
+        selectedLocations = places;
+        selectedSignature = sig;
+        makeRunes(selectedLocations);
+      }
     }
   }
   function onPointer(event) {
@@ -452,6 +457,7 @@ import * as THREE from "./vendor/three.module.js";
   window.addEventListener("resize", resize);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { lastTick = performance.now(); resize(); } });
   const api = { setPhase, step, setLocations, resize, get active() { return phase !== "off"; } };
+  document.body.classList.add("world3d-ready");
   window.portal3d = api;
   window.dispatchEvent(new Event("portal3dready"));
 })();
