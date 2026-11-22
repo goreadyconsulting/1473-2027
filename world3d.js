@@ -113,6 +113,37 @@ import * as THREE from "./vendor/three.module.js";
     blending: THREE.AdditiveBlending, depthWrite: false,
   });
 
+  // Replace initial procedural backup maps with photographic medieval masonry
+  // once locally bundled licensed textures are ready.
+  const texLoader=new THREE.TextureLoader();
+  texLoader.load("./assets/textures/stone-masonry.webp",tex=>{
+    tex.colorSpace=THREE.SRGBColorSpace;
+    tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+    tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+    const materials=[groundMat,sideMat,darkStone];
+    materials.forEach((mat,i)=>{
+      const copy=tex.clone();
+      copy.wrapS=copy.wrapT=THREE.RepeatWrapping;
+      copy.repeat.set(i===2?.34:1,i===2?.34:1);
+      copy.colorSpace=THREE.SRGBColorSpace;
+      copy.anisotropy=tex.anisotropy;
+      copy.needsUpdate=true;
+      mat.map=copy;
+      mat.needsUpdate=true;
+    });
+  },undefined,()=>{/* the procedural stone texture is the offline fallback */});
+  texLoader.load("./assets/textures/stone-height.webp",tex=>{
+    tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+    [groundMat,sideMat,darkStone].forEach((mat,i)=>{
+      const copy=tex.clone();
+      copy.wrapS=copy.wrapT=THREE.RepeatWrapping;
+      copy.repeat.set(i===2?.34:1,i===2?.34:1);
+      copy.needsUpdate=true;
+      mat.bumpMap=copy;
+      mat.bumpScale=i===2?.105:.045;
+      mat.needsUpdate=true;
+    });
+  });
   const key = new THREE.DirectionalLight(0xb5cad7, 3.4);
   key.position.set(-18, 26, 11);
   scene.add(key);
@@ -178,11 +209,11 @@ import * as THREE from "./vendor/three.module.js";
   // A few independent heavy monoliths anchor the world and sell its scale.
   const rockGeo = new THREE.IcosahedronGeometry(1, 2);
   const distantRocks = [];
-  for (let i = 0; i < 38; i++) {
-    const radius = range(1.1, 8.0);
+  for (let i = 0; i < 22; i++) {
+    const radius = range(.9, 4.5);
     const r = new THREE.Mesh(rockGeo, sideMat);
     const side = i % 2 ? -1 : 1;
-    r.position.set(side * range(12, 54), range(-18, 26), range(-115, 14));
+    r.position.set(side * range(24, 70), range(-20, 30), range(-160, -8));
     r.scale.set(radius * range(.6, 1.5), radius * range(.4, 1.8), radius * range(.5, 1.4));
     r.rotation.set(range(-3, 3), range(-3, 3), range(-3, 3));
     r.userData.speed = range(-.00045, .00045);
@@ -263,6 +294,27 @@ import * as THREE from "./vendor/three.module.js";
     stoneFoot.position.set(side * 3.85, -.05, -55.3);
     stoneFoot.rotation.y = side * .17;
     scene.add(stoneFoot);
+  }
+  // Two real stone braziers echo the warm firelight of the approved portal gate.
+  const flameMat = new THREE.MeshBasicMaterial({
+    color:0xffb15c,transparent:true,opacity:.85,
+    blending:THREE.AdditiveBlending,depthWrite:false
+  });
+  const torches=[];
+  for(const side of [-1,1]){
+    const brazier=new THREE.Mesh(
+      new THREE.CylinderGeometry(.55,.44,.37,10),
+      new THREE.MeshStandardMaterial({color:0x4c4a43,roughness:.95,metalness:.15})
+    );
+    brazier.position.set(side*4.08,1.1,-53.65);
+    scene.add(brazier);
+    const flame=new THREE.Mesh(new THREE.ConeGeometry(.25,1.05,9),flameMat);
+    flame.position.set(side*4.08,1.76,-53.65);
+    flame.userData.baseY=flame.position.y;
+    scene.add(flame);torches.push(flame);
+    const warmth=new THREE.PointLight(0xfca25e,5.5,14,2);
+    warmth.position.set(side*4.08,1.85,-53.5);
+    scene.add(warmth);
   }
   const slabZ = -54.52;
   const centerY = 5.8;
@@ -450,6 +502,10 @@ import * as THREE from "./vendor/three.module.js";
     const lookY = THREE.MathUtils.lerp(1.88, centerY - .18, THREE.MathUtils.smoothstep(progress, .63, 1));
     camera.lookAt(0, lookY, -55);
     for (const rock of distantRocks) rock.rotation.y += rock.userData.speed * delta * 50;
+    for(const [i,flame] of torches.entries()){
+      flame.scale.y=.8+Math.sin(t*.006+i*2.8)*.11+Math.sin(t*.013+i)*.07;
+      flame.position.y=flame.userData.baseY+Math.sin(t*.009+i)*.07;
+    }
     endSigil.material.opacity = .85 + Math.sin(t * .001) * .12;
     for (const node of runeGroup.children) node.rotation.z = Math.sin(t * .0008 + node.position.x) * .009;
     renderer.render(scene, camera);
