@@ -1,0 +1,39 @@
+name: Create authentic photographic realm assets
+on:
+  push:
+    branches:
+      - feat/real-3d-journey-photographic-destinations
+    paths:
+      - 'scripts/source_real_photos.py'
+      - '.github/workflows/source-real-photos.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  photography:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare photo processing
+        run: pip install pillow==11.1.0 requests==2.32.3
+      - name: Download and grade seven licensed original photographs
+        run: python scripts/source_real_photos.py
+      - name: Verify the outputs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          items=list(Path("assets/photography").glob("*.webp"))
+          assert len(items)==21, f"Expected 21 individual photographic frames: {len(items)}"
+          assert all(f.stat().st_size>=20000 for f in items)
+          print("21 verified authentic photographic location frames")
+          PY
+      - name: Commit locally bundled photos to this feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/photography
+          git diff --cached --quiet || (git commit -m "assets: replace synthetic reel stills with real licensed location photos" && git push)
