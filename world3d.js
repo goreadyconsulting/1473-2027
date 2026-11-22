@@ -92,35 +92,38 @@ import * as THREE from "./vendor/three.module.js";
   const wallMap = stoneTexture(87);
   const slabMap = stoneTexture(92);
   const groundMat = new THREE.MeshStandardMaterial({
-    map: cobbleMap, color: 0xa4afb2, roughness: .94, metalness: .025
+    map: cobbleMap, color: 0xc4bab0, roughness: .97, metalness: .0
   });
   const sideMat = new THREE.MeshStandardMaterial({
-    map: wallMap, color: 0x76818a, roughness: .98, metalness: .03, flatShading: true
+    map: wallMap, color: 0xaba69d, roughness: .99, metalness: .0, flatShading: false
   });
   const darkStone = new THREE.MeshStandardMaterial({
-    map: slabMap, color: 0x8a9999, roughness: .87, metalness: .07,
+    map: slabMap, color: 0xc3bdb0, roughness: .98, metalness: .0,
     side: THREE.DoubleSide, flatShading: true
   });
   const edgeMat = new THREE.MeshStandardMaterial({
     color: 0x344957, roughness: .97, metalness: .02
   });
   const goldMat = new THREE.MeshStandardMaterial({
-    color: 0xc9b18b, metalness: .58, roughness: .49,
-    emissive: 0x2a1906, emissiveIntensity: .22
+    color: 0xa99a79, metalness: .1, roughness: .86,
+    emissive: 0x342c1a, emissiveIntensity: .13
   });
   const runeMat = new THREE.MeshBasicMaterial({
     color: 0xb0e5db, transparent: true, opacity: .88,
     blending: THREE.AdditiveBlending, depthWrite: false,
   });
 
-  const key = new THREE.DirectionalLight(0x8ebbd3, 2.65);
+  const key = new THREE.DirectionalLight(0xb5cad7, 3.4);
   key.position.set(-18, 26, 11);
   scene.add(key);
   const fill = new THREE.DirectionalLight(0xd5a68b, .72);
   fill.position.set(14, 4, -60);
   scene.add(fill);
-  scene.add(new THREE.HemisphereLight(0x5f839c, 0x11161b, 1.6));
-  const altarLight = new THREE.PointLight(0x8bded2, 25, 19, 2);
+  scene.add(new THREE.HemisphereLight(0xb7c5c5, 0x313036, 1.95));
+  const faceLight = new THREE.DirectionalLight(0xf5dac4, 2.1);
+  faceLight.position.set(0, 14, 28);
+  scene.add(faceLight);
+  const altarLight = new THREE.PointLight(0x9fd7cf, 9.5, 19, 2);
   altarLight.position.set(0, 6.8, -53.2);
   scene.add(altarLight);
 
@@ -150,8 +153,30 @@ import * as THREE from "./vendor/three.module.js";
       scene.add(joint);
     }
   }
+  // A single instanced batch of irregular cobbles hides the unnatural striped
+  // repeated slab effect of flat image-based bridges.
+  const cobbleGeo = new THREE.BoxGeometry(1.61, .16, 1.26);
+  const cobbles = new THREE.InstancedMesh(cobbleGeo, groundMat, 50 * 3);
+  const cobbleDummy = new THREE.Object3D();
+  const stoneTint = new THREE.Color();
+  for(let i=0;i<50;i++){
+    for(let col=0;col<3;col++){
+      const idx=i*3+col;
+      const offset = i%2===0 ? .08 : -.08;
+      cobbleDummy.position.set(-1.67+col*1.67+offset+range(-.03,.03),
+        -.07+range(-.028,.02),19-i*1.45+range(-.035,.035));
+      cobbleDummy.rotation.set(range(-.01,.01),range(-.014,.014),range(-.012,.012));
+      cobbleDummy.scale.set(range(.95,1.03),range(.85,1.16),range(.94,1.04));
+      cobbleDummy.updateMatrix();
+      cobbles.setMatrixAt(idx,cobbleDummy.matrix);
+      stoneTint.setHSL(.088+range(-.018,.015),.07+range(0,.035),.65+range(-.1,.07));
+      cobbles.setColorAt(idx,stoneTint);
+    }
+  }
+  cobbles.instanceMatrix.needsUpdate=true;
+  scene.add(cobbles);
   // A few independent heavy monoliths anchor the world and sell its scale.
-  const rockGeo = new THREE.DodecahedronGeometry(1, 1);
+  const rockGeo = new THREE.IcosahedronGeometry(1, 2);
   const distantRocks = [];
   for (let i = 0; i < 38; i++) {
     const radius = range(1.1, 8.0);
@@ -254,14 +279,13 @@ import * as THREE from "./vendor/three.module.js";
   innerRing.position.set(0, centerY, slabZ + .13);
   scene.add(innerRing);
   const centre = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.05, 1.05, .2, 48),
+    new THREE.CircleGeometry(1.2,48),
     new THREE.MeshStandardMaterial({
-      color: 0x203a42, metalness: .36, roughness: .62,
-      emissive: 0x142a2d, emissiveIntensity: .22
+      map:slabMap, color:0x8d8d84, metalness:0,roughness:.99,
+      side:THREE.DoubleSide
     })
   );
-  centre.rotation.x = Math.PI / 2;
-  centre.position.set(0, centerY, slabZ + .13);
+  centre.position.set(0,centerY,slabZ+.13);
   scene.add(centre);
   // Fine stone fissures are geometric (in 3D), not painted fake runes.
   for (let i = 0; i < 27; i++) {
@@ -280,23 +304,44 @@ import * as THREE from "./vendor/three.module.js";
     scene.add(line);
   }
 
+  // Deliberately draw rune glyphs as hand-chiselled vector strokes. Unicode
+  // rune fonts are missing on some iPads AND Chrome Linux, leaving blank sockets.
+  const runeLines = {
+    "ᚠ":[[[.31,.12],[.31,.89]],[[.31,.18],[.74,.18]],[[.31,.49],[.68,.49]]],
+    "ᚹ":[[[.29,.11],[.29,.9]],[[.29,.13],[.75,.34],[.29,.55]]],
+    "ᛉ":[[[.5,.11],[.5,.9]],[[.5,.49],[.21,.19]],[[.5,.49],[.79,.19]]],
+    "ᚱ":[[[.3,.11],[.3,.9]],[[.3,.14],[.7,.14],[.73,.4],[.3,.52]],[[.31,.52],[.76,.89]]],
+    "ᛚ":[[[.31,.1],[.31,.89]],[[.31,.15],[.74,.49]]],
+    "ᛟ":[[[.5,.11],[.79,.48],[.5,.73],[.21,.48],[.5,.11]],[[.21,.48],[.12,.91]],[[.79,.48],[.88,.91]]],
+    "ᚨ":[[[.31,.09],[.31,.9]],[[.31,.30],[.78,.14]],[[.31,.59],[.77,.42]]]
+  };
   function runeTexture(symbol) {
     const c = document.createElement("canvas");
-    c.width = c.height = 256;
-    const ctx = c.getContext("2d");
-    ctx.clearRect(0, 0, 256, 256);
-    const halo = ctx.createRadialGradient(128, 128, 12, 128, 128, 116);
-    halo.addColorStop(0, "rgba(148,235,218,.22)");
-    halo.addColorStop(.48, "rgba(95,200,195,.09)");
-    halo.addColorStop(1, "rgba(45,105,143,0)");
-    ctx.fillStyle = halo; ctx.fillRect(0,0,256,256);
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.font = "normal 162px Georgia,serif";
-    ctx.shadowColor = "#6de2d2"; ctx.shadowBlur = 19;
-    ctx.fillStyle = "#b8f0d5";
-    ctx.fillText(symbol || "ᛟ", 128, 130);
-    const tex = new THREE.CanvasTexture(c);
-    tex.colorSpace = THREE.SRGBColorSpace;
+    c.width=c.height=256;
+    const ctx=c.getContext("2d");
+    ctx.clearRect(0,0,256,256);
+    const halo=ctx.createRadialGradient(128,128,12,128,128,121);
+    halo.addColorStop(0,"rgba(141,222,207,.18)");
+    halo.addColorStop(.56,"rgba(88,170,164,.065)");
+    halo.addColorStop(1,"rgba(48,92,108,0)");
+    ctx.fillStyle=halo;ctx.fillRect(0,0,256,256);
+    const lines=runeLines[symbol]||runeLines["ᛟ"];
+    ctx.lineCap="square";ctx.lineJoin="miter";
+    for(const line of lines){
+      const stroke=(color,width,blur)=>{
+        ctx.beginPath();line.forEach(([x,y],i)=>{
+          const px=35+x*184,py=24+y*204;
+          i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+        });
+        ctx.shadowColor="#a3eed6";ctx.shadowBlur=blur;
+        ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();
+      };
+      stroke("rgba(14,37,40,.9)",23,0);
+      stroke("rgba(153,227,207,.68)",12,9);
+      stroke("rgba(234,238,202,.86)",5,2);
+    }
+    const tex=new THREE.CanvasTexture(c);
+    tex.colorSpace=THREE.SRGBColorSpace;
     return tex;
   }
   const runeMeshes = [];
